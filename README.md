@@ -19,9 +19,9 @@ enabling easier retrieval of the information needed to perform civil responsibil
 
 - [ ] **Implement Frontend**
   - [ ] Design responsive UI using HTML, CSS, and JavaScript (or a framework like React/Vue)  
-  - [ ]Connect with backend APIs to fetch and display civilian data  
-  - [ ]Add input validation, loading states, and data visualization components  
-  - [ ]Optimize for both desktop and mobile users  
+  - [ ] Connect with backend APIs to fetch and display civilian data  
+  - [ ] Add input validation, loading states, and data visualization components  
+  - [ ] Optimize for both desktop and mobile users  
 
 ---
 
