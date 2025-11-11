@@ -1,4 +1,6 @@
 <?php
+  require_once "DBConnect.php";
+
   enum Gender: string {
     case MALE = "Male";
     case FEMALE = "Female";
@@ -115,6 +117,8 @@
         $gender,
         $address
       );
+
+      return $stmt->execute();
     }
 
     public static function fetchById(mysqli $conn, int $personId): ?Person {
