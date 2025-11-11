@@ -26,7 +26,8 @@ enabling easier retrieval of the information needed to perform civil responsibil
 ---
 
 ### 👨‍💻 Authors
-Author: **@fnzh-i** 
+Author: **@fnzh-i**
+
 Co-Author: **@ravendr17**
 
 Role: Web & Software Developers
