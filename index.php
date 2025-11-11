@@ -36,11 +36,10 @@
 
 <?php
   require_once "DBConnect.php";
-  require_once "Person.php";
-  // require_once "Vehicle.php";
-  // require_once "VehicleRegistration.php";
-  require_once "DriverLicense.php";
-  // require_once "TicketViolation.php";
+  require_once "Vehicle.php";
+  require_once "VehicleRegistration.php";
+  require_once "DriversLicense.php";
+  require_once "TicketViolation.php";
 
   // Vehicle: brandName, modelName, modelYear, modelColor
   // VehicleRegistration: plateNumber, mvFileNumber, issueDate, registrationStatus, vehicle, driverLicense
