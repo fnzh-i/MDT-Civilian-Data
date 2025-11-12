@@ -10,3 +10,4 @@ Development ongoing — updates posted as time allows.
 - Nov 12, 2025  - Updated and refactored licenses, vehicles, and tickets modules to align with the new merged table structure, 
                 resolving schema conflicts and ensuring smooth data migration.<br>
                 - Removed commented-out SQL and sample code.<br>
+                - Added REVOKED status to DriversLicenseStatus enum.<br>
