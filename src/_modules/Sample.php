@@ -11,6 +11,8 @@
 </html>
 
 <?php
+  require_once "DBConnect.php";
+  require_once "User.php";
   require_once "DriversLicense.php";
   require_once "Vehicle.php";
   require_once "TicketViolation.php";

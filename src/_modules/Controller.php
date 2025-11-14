@@ -1,0 +1,101 @@
+<?php
+  require_once "DBConnect.php";
+  require_once "User.php";
+  require_once "Vehicle.php";
+  require_once "DriversLicense.php";
+  require_once "TicketViolation.php";
+
+  session_start();
+
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? null;
+
+    switch ($action) {
+      case 'USER-LOGIN':
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+
+        $loginResult = User::searchEmail($conn, $email, $password);
+
+        if ($loginResult === true) {
+          header("Location: AdminMenu.php");
+          exit();
+        } else {
+          $_SESSION['error-message'] = $loginResult;
+
+          header("Location: Error.php");
+          exit();
+        }
+
+        break;
+
+      case 'SEARCH-PLATE-NUMBER':
+        $plateNumber = $_POST['plate-number'];
+        $result = Vehicle::searchPlateNumber($conn, $plateNumber);
+
+        if (is_string($result)) {
+          $_SESSION['error-message'] = $result;
+
+          header("Location: Error.php");
+          exit();
+        } else {
+          $vehicle = $result['vehicle'];
+          $vehicleId = $result['vehicle_id'];
+          $plateNumber = $vehicle->getPlateNumber();
+
+          $_SESSION['vehicle'] = $vehicle;
+          $_SESSION['vehicle-id'] = $vehicleId;
+          $_SESSION['plate-number'] = $plateNumber;
+
+          header("Location: AdminSearchVehicleResult.php");
+          exit();
+        }
+
+        break;
+      
+      case 'SEARCH-LICENSE-NUMBER':
+        $licenseNumber = $_POST['license-number'];
+        $result = DriversLicense::searchLicenseNumber($conn, $licenseNumber);
+
+        if (is_string($result)) {
+          $_SESSION['error-message'] = $result;
+
+          header("Location: Error.php");
+          exit();
+        } else {
+          $license = $result['license'];
+          $licenseId = $result['license_id'];
+
+          $_SESSION['license'] = $license;
+          $_SESSION['license-id'] = $licenseId;
+
+          header("Location: AdminSearchLicenseResult.php");
+          exit();
+        }
+        
+        break;
+      
+      case 'ADD-VIOLATION':
+        $violation = Violation::from($_POST['violation']);
+        $dateOfIncident = $_POST['date-of-incident'];
+        $placeOfIncident = $_POST['place-of-incident'];
+        $note = $_POST['note'];
+
+        $ticket = new TicketViolation($violation, new DateTime($dateOfIncident), $placeOfIncident, $note);
+
+        $licenseId = $_SESSION['license-id'];
+
+        $result = $ticket->save($conn, $licenseId);
+
+        if (is_string($result)) {
+          $_SESSION['error-message'] = $result;
+
+          header("Location: Error.php");
+          exit();
+        } else {
+          echo "Ticket saved successfully.";
+        }
+        break;
+    }
+  }
+?>
