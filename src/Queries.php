@@ -47,11 +47,9 @@
   // $sql = "CREATE TABLE licenses (
   //   license_id INT AUTO_INCREMENT PRIMARY KEY,
   //   license_number VARCHAR(50) NOT NULL UNIQUE,
-<<<<<<< Updated upstream
   //   license_status ENUM('REGISTERED', 'UNREGISTERED', 'EXPIRED') NOT NULL,
-=======
   //   license_status ENUM('REGISTERED', 'UNREGISTERED', 'EXPIRED', 'REVOKED') NOT NULL,
->>>>>>> Stashed changes
+  //   license_status ENUM('REGISTERED', 'UNREGISTERED', 'EXPIRED', 'REVOKED') NOT NULL,
   //   license_type ENUM('PROFESSIONAL', 'NON-PROFESSIONAL', 'STUDENT PERMIT') NOT NULL,
   //   issue_date DATE NOT NULL,
   //   expiry_date DATE NOT NULL,
@@ -121,9 +119,7 @@
   //  } else {
   //   echo "Modification failed: {$conn->error}";
   //  }
-
-<<<<<<< Updated upstream
-=======
+  
   // $sql = "CREATE TABLE users (
   //   user_id INT AUTO_INCREMENT PRIMARY KEY,
   //   email VARCHAR(100) NOT NULL,
@@ -174,5 +170,4 @@
   // } else {
   //   echo "Error creating table: {$conn->error}";
   // }
->>>>>>> Stashed changes
 ?>
