@@ -15,3 +15,4 @@ Development ongoing — updates posted as time allows.
                 - Added Controller.php to act as the central bridge between the frontend, backend, and database. All frontend form requests are routed through a switch statement inside Controller.php, which delegates each request to the appropriate class methods using static database functions.<br>
                 - Created Error.php to handle and display all system and input errors.<br>
                 - Refactored and modularize code, added a seperate folder for admin panel.<br>
+                - Refactored admin panel file structure.<br>
