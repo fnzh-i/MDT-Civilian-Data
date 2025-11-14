@@ -11,10 +11,13 @@
 </html>
 
 <?php
+  require_once "DBConnect.php";
+  require_once "User.php";
   require_once "DriversLicense.php";
   require_once "Vehicle.php";
   require_once "TicketViolation.php";
 
+<<<<<<< Updated upstream
   // $license = new DriverLicense(
   //   "A5-66-778899",
   //   LicenseStatus::EXPIRED,
@@ -74,4 +77,14 @@
   //   echo "Failed saving to ticker_violations table: {$result}";
   // }
 
+=======
+
+  $user = new User("raven02@gmail.com","123456");
+
+  if ($user->save($conn)) {
+    echo "success";
+  } else {
+    echo "unsuccessful";
+  }
+>>>>>>> Stashed changes
 ?>
