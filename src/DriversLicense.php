@@ -5,6 +5,7 @@
     case REGISTERED = "REGISTERED";
     case UNREGISTERED = "UNREGISTERED";
     case EXPIRED = "EXPIRED";
+    case REVOKED = "REVOKED";
   }
 
   enum LicenseType: string {
@@ -36,7 +37,8 @@
     case FEMALE = "Female";
   }
 
-  class DriverLicense {
+  class DriversLicense {
+    private ?int $license_id = null; // will have an auto-incremented value once saved to DB
     private string $licenseNumber;
     private LicenseStatus $licenseStatus;
     private LicenseType $licenseType;
@@ -65,7 +67,7 @@
       string $lastName,
       DateTime $dateOfBirth,
       Gender $gender,
-      string $address,
+      string $address
     ) {
       $this->licenseNumber = $licenseNumber;
       $this->licenseStatus = $licenseStatus;
@@ -83,6 +85,14 @@
       $this->dateOfBirth = $dateOfBirth;
       $this->gender = $gender;
       $this->address = $address;
+    }
+
+    public function setLicenseID($license_id): void {
+      $this->license_id = $license_id;
+    }
+
+    public function getLicenseID(): int {
+      return $this->license_id;
     }
 
     public function getLicenseNumber(): string {
@@ -205,6 +215,54 @@
       );
 
       return $stmt->execute();
+    }
+
+    public static function inferExpiryOption(string $issueDate, string $expiryDate) {
+      $diff = (new DateTime($issueDate))->diff(new DateTime($expiryDate));
+      return ($diff->y >=10) ? ExpiryOption::TEN_YEARS : ExpiryOption::FIVE_YEARS;
+    }
+
+    public static function fromDatabase(array $row): self {
+      $dlCodesArray = array_map(fn($code) => DLCodes::from(trim($code)), explode(',', $row['dl_codes']));
+
+      return new self(
+        $row['license_number'],
+        LicenseStatus::from($row['license_status']),
+        LicenseType::from($row['license_type']),
+        new DateTime($row['issue_date']),
+        self::inferExpiryOption($row['issue_date'], $row['expiry_date']),
+        $dlCodesArray,
+
+        $row['first_name'],
+        $row['middle_name'] ?? null,
+        $row['last_name'],
+        new DateTime($row['date_of_birth']),
+        Gender::from($row['gender']),
+        $row['address']
+      );
+    }
+
+    public static function searchLicenseNumber(mysqli $conn, string $licenseNumber): string | array {
+      $checkStmt = $conn->prepare("SELECT * FROM licenses WHERE license_number = ?");
+      $checkStmt->bind_param("s", $licenseNumber);
+      $checkStmt->execute();
+
+      $result = $checkStmt->get_result();
+
+      if ($result->num_rows === 0) {
+        $checkStmt->close();
+        return "Error: License Number $licenseNumber not found in licenses table.";
+      } else {
+        $row = $result->fetch_assoc();
+        $checkStmt->close();
+        
+        $license = self::fromDatabase($row);
+
+        return [
+          "license" => $license,
+          "license_id" => $row['license_id']
+        ];
+      }
     }
   }
 ?>

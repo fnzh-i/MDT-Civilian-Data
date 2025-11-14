@@ -143,5 +143,63 @@
       $stmt->close();
       return true;
     }
+
+    private static function inferIssueDate(string $expiryDate): DateTime {
+      $date = new DateTime($expiryDate);
+      $date->sub(new DateInterval("P1Y")); // subtract 1 year
+      return $date;
+    }
+
+    public static function fromDatabase(array $row): self {
+      return new self(
+        $row['plate_number'],
+        $row['mv_file_number'] ?? null,
+        self::inferIssueDate($row['expiry_date']),
+        RegistrationStatus::from($row['registration_status']),
+        $row['brand_name'],
+        $row['model_name'],
+        (int)$row['model_year'],
+        $row['model_color']
+      );
+    }
+
+    public static function searchPlateNumber(mysqli $conn, string $plateNumber): string|array {
+      $stmt = $conn->prepare("SELECT * FROM vehicles WHERE plate_number = ?");
+      $stmt->bind_param("s", $plateNumber);
+      $stmt->execute();
+      $result = $stmt->get_result();
+
+      if ($result->num_rows === 0) {
+        $stmt->close();
+        return "Error: Vehicle with plate number $plateNumber not found.";
+      } else {
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        return [
+          "vehicle" => self::fromDatabase($row),
+          "vehicle_id" => $row['vehicle_id'] ?? null
+        ];
+      }
+    }
+
+    public static function searchMVfileNumber(mysqli $conn, string $mvFileNumber): string|array {
+      $stmt = $conn->prepare("SELECT * FROM vehicles WHERE mv_file_number = ?");
+      $stmt->bind_param("s", $mvFileNumber);
+      $stmt->execute();
+      $result = $stmt->get_result();
+
+      if ($result->num_rows === 0) {
+        $stmt->close();
+        return "Error: Vehicle with MV File Number $mvFileNumber not found.";
+      } else {
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        return [
+          "vehicle" => self::fromDatabase($row),
+          "vehicle_id" => $row['vehicle_id'] ?? null
+        ];
+      }
+    }
+
   }
 ?>
