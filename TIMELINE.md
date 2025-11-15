@@ -21,3 +21,4 @@ Development ongoing — updates posted as time allows.
                 - Integrated Tailwind CSS into the frontend along with all required assets such as the configuration file, compiled output, and CDN/build setup.<br>
                 - Removed legacy index.php and deprecated modules and Moved admin panel files to a new _admin_panel directory and added new pages for dashboard, landing, license, and vehicle.<br>
                 - Updated .gitignore, and documented changes in TIMELINE.md.<br>
+                - Moved API files to src/api and update bootstrap path.<br>
