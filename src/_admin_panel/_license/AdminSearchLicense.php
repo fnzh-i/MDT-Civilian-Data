@@ -11,7 +11,7 @@
   <a href="Admin.php" class="btn">Back</a>
   <br>
   <br>
-  <form action="Controller.php" method="POST" class="forms">
+  <form action="index.php?page=AdminSearchLicense" method="POST">
     <input type="hidden" name="action" value="SEARCH-LICENSE-NUMBER">
     <label for="search-license">Enter License Number:</label>
     <input type="text" id="search-license" name="license-number" placeholder="AXX-XX-XXXXXX">

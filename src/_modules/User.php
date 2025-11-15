@@ -1,6 +1,5 @@
 <?php
-  require_once "DBConnect.php";
-
+  require_once __DIR__ . '/../bootstrap.php';
   Class User {
     private ?int $user_id = null;
     private string $email;
@@ -65,6 +64,13 @@
       $stmt->close();
 
       return $exists ? true : "Password does not match the email provided.";
+    }
+
+    public static function fromDatabase(array $row): self {
+      return new self(
+        $row['email'],
+        $row['password'],
+      );
     }
   }
 ?>

@@ -1,2 +1,3 @@
 DBConnect.php
 *.log
+.htaccess

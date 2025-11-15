@@ -1,5 +1,5 @@
 <?php
-  require_once "DBConnect.php";
+  require_once __DIR__ . '/../bootstrap.php';
 
   enum Violation: string {
     case ILLEGAL_PARKING = "ILLEGAL PARKING";
@@ -27,17 +27,23 @@
     private DateTime $dateOfIncident;
     private string $placeOfIncident;
     private ViolationStatus $violationStatus;
+    private string $note;
+    private int $licenseID;
 
     public function __construct(
       Violation $violation,
       DateTime $dateOfIncident,
       string $placeOfIncident,
-      ViolationStatus $violationStatus
+      ViolationStatus $violationStatus,
+      string $note,
+      int $licenseID
       ) {
       $this->violation = $violation;
       $this->dateOfIncident = $dateOfIncident;
       $this->placeOfIncident = $placeOfIncident;
       $this->violationStatus = $violationStatus;
+      $this->note = $note;
+      $this->licenseID = $licenseID;
     }
 
     public function setViolationStatus(ViolationStatus $violationStatus): void {
@@ -60,57 +66,66 @@
       return $this->violationStatus;
     }
 
-    public function displayInfo(): string {
-      return
-      "
-        Violation: {$this->getViolation()->value} <br>
-        Date Of Incident: {$this->getDateOfIncident()->format("F j, Y g:i A")} <br>
-        Place Of Incident: {$this->getPlaceOfIncident()} <br>
-        Status: {$this->getViolationStatus()->value} <br> <br>
-      ";
+    public function getNote(): string {
+      return $this->note;
     }
 
-    public function save(mysqli $conn, int $license_id): string | bool {
-      $checkStmt = $conn->prepare("SELECT license_id FROM licenses WHERE license_id = ?");
-      $checkStmt->bind_param("i", $license_id);
-      $checkStmt->execute();
+    public function getLicenseID(): int{
+      return $this->licenseID;
+    }
 
-      $result = $checkStmt->get_result();
-
-      if ($result->num_rows === 0) {
-        $checkStmt->close();
-        return "Error: License ID $license_id not found in licenses table.";
-      }
-
-      $checkStmt->close();
-
-      $stmt = $conn->prepare("
-        INSERT INTO ticket_violations(violation, date_of_incident, place_of_incident, status, license_id)
-        VALUES (?, ?, ?, ?, ?)
-      ");
-
-      $violation = $this->getViolation()->value;
-      $dateOfIncident = $this->getDateOfIncident()->format("Y-m-d H:i:s");
-      $placeOfIncident = $this->getPlaceOfIncident();
-      $violationStatus = $this->getViolationStatus()->value;
-
-      $stmt->bind_param(
-        "ssssi",
-        $violation,
-        $dateOfIncident,
-        $placeOfIncident,
-        $violationStatus,
-        $license_id
+    public static function fromDatabase(array $row): self {
+      return new self(
+        Violation::from($row['violation']),
+        new DateTime($row['date_of_incident']),
+        $row['place_of_incident'],
+        ViolationStatus::from($row['status']),
+        $row['note']??'',
+        $row['license_id']
       );
-
-      if (!$stmt->execute()) {
-        $error = "Database error: {$stmt->error}";
-        $stmt->close();
-        return $error;
-      }
-
-      $stmt->close();
-      return true;
     }
+
+    // public function save(mysqli $conn, int $license_id): string | bool {
+    //   $checkStmt = $conn->prepare("SELECT license_id FROM licenses WHERE license_id = ?");
+    //   $checkStmt->bind_param("i", $license_id);
+    //   $checkStmt->execute();
+
+    //   $result = $checkStmt->get_result();
+
+    //   if ($result->num_rows === 0) {
+    //     $checkStmt->close();
+    //     return "Error: License ID $license_id not found in licenses table.";
+    //   }
+
+    //   $checkStmt->close();
+
+    //   $stmt = $conn->prepare("
+    //     INSERT INTO ticket_violations(violation, date_of_incident, place_of_incident, status, license_id)
+    //     VALUES (?, ?, ?, ?, ?)
+    //   ");
+
+    //   $violation = $this->getViolation()->value;
+    //   $dateOfIncident = $this->getDateOfIncident()->format("Y-m-d H:i:s");
+    //   $placeOfIncident = $this->getPlaceOfIncident();
+    //   $violationStatus = $this->getViolationStatus()->value;
+
+    //   $stmt->bind_param(
+    //     "ssssi",
+    //     $violation,
+    //     $dateOfIncident,
+    //     $placeOfIncident,
+    //     $violationStatus,
+    //     $license_id
+    //   );
+
+    //   if (!$stmt->execute()) {
+    //     $error = "Database error: {$stmt->error}";
+    //     $stmt->close();
+    //     return $error;
+    //   }
+
+    //   $stmt->close();
+    //   return true;
+    // }
   }
 ?>

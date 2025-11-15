@@ -1,11 +1,6 @@
 <?php
-  require_once "DBConnect.php";
-  require_once "User.php";
-  require_once "Vehicle.php";
-  require_once "DriversLicense.php";
-  require_once "TicketViolation.php";
-
   session_start();
+  require_once __DIR__ . '/../bootstrap.php';
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? null;

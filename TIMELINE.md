@@ -16,3 +16,8 @@ Development ongoing — updates posted as time allows.
                 - Created Error.php to handle and display all system and input errors.<br>
                 - Refactored and modularize code, added a seperate folder for admin panel.<br>
                 - Refactored admin panel file structure.<br>
+- Nov 16, 2025  - Converted DB row to DriversLicense object and Converted the object to an array for JSON output in api.php.<br>
+                - Implemented dedicated API endpoints for managing licenses, tickets, users, and vehicles, allowing the frontend to retrieve, create, update, and search data through standardized JSON responses. This separation of endpoints improves modularity, simplifies integration, and ensures each resource can be accessed independently by the UI.<br>
+                - Integrated Tailwind CSS into the frontend along with all required assets such as the configuration file, compiled output, and CDN/build setup.<br>
+                - Removed legacy index.php and deprecated modules and Moved admin panel files to a new _admin_panel directory and added new pages for dashboard, landing, license, and vehicle.<br>
+                - Updated .gitignore, and documented changes in TIMELINE.md.<br>

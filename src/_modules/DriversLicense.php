@@ -1,5 +1,5 @@
 <?php
-  require_once "DBConnect.php";
+  require_once __DIR__ . '/../bootstrap.php';
 
   enum LicenseStatus: string {
     case REGISTERED = "REGISTERED";
@@ -87,10 +87,6 @@
       $this->address = $address;
     }
 
-    public function setLicenseID($license_id): void {
-      $this->license_id = $license_id;
-    }
-
     public function getLicenseID(): int {
       return $this->license_id;
     }
@@ -135,11 +131,6 @@
       return $this->middleName;
     }
 
-    public function getMiddleInitial(): string {
-      $middleInitial = mb_substr($this->getMiddleName(), 0, 1);
-      return "{$middleInitial}.";
-    }
-
     public function getLastName(): string {
       return $this->lastName;
     }
@@ -154,67 +145,6 @@
 
     public function getAddress(): string {
       return $this->address;
-    }
-
-    public function displayInfo(): string {
-      return
-      "
-        <strong>License Information</strong> <br>
-        License Number: {$this->getLicenseNumber()} <br>
-        License Status: {$this->getLicenseStatus()->value} <br>
-        License Type: {$this->getLicenseType()->value} <br>
-        Issue Date: {$this->getIssueDate()->format("F j, Y")} <br>
-        Expiry Date: {$this->getExpiryDate()->format("F j, Y")} <br>
-        DL Codes: {$this->getDLCodesToString()} <br> <br>
-
-        <strong>Personal Information</strong> <br>
-        First Name: {$this->getFirstName()} <br>
-        Middle Name: {$this->getMiddleName()} <br>
-        Last Name: {$this->getLastName()} <br>
-        Date Of Birth: {$this->getDateOfBirth()->format("F j, Y")} <br>
-        Gender: {$this->getGender()->value} <br>
-        Address: {$this->getAddress()} <br>
-      ";
-    }
-
-    public function save(mysqli $conn): bool {
-      $stmt = $conn->prepare("
-        INSERT INTO licenses(license_number, license_status, license_type, issue_date, expiry_date, dl_codes,
-        first_name, middle_name, last_name, date_of_birth, gender, address)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      ");
-
-      $licenseNumber = $this->getLicenseNumber();
-      $licenseStatus = $this->getLicenseStatus()->value;
-      $licenseType = $this->getLicenseType()->value;
-      $issueDate = $this->getIssueDate()->format("Y-m-d");
-      $expiryDate = $this->getExpiryDate()->format("Y-m-d");
-      $dlCodes = $this->getDLCodesToString();
-
-      $firstName = $this->getFirstName();
-      $middleName = $this->getMiddleName();
-      $lastName = $this->getLastName();
-      $dateOfBirth = $this->getDateOfBirth()->format("Y-m-d");
-      $gender = $this->getGender()->value;
-      $address = $this->getAddress();
-
-      $stmt->bind_param(
-        "ssssssssssss",
-        $licenseNumber,
-        $licenseStatus,
-        $licenseType,
-        $issueDate,
-        $expiryDate,
-        $dlCodes,
-        $firstName,
-        $middleName,
-        $lastName,
-        $dateOfBirth,
-        $gender,
-        $address
-      );
-
-      return $stmt->execute();
     }
 
     public static function inferExpiryOption(string $issueDate, string $expiryDate) {
@@ -242,7 +172,7 @@
       );
     }
 
-    public static function searchLicenseNumber(mysqli $conn, string $licenseNumber): string | array {
+      public static function searchLicenseNumber(mysqli $conn, string $licenseNumber): string | array {
       $checkStmt = $conn->prepare("SELECT * FROM licenses WHERE license_number = ?");
       $checkStmt->bind_param("s", $licenseNumber);
       $checkStmt->execute();
