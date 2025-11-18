@@ -2,27 +2,25 @@
   session_start();
   require_once __DIR__ . '/../bootstrap.php';
 
-  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+  if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? null;
 
     switch ($action) {
       case 'USER-LOGIN':
-        $email = $_POST['email'];
-        $password = $_POST['password'];
+          $email = $_POST['email'] ?? null;
+          $password = $_POST['password'] ?? null;
+          
 
-        $loginResult = User::searchEmail($conn, $email, $password);
+          $loginResult = User::searchEmail($conn, $email, $password);
 
-        if ($loginResult === true) {
-          header("Location: AdminMenu.php");
-          exit();
-        } else {
-          $_SESSION['error-message'] = $loginResult;
+          if ($loginResult === true) {
+              echo "SUCCESS";
+          } else {
+              echo $loginResult; // the error message from User::searchEmail()
+          }
+      exit;
 
-          header("Location: Error.php");
-          exit();
-        }
-
-        break;
 
       case 'SEARCH-PLATE-NUMBER':
         $plateNumber = $_POST['plate-number'];

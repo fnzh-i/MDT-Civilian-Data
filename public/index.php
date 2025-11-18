@@ -9,6 +9,7 @@
     <meta charset="UTF-8">
     <title>MDT System - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="script.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gradient-to-r from-[#63FFFD] to-[#00A8FF] h-screen flex flex-col items-center justify-center">
@@ -21,19 +22,5 @@
     <button onclick="login()" class="w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white py-3 rounded-xl hover:from-blue-600 hover:to-blue-800 transition font-bold">Login</button>
     <p id="error" class="text-red-500 text-center mt-3 hidden">Invalid login.</p>
 </div>
-
-<script>
-function login() {
-    const user = document.getElementById("username").value;
-    const pass = document.getElementById("password").value;
-
-    if(user === "admin" && pass === "admin") {
-        window.location.href = "./../src/_pages/dashboard.php";
-    } else {
-        document.getElementById("error").classList.remove("hidden");
-    }
-}
-</script>
-<script src="script.js"></script>
 </body>
 </html>

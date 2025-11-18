@@ -22,3 +22,5 @@ Development ongoing — updates posted as time allows.
                 - Removed legacy index.php and deprecated modules and Moved admin panel files to a new _admin_panel directory and added new pages for dashboard, landing, license, and vehicle.<br>
                 - Updated .gitignore, and documented changes in TIMELINE.md.<br>
                 - Moved API files to src/api and update bootstrap path.<br>
+
+- Nov 16, 2025  - Implemented backend login and API integration (Replaced the frontend dummy login logic with an API-based login using fetch in script.js)

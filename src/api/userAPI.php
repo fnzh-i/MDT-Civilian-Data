@@ -19,7 +19,7 @@ if ($conn) {
             $users[] = [
                 'user_id' => $row['user_id'],
                 'email' => $user->getEmail(),
-                'password' => $user->getPassword(),
+                // 'password' => $user->getPassword(),
                 // 'first_name' => $license->getFirstName(),
                 // 'middle_name' => $license->getMiddleName(),
                 // 'last_name' => $license->getLastName(),
@@ -27,8 +27,8 @@ if ($conn) {
                 // 'address' => $license->getAddress()
             ];
         }
-
-        echo json_encode(['users' => $users], JSON_PRETTY_PRINT);
+        $response = json_encode(['users' => $users], JSON_PRETTY_PRINT);
+        // echo json_encode(['users' => $users], JSON_PRETTY_PRINT);
     } else {
         http_response_code(500);
         echo json_encode(['error' => 'Failed to fetch users from database.']);
