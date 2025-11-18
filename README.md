@@ -14,7 +14,7 @@ enabling easier retrieval of the information needed to perform civil responsibil
 - [x] **Implement Backend**
   - [x] Design and build RESTful APIs for data access and updates  
   - [x] Connect to a database (e.g., MySQL or MongoDB)  
-  - [ ] Add authentication and role-based access control  
+  - [x] Add authentication and role-based access control  
   - [ ] Integrate logging and error handling mechanisms  
 
 - [ ] **Implement Frontend**
