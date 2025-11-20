@@ -24,3 +24,7 @@ Development ongoing — updates posted as time allows.
                 - Moved API files to src/api and update bootstrap path.<br>
 
 - Nov 16, 2025  - Implemented backend login and API integration (Replaced the frontend dummy login logic with an API-based login using fetch in script.js)
+- Nov 21, 2025  - Implemented vehicle plate lookup via AJAX and API refactor. <br>
+                - Added a lookupVehicle() function in script.js to perform AJAX-based vehicle plate searches. <br>
+                - Refactored Controller.php to return JSON responses for plate lookups and updated vehicleAPI.php to encapsulate vehicle-related API logic in a VehicleAPI class.<br>
+                - Adjusted vehicle.php and bootstrap.php for correct asset paths and improved autoloading.

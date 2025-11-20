@@ -22,30 +22,63 @@
       exit;
 
 
+
+
       case 'SEARCH-PLATE-NUMBER':
-        $plateNumber = $_POST['plate-number'];
-        $result = Vehicle::searchPlateNumber($conn, $plateNumber);
+          header('Content-Type: application/json');
 
-        if (is_string($result)) {
-          $_SESSION['error-message'] = $result;
+          $plateNumber = $_POST['plate-number'];
 
-          header("Location: Error.php");
-          exit();
-        } else {
+          $vehicleAPI = new VehicleAPI($conn);
+          $result = $vehicleAPI->searchPlate($plateNumber);
+
+          if (is_string($result)) {
+              echo json_encode([
+                  'status' => 'error',
+                  'message' => $result
+              ]);
+              exit();
+          }
+
           $vehicle = $result['vehicle'];
-          $vehicleId = $result['vehicle_id'];
-          $plateNumber = $vehicle->getPlateNumber();
+          $vehicleId = $result['vehicle_id']; 
 
-          $_SESSION['vehicle'] = $vehicle;
-          $_SESSION['vehicle-id'] = $vehicleId;
-          $_SESSION['plate-number'] = $plateNumber;
-
-          header("Location: AdminSearchVehicleResult.php");
+          echo json_encode([
+              'status' => 'success',
+              'vehicle' => [
+                  'id' => $vehicleId,
+                  'plate' => $vehicle->getPlateNumber(),
+                  'brand' => $vehicle->getBrandName(),
+                  'model' => $vehicle->getModelName(),
+                  'color' => $vehicle->getModelColor()
+              ]
+          ]);
           exit();
-        }
 
-        break;
-      
+
+            // case 'SEARCH-PLATE-NUMBER':
+      //   $plateNumber = $_POST['plate-number'];
+      //   $result = Vehicle::searchPlateNumber($conn, $plateNumber);
+
+      //   if (is_string($result)) {
+      //     $_SESSION['error-message'] = $result;
+
+      //     header("Location: Error.php");
+      //     exit();
+      //   } else {
+      //     $vehicle = $result['vehicle'];
+      //     $vehicleId = $result['vehicle_id']; 
+      //     $plateNumber = $vehicle->getPlateNumber();
+
+      //     $_SESSION['vehicle'] = $vehicle;
+      //     $_SESSION['vehicle-id'] = $vehicleId;
+      //     $_SESSION['plate-number'] = $plateNumber;
+
+      //     header("Location: AdminSearchVehicleResult.php");
+      //     exit();
+      //   }
+
+          
       case 'SEARCH-LICENSE-NUMBER':
         $licenseNumber = $_POST['license-number'];
         $result = DriversLicense::searchLicenseNumber($conn, $licenseNumber);

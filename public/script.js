@@ -36,6 +36,70 @@ function login() {
 
 }
 
+function lookupVehicle() {
+
+    // const formData = new FormData();
+    // formData.append("action", "SEARCH-PLATE-NUMBER");
+    // formData.append("plate-number", document.getElementById("plateInput").value);
+
+    // fetch("../_modules/Controller.php", {
+    //     method: "POST",
+    //     body: formData
+    // })
+    // .then(res => res.text())
+    // .then(console.log)
+    // .catch(console.error);
+
+    const formData = new FormData();
+    formData.append("action", "SEARCH-PLATE-NUMBER");
+    formData.append("plate-number", document.getElementById("plateInput").value);
+
+    fetch("../_modules/Controller.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.text())
+    .then(data => {
+        console.log("Response:", data);
+
+        if (data.status === "error") {
+            alert(data.message);
+            return;
+        }
+
+        // Success response
+        console.log("Found Vehicle:", data.vehicle);
+
+        
+        // box.innerHTML = `
+        //     <div class="bg-white rounded-2xl shadow-xl p-6 space-y-4">
+        //         <h2 class="text-2xl font-bold mb-2">Vehicle Information</h2>
+        //         <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        //             <p><b>Status:</b> ${v.status}</p>
+        //             <p><b>Plate Number:</b> ${v.plate}</p>
+        //             <p><b>MV File Number:</b> ${v.mvFile}</p>
+        //             <p><b>Make:</b> ${v.make}</p>
+        //             <p><b>Model:</b> ${v.model}</p>
+        //             <p><b>Year:</b> ${v.year}</p>
+        //             <p><b>Color:</b> ${v.color}</p>
+        //             <p><b>VIN:</b> ${v.vin}</p>
+        //             <p><b>Registration Expiry:</b> ${v.regExpiry}</p>
+        //         </div>
+        //         <h3 class="text-xl font-bold mt-4">Registered Owner</h3>
+        //         <p><b>Name:</b> ${v.ownerName}</p>
+        //         <p><b>License Number:</b> ${v.ownerLicense}</p>
+        //         <p><b>Address:</b> ${v.ownerAddress}</p>
+        //         <h3 class="text-xl font-bold mt-4">Insurance Information</h3>
+        //         <p><b>Insurance Company:</b> ${v.insuranceCompany}</p>
+        //         <p><b>Policy No.:</b> ${v.policyNumber}</p>
+        //         <p><b>Expiry Date:</b> ${v.insuranceExpiry}</p>
+        //     </div>
+        // `;
+        // box.classList.remove("hidden");
+    })
+    .catch(err => console.error("Fetch Error:", err));
+}
+
 
 // ---------- DUMMY DATA ----------
 // const vehicleDB = {

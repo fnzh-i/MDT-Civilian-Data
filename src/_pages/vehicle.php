@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Check Vehicle</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/MDT-CIVILIAN-DATA/public/style.css">
 </head>
 <body class="bg-gradient-to-r from-[#63FFFD] to-[#00A8FF] min-h-screen">
 
@@ -48,6 +48,6 @@
         <div id="infoBox" class="hidden mt-6 max-w-3xl w-full bg-white p-6 rounded-2xl shadow-lg text-gray-800"></div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="/MDT-CIVILIAN-DATA/public/script.js"></script>
 </body>
 </html>
