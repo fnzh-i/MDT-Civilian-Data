@@ -16,19 +16,19 @@
     <a href="AdminCreateUser.php" class="button">Create User</a>
   </div>
 </body>
+
 <?php
   require dirname(__DIR__) . "/src/bootstrap.php";
 
 if (isset($_GET['updateID'])) {
     $id = $_GET['updateID'];
-    $firstname = $_GET['firstname'];
-    $lastname = $_GET['lastname'];
-    $address = $_GET['email'];
+    $email = $_GET['email'];
+    $password = $_GET['password'];
+
 } else {
     $id = "";
-    $firstname = "";
-    $lastname = "";
-    $address = "";
+    $email = "";
+    $password = "";
 }
 ?>
 
