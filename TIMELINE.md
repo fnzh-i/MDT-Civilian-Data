@@ -32,3 +32,4 @@ Development ongoing — updates posted as time allows.
                 - Added LicenseAPI and updated VehicleAPI to provide structured JSON output for lookups and listings. <br>
                 - Updated Controller.php to route 'SEARCH-PLATE-NUMBER' and 'SEARCH-LICENSE-NUMBER' actions to the new API classes. <br>
                 - Updated frontend scripts and page links for improved navigation and error handling.<br>
+                - Added admin user management functionality in password-hash branch
