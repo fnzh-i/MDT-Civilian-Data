@@ -7,7 +7,7 @@
 
     public function __construct(string $email, string $password) {
       $this->email = $email;
-      $this->password = $password;
+      $this->password = password_hash($password, PASSWORD_DEFAULT); // hash the password kaagad
     }
 
     public function getEmail(): string {
@@ -27,11 +27,7 @@
       $email = $this->getEmail();
       $password = $this->getPassword();
 
-      $stmt->bind_param(
-        "ss",
-        $email,
-        $password
-      );
+      $stmt->bind_param("ss", $email, $password);
 
       return $stmt->execute();
     }
@@ -42,35 +38,31 @@
       $stmt->execute();
       $result = $stmt->get_result();
 
-      if ($result->num_rows === 0) {
+      if ($result->num_rows === 0) { // if non-existent yung ininput na email sa db
           $stmt->close();
           return "Email '$email' not found in users table.";
       }
 
+      $user = $result->fetch_assoc(); // kunin yung hashed password sa db, if found yung email sa db
       $stmt->close();
 
-      return self::checkPassword($conn, $email, $password);
+      return self::checkPassword($password, $user['password']); // first param is yung ininput sa UI, second param is galing sa database
     }
 
-    
-    public static function checkPassword(mysqli $conn, string $email, string $password): string | bool {
-      $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
-      $stmt->bind_param("ss", $email, $password);
-      $stmt->execute();
-
-      $result = $stmt->get_result();
-
-      $exists = $result->num_rows > 0;
-      $stmt->close();
-
-      return $exists ? true : "Password does not match the email provided.";
+    // para ma compare yung ininput na pass vs hashed password from database
+    public static function checkPassword(string $enteredPassword, string $hashedPassword): string | bool {
+      return password_verify($enteredPassword, $hashedPassword) // comparing the two
+        ? true // boolean return pag tama yung pass
+        : "Password does not match the email provided."; // string return pag mali.
     }
 
+    // etong fromDatabase() di muna nagamit, if in the future mag add tayo ng new variables sa User class like
+    // first name, last name, address, etc. sa User class (Enforcer / Officer), and if need yung
+    // User Profile (button) sa dashboard, parang yung sa Figma, tsaka lang magagamit ito
     public static function fromDatabase(array $row): self {
-      return new self(
-        $row['email'],
-        $row['password'],
-      );
+      $user = new self ($row['email'], $row['password']);
+      $user->password = $row['password']; // para di ma rehash yung pass
+      return $user;
     }
   }
 ?>
