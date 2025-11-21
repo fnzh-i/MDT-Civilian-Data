@@ -13,6 +13,7 @@
     <a href="AdminSearchVehicle.php" class="button">Search Vehicle</a>
     <a href="AdminCreateLicense.php" class="button">Create License</a>
     <a href="AdminSearchLicense.php" class="button">Search License</a>
+    <a href="AdminCreateUser.php" class="button">Create User</a>
   </div>
 </body>
 <?php
