@@ -34,4 +34,8 @@ Development ongoing — updates posted as time allows.
                 - Updated frontend scripts and page links for improved navigation and error handling.<br>
                 - Added admin user management functionality in password-hash branch.
 - Nov 22, 2025  - Added 'Create User' button to admin menu.<br>
-                - Fixed variable assignment in AdminMenu update logic.
+                - Fixed variable assignment in AdminMenu update logic.<br>
+                - Added password_hash feature on the User class's password property.
+                - Updated the three functions accordingly: searchEmail, checkPassword, and fromDatabase. 
+                - searchEmail function will use the checkPassword function if the entered email is found on the database. checkPassword will compare the entered password to the hashed password from the database, and will return either boolean true if they matched, or a string if they don't. 
+                fromDatabase function is no longer used since the User class is only used for email and password checking or verification for now.<br>
