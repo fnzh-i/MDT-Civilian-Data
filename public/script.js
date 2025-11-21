@@ -2,7 +2,6 @@
 
 const API_URL = "../src/Controller.php";
 
-// LOGIN FUNCTION CALLED FROM index.php
 function login() {
     const email = document.getElementById("username").value;
     const password = document.getElementById("password").value;
@@ -36,19 +35,9 @@ function login() {
 
 }
 
+// ================= VEHICLE LOOKUP =================
 function lookupVehicle() {
-
-    // const formData = new FormData();
-    // formData.append("action", "SEARCH-PLATE-NUMBER");
-    // formData.append("plate-number", document.getElementById("plateInput").value);
-
-    // fetch("../_modules/Controller.php", {
-    //     method: "POST",
-    //     body: formData
-    // })
-    // .then(res => res.text())
-    // .then(console.log)
-    // .catch(console.error);
+    const box = document.getElementById("infoBox");
 
     const formData = new FormData();
     formData.append("action", "SEARCH-PLATE-NUMBER");
@@ -58,7 +47,7 @@ function lookupVehicle() {
         method: "POST",
         body: formData
     })
-    .then(res => res.text())
+    .then(res => res.json())
     .then(data => {
         console.log("Response:", data);
 
@@ -67,37 +56,138 @@ function lookupVehicle() {
             return;
         }
 
-        // Success response
-        console.log("Found Vehicle:", data.vehicle);
+        // Success
+        const v = data.vehicle; 
+        console.log("Found Vehicle:", v);
 
         
-        // box.innerHTML = `
-        //     <div class="bg-white rounded-2xl shadow-xl p-6 space-y-4">
-        //         <h2 class="text-2xl font-bold mb-2">Vehicle Information</h2>
-        //         <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-        //             <p><b>Status:</b> ${v.status}</p>
-        //             <p><b>Plate Number:</b> ${v.plate}</p>
-        //             <p><b>MV File Number:</b> ${v.mvFile}</p>
-        //             <p><b>Make:</b> ${v.make}</p>
-        //             <p><b>Model:</b> ${v.model}</p>
-        //             <p><b>Year:</b> ${v.year}</p>
-        //             <p><b>Color:</b> ${v.color}</p>
-        //             <p><b>VIN:</b> ${v.vin}</p>
-        //             <p><b>Registration Expiry:</b> ${v.regExpiry}</p>
-        //         </div>
-        //         <h3 class="text-xl font-bold mt-4">Registered Owner</h3>
-        //         <p><b>Name:</b> ${v.ownerName}</p>
-        //         <p><b>License Number:</b> ${v.ownerLicense}</p>
-        //         <p><b>Address:</b> ${v.ownerAddress}</p>
-        //         <h3 class="text-xl font-bold mt-4">Insurance Information</h3>
-        //         <p><b>Insurance Company:</b> ${v.insuranceCompany}</p>
-        //         <p><b>Policy No.:</b> ${v.policyNumber}</p>
-        //         <p><b>Expiry Date:</b> ${v.insuranceExpiry}</p>
-        //     </div>
-        // `;
-        // box.classList.remove("hidden");
+        box.innerHTML = `
+            <div class="bg-white rounded-2xl shadow-xl p-6 space-y-4">
+                <h2 class="text-2xl font-bold mb-2">Vehicle Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <p><b>Status:</b> ${v.status}</p>
+                    <p><b>Plate Number:</b> ${v.plate}</p>
+                    <p><b>MV File Number:</b> ${v.mvFile}</p>
+                    <p><b>Make:</b> ${v.make}</p>
+                    <p><b>Model:</b> ${v.model}</p>
+                    <p><b>Year:</b> ${v.year}</p>
+                    <p><b>Color:</b> ${v.color}</p>
+                    <p><b>VIN:</b> ${v.vin}</p>
+                    <p><b>Registration Expiry:</b> ${v.regExpiry}</p>
+                </div>
+                <h3 class="text-xl font-bold mt-4">Registered Owner</h3>
+                <p><b>Name:</b> ${v.ownerName}</p>
+                <p><b>License Number:</b> ${v.ownerLicense}</p>
+                <p><b>Address:</b> ${v.ownerAddress}</p>
+                <h3 class="text-xl font-bold mt-4">Insurance Information</h3>
+                <p><b>Insurance Company:</b> ${v.insuranceCompany}</p>
+                <p><b>Policy No.:</b> ${v.policyNumber}</p>
+                <p><b>Expiry Date:</b> ${v.insuranceExpiry}</p>
+            </div>
+        `;
+        box.classList.remove("hidden");
     })
     .catch(err => console.error("Fetch Error:", err));
+}
+
+// ---------- LICENSE LOOKUP ----------
+function lookupLicense() {
+    // const lic = document.getElementById("licenseInput").value.trim();
+    // const error = document.getElementById("error");
+    const box = document.getElementById("infoBox");
+
+    const formData = new FormData();
+    formData.append("action", "SEARCH-LICENSE-NUMBER");
+    formData.append("license-number", document.getElementById("licenseInput").value.trim());
+
+    fetch("../_modules/Controller.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log("Response:", data);
+
+        if (data.status === "error") {
+            alert(data.message);
+            return;
+        }
+
+        const L = data.license;
+        console.log("Found License:", L);
+        // Fill License Info
+        box.innerHTML = `
+            <div class="bg-white p-6 rounded-2xl shadow-xl mb-6">
+                <h2 class="text-2xl font-bold mb-3">License Status</h2>
+                <p><b>Status:</b> ${L.status}</p>
+                <p><b>License Number:</b> ${L.licenseNumber}</p>
+                <p><b>License Type:</b> ${L.type}</p>
+                <p><b>Issue Date:</b> ${L.issueDate}</p>
+                <p><b>Expiry Date:</b> ${L.expiryDate}</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-xl mb-6">
+                <h2 class="text-2xl font-bold mb-3">Personal Information</h2>
+                <p><b>Full Name:</b> ${L.first_name}</p>
+                <p><b>Full Name:</b> ${L.middle_name}</p>
+                <p><b>Full Name:</b> ${L.last_name}</p>
+                <p><b>Date of Birth:</b> ${L.date_of_birth}</p>
+                <p><b>Address:</b> ${L.address}</p>
+                <p><b>Sex:</b> ${L.gender}</p>
+                <p><b>Height:</b> ${L.height}</p>
+                <p><b>Weight:</b> ${L.weight}</p>
+                <p><b>Eye Color:</b> ${L.eyeColor}</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-xl mb-6">
+                <h2 class="text-2xl font-bold mb-3">License Details</h2>
+                <p><b>Restrictions:</b> ${L.restrictions}</p>
+                <p><b>Endorsements:</b> ${L.endorsements}</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-xl mb-6 overflow-x-auto">
+                <h2 class="text-2xl font-bold mb-4">Violation History</h2>
+                <table class="w-full border-collapse">
+                    <thead class="bg-gray-200 sticky top-0">
+                        <tr>
+                            <th class="border px-3 py-2 text-left">Date</th>
+                            <th class="border px-3 py-2 text-left">Offense</th>
+                            <th class="border px-3 py-2 text-left">Place</th>
+                            <th class="border px-3 py-2 text-left">Notes</th>
+                            <th class="border px-3 py-2 text-left">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="violationTable"></tbody>
+                </table>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-xl">
+                <h2 class="text-2xl font-bold mb-4">Add New Ticket Violation</h2>
+                <div class="mb-3">
+                    <label class="font-semibold">Date of Violation:</label>
+                    <input id="v_date" type="date" class="p-2 border rounded w-full">
+                </div>
+                <div class="mb-3">
+                    <label class="font-semibold">Offense Description:</label>
+                    <input id="v_offense" type="text" class="p-2 border rounded w-full">
+                </div>
+                <div class="mb-3">
+                    <label class="font-semibold">Place of Incident:</label>
+                    <input id="v_place" type="text" class="p-2 border rounded w-full">
+                </div>
+                <div class="mb-3">
+                    <label class="font-semibold">Note:</label>
+                    <textarea id="v_note" class="p-2 border rounded w-full"></textarea>
+                </div>
+                <button onclick="addViolation()" class="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-5 py-3 rounded-xl hover:from-blue-600 hover:to-blue-800 transition font-bold">
+                    Add Violation
+                </button>
+            </div>
+        `;
+        box.classList.remove("hidden");
+    })
+    .catch(err => console.error("Fetch Error:", err));
+    // loadViolations();
 }
 
 
@@ -144,48 +234,6 @@ function lookupVehicle() {
 //         ]
 //     }
 // };
-
-// // ---------- VEHICLE LOOKUP ----------
-// function lookupVehicle() {
-//     const plate = document.getElementById("plateInput").value.trim();
-//     const error = document.getElementById("error");
-//     const box = document.getElementById("infoBox");
-
-//     if(!vehicleDB[plate]) {
-//         box.classList.add("hidden");
-//         error.classList.remove("hidden");
-//         return;
-//     }
-
-//     error.classList.add("hidden");
-//     const v = vehicleDB[plate];
-
-//     box.innerHTML = `
-//         <div class="bg-white rounded-2xl shadow-xl p-6 space-y-4">
-//             <h2 class="text-2xl font-bold mb-2">Vehicle Information</h2>
-//             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-//                 <p><b>Status:</b> ${v.status}</p>
-//                 <p><b>Plate Number:</b> ${v.plate}</p>
-//                 <p><b>MV File Number:</b> ${v.mvFile}</p>
-//                 <p><b>Make:</b> ${v.make}</p>
-//                 <p><b>Model:</b> ${v.model}</p>
-//                 <p><b>Year:</b> ${v.year}</p>
-//                 <p><b>Color:</b> ${v.color}</p>
-//                 <p><b>VIN:</b> ${v.vin}</p>
-//                 <p><b>Registration Expiry:</b> ${v.regExpiry}</p>
-//             </div>
-//             <h3 class="text-xl font-bold mt-4">Registered Owner</h3>
-//             <p><b>Name:</b> ${v.ownerName}</p>
-//             <p><b>License Number:</b> ${v.ownerLicense}</p>
-//             <p><b>Address:</b> ${v.ownerAddress}</p>
-//             <h3 class="text-xl font-bold mt-4">Insurance Information</h3>
-//             <p><b>Insurance Company:</b> ${v.insuranceCompany}</p>
-//             <p><b>Policy No.:</b> ${v.policyNumber}</p>
-//             <p><b>Expiry Date:</b> ${v.insuranceExpiry}</p>
-//         </div>
-//     `;
-//     box.classList.remove("hidden");
-// }
 
 // // ---------- LICENSE LOOKUP ----------
 // let currentLicense = null;

@@ -11,7 +11,7 @@
     <!-- STICKY NAVBAR -->
     <nav class="bg-gradient-to-r from-[#63FFFD] to-[#00A8FF] shadow-lg px-6 py-3 flex justify-between items-center sticky top-0 z-50">
         <!-- Left: Dashboard link with burger icon -->
-        <a href="dashboard.html" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+        <a href="dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
             <div class="space-y-1">
                 <span class="block w-5 h-0.5 bg-white"></span>
                 <span class="block w-5 h-0.5 bg-white"></span>
@@ -21,7 +21,7 @@
         </a>
 
         <!-- Right: Logout -->
-        <a href="index.html" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+        <a href="/MDT-CIVILIAN-DATA/public/index.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
             </svg>
@@ -53,6 +53,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="/MDT-CIVILIAN-DATA/public/script.js"></script>
 </body>
 </html>

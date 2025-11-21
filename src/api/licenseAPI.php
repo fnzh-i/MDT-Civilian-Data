@@ -3,17 +3,66 @@ require_once __DIR__ . '/../bootstrap.php';
 
 header('Content-Type: application/json');
 
-$response = [];
+class LicenseAPI{
 
-if ($conn) {
-    $sql = "SELECT * FROM licenses";
-    $result = mysqli_query($conn, $sql);
+    private mysqli $conn;
+    
+    public function __construct(mysqli $conn) {
+        $this->conn = $conn;
+    }
 
-    if ($result) {
+    public function searchLicense(string $licenseNumber): array|string {
+        $result = DriversLicense::searchLicenseNumber($this->conn, $licenseNumber);
+       
+        // If Vehicle::searchPlateNumber returns an error string
+        if (is_string($result)) {
+              return json_encode([
+                  'status' => 'error',
+                  'message' => $result
+              ]);
+          }
+
+          $license = $result['license'];
+          $licenseId = $result['license_id']; 
+
+        return json_encode([
+            'status' => 'success',
+            'license' => [
+                'id' => $licenseId,
+                'licenseNumber' => $license->getLicenseNumber(),
+                'status' => $license->getLicenseStatus()->value,
+                'type' => $license->getLicenseType()->value,
+                'issueDate' => $license->getIssueDate()->format('M-d-Y'),
+                'expiryDate' => $license->getExpiryDate()->format('M-d-Y'),
+                'dl_codes' => $license->getDLCodesToString(),
+                'first_name' => $license->getFirstName(),
+                'middle_name' => $license->getMiddleName(),
+                'last_name' => $license->getLastName(),
+                'date_of_birth' => $license->getDateOfBirth()->format('M-d-Y'),
+                'gender' => $license->getGender()->value,
+                'address' => $license->getAddress(),
+            ]
+        ]);
+    }
+
+    public function getAllLicenses(): string {
+        if (!$this->conn) {
+            http_response_code(500);
+            return json_encode(['error' => 'Database connection failed.']);
+        }
+    
+        $sql = "SELECT * FROM licenses";
+        $result = mysqli_query($this->conn, $sql);
+
+        if (!$result) {
+            http_response_code(500);
+            return json_encode(['error' => 'Failed to fetch vehicles from database.']);
+        }
+
         $licenses = [];
 
+
         while ($row = mysqli_fetch_assoc($result)) {
-            
             $license = DriversLicense::fromDatabase($row);
 
             $licenses[] = [
@@ -32,13 +81,7 @@ if ($conn) {
                 'address' => $license->getAddress()
             ];
         }
-
-        echo json_encode(['licenses' => $licenses], JSON_PRETTY_PRINT);
-    } else {
-        http_response_code(500);
-        echo json_encode(['error' => 'Failed to fetch licenses from database.']);
+        return json_encode(['licenses' => $licenses]);
     }
-} else {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed.']);
 }
+

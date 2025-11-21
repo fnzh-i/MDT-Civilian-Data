@@ -13,9 +13,9 @@
     <h1 class="text-5xl font-extrabold text-white mb-6 text-center">Instant Vehicle & License Data</h1>
     <p class="text-xl text-white mb-10 text-center">Smarter MDT. Faster civil processes.</p>
 
-    <a href="index.html" class="bg-white text-blue-500 font-bold px-10 py-4 rounded-xl shadow-lg hover:bg-gray-200 transition text-xl">
+    <a href="/MDT-CIVILIAN-DATA/public/index.php" class="bg-white text-blue-500 font-bold px-10 py-4 rounded-xl shadow-lg hover:bg-gray-200 transition text-xl">
         Get Started
     </a>
-<script src="script.js"></script>
+<script src="/MDT-CIVILIAN-DATA/public/script.js"></script>
 </body>
 </html>

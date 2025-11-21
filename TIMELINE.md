@@ -27,4 +27,8 @@ Development ongoing — updates posted as time allows.
 - Nov 21, 2025  - Implemented vehicle plate lookup via AJAX and API refactor. <br>
                 - Added a lookupVehicle() function in script.js to perform AJAX-based vehicle plate searches. <br>
                 - Refactored Controller.php to return JSON responses for plate lookups and updated vehicleAPI.php to encapsulate vehicle-related API logic in a VehicleAPI class.<br>
-                - Adjusted vehicle.php and bootstrap.php for correct asset paths and improved autoloading.
+                - Adjusted vehicle.php and bootstrap.php for correct asset paths and improved autoloading.<br>
+                - Implemented AJAX license and vehicle lookup with API refactor. Refactored vehicle and license lookup to use AJAX requests and return JSON responses. Added LicenseAPI and updated.<br>
+                - Added LicenseAPI and updated VehicleAPI to provide structured JSON output for lookups and listings. <br>
+                - Updated Controller.php to route 'SEARCH-PLATE-NUMBER' and 'SEARCH-LICENSE-NUMBER' actions to the new API classes. <br>
+                - Updated frontend scripts and page links for improved navigation and error handling.<br>

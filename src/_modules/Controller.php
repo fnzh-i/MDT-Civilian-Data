@@ -21,44 +21,46 @@
           }
       exit;
 
-
-
-
       case 'SEARCH-PLATE-NUMBER':
-          header('Content-Type: application/json');
+        header('Content-Type: application/json');
 
-          $plateNumber = $_POST['plate-number'];
+        $plateNumber = $_POST['plate-number'];
+        $vehicleAPI = new VehicleAPI($conn);
 
-          $vehicleAPI = new VehicleAPI($conn);
-          $result = $vehicleAPI->searchPlate($plateNumber);
+        echo $vehicleAPI->searchPlate($plateNumber);
+        exit();
+        
+        
+      case 'SEARCH-LICENSE-NUMBER':
 
-          if (is_string($result)) {
-              echo json_encode([
-                  'status' => 'error',
-                  'message' => $result
-              ]);
-              exit();
-          }
+        header('Content-Type: application/json');
 
-          $vehicle = $result['vehicle'];
-          $vehicleId = $result['vehicle_id']; 
+        $licenseNumber = $_POST['license-number'];
+        $licenseAPI = new LicenseAPI($conn);
+        echo $licenseAPI->searchLicense($licenseNumber);
+        exit();
 
-          echo json_encode([
-              'status' => 'success',
-              'vehicle' => [
-                  'id' => $vehicleId,
-                  'plate' => $vehicle->getPlateNumber(),
-                  'brand' => $vehicle->getBrandName(),
-                  'model' => $vehicle->getModelName(),
-                  'color' => $vehicle->getModelColor()
-              ]
-          ]);
-          exit();
+        // $licenseNumber = $_POST['license-number'];
+        // $result = DriversLicense::searchLicenseNumber($conn, $licenseNumber);
 
+        // if (is_string($result)) {
+        //   $_SESSION['error-message'] = $result;
 
-            // case 'SEARCH-PLATE-NUMBER':
-      //   $plateNumber = $_POST['plate-number'];
-      //   $result = Vehicle::searchPlateNumber($conn, $plateNumber);
+        //   header("Location: Error.php");
+        //   exit();
+        // } else {
+        //   $license = $result['license'];
+        //   $licenseId = $result['license_id'];
+
+        //   $_SESSION['license'] = $license;
+        //   $_SESSION['license-id'] = $licenseId;
+
+        //   header("Location: AdminSearchLicenseResult.php");
+        //   exit();
+        // } 
+      // case 'SEARCH-LICENSE-NUMBER':
+      //   $licenseNumber = $_POST['license-number'];
+      //   $result = DriversLicense::searchLicenseNumber($conn, $licenseNumber);
 
       //   if (is_string($result)) {
       //     $_SESSION['error-message'] = $result;
@@ -66,40 +68,16 @@
       //     header("Location: Error.php");
       //     exit();
       //   } else {
-      //     $vehicle = $result['vehicle'];
-      //     $vehicleId = $result['vehicle_id']; 
-      //     $plateNumber = $vehicle->getPlateNumber();
+      //     $license = $result['license'];
+      //     $licenseId = $result['license_id'];
 
-      //     $_SESSION['vehicle'] = $vehicle;
-      //     $_SESSION['vehicle-id'] = $vehicleId;
-      //     $_SESSION['plate-number'] = $plateNumber;
+      //     $_SESSION['license'] = $license;
+      //     $_SESSION['license-id'] = $licenseId;
 
-      //     header("Location: AdminSearchVehicleResult.php");
+      //     header("Location: AdminSearchLicenseResult.php");
       //     exit();
       //   }
 
-          
-      case 'SEARCH-LICENSE-NUMBER':
-        $licenseNumber = $_POST['license-number'];
-        $result = DriversLicense::searchLicenseNumber($conn, $licenseNumber);
-
-        if (is_string($result)) {
-          $_SESSION['error-message'] = $result;
-
-          header("Location: Error.php");
-          exit();
-        } else {
-          $license = $result['license'];
-          $licenseId = $result['license_id'];
-
-          $_SESSION['license'] = $license;
-          $_SESSION['license-id'] = $licenseId;
-
-          header("Location: AdminSearchLicenseResult.php");
-          exit();
-        }
-        
-        break;
       
       case 'ADD-VIOLATION':
         $violation = Violation::from($_POST['violation']);
