@@ -14,11 +14,11 @@ if (isset($_POST['insert'])) {
         return;
     }
 
-    // SAFE INSERT USING PREPARED STATEMENT
-    $stmt = $conn->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
-    $stmt->bind_param("ss", $_POST['email'], $_POST['password']);
+    // CREATE USER OBJECT FIRST BEFORE SAVING TO DATABASE
+    $user = new User($_POST['email'], $_POST['password']);
+    $result = $user->save($conn);
 
-    if ($stmt->execute()) {
+    if ($result) {
         echo "Insert Successful";
     } else {
         echo "Insert Unsuccessful";
