@@ -18,6 +18,7 @@
     private string $modelName;
     private int $modelYear;
     private string $modelColor;
+    private string $VIN;
     private int $licenseID;
 
     public function __construct(
@@ -30,6 +31,7 @@
       string $modelName,
       int $modelYear,
       string $modelColor,
+      string $VIN,
       int $licenseID
       ) {
       $this->plateNumber = $plateNumber;
@@ -44,6 +46,7 @@
       $this->modelName = $modelName;
       $this->modelYear = $modelYear;
       $this->modelColor = $modelColor;
+      $this->VIN = $VIN;
       $this->licenseID = $licenseID;
     }
 
@@ -79,6 +82,10 @@
       return $this->modelColor;
     }
 
+    public function getVIN(): string {
+      return $this->VIN;
+    }
+
     public function getLicenseID(): int {
       return $this->licenseID;
     }
@@ -98,6 +105,7 @@
         $row['model_name'],
         (int)$row['model_year'],
         $row['model_color'],
+        $row['VIN'],
         $row['license_id'],
       );
     }

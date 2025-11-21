@@ -53,6 +53,11 @@
     private DateTime $dateOfBirth;
     private Gender $gender;
     private string $address;
+    private string $nationality;
+    private string $height;
+    private string $weight;
+    private string $eyeColor;
+    private ?string $bloodType;
 
     public function __construct(
       string $licenseNumber,
@@ -67,7 +72,13 @@
       string $lastName,
       DateTime $dateOfBirth,
       Gender $gender,
-      string $address
+      string $address,
+      string $nationality,
+      string $height,
+      string $weight,
+      string $eyeColor,
+      ?string $bloodType
+
     ) {
       $this->licenseNumber = $licenseNumber;
       $this->licenseStatus = $licenseStatus;
@@ -85,6 +96,11 @@
       $this->dateOfBirth = $dateOfBirth;
       $this->gender = $gender;
       $this->address = $address;
+      $this->nationality = $nationality;
+      $this->height = $height;
+      $this->weight = $weight;
+      $this->eyeColor = $eyeColor;
+      $this->bloodType = $bloodType;
     }
 
     public function getLicenseID(): int {
@@ -131,8 +147,19 @@
       return $this->middleName;
     }
 
+    public function getMiddleInitial(): string {
+      if ($this->middleName) {
+        return strtoupper($this->middleName[0]) . ".";
+      }
+      return ""; // return empty string if wala syang middle name
+    }
+
     public function getLastName(): string {
       return $this->lastName;
+    }
+
+    public function getFullName(): string {
+      return "{$this->getFirstName()} {$this->getMiddleInitial()} {$this->getLastName()}";
     }
 
     public function getDateOfBirth(): DateTime {
@@ -145,6 +172,26 @@
 
     public function getAddress(): string {
       return $this->address;
+    }
+
+    public function getNationality(): string {
+      return $this->nationality;
+    }
+
+    public function getHeight(): string {
+      return $this->height;
+    }
+
+    public function getWeight(): string {
+      return $this->weight;
+    }
+
+    public function getEyeColor(): string {
+      return $this->eyeColor;
+    }
+
+    public function getBloodType(): ?string {
+      return $this->bloodType;
     }
 
     public static function inferExpiryOption(string $issueDate, string $expiryDate) {
@@ -168,7 +215,12 @@
         $row['last_name'],
         new DateTime($row['date_of_birth']),
         Gender::from($row['gender']),
-        $row['address']
+        $row['address'],
+        $row['nationality'],
+        $row['height'],
+        $row['weight'],
+        $row['eye_color'],
+        $row['blood_type']
       );
     }
 
