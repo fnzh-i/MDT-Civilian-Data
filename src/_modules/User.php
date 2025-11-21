@@ -5,9 +5,16 @@
     private string $email;
     private string $password;
 
-    public function __construct(string $email, string $password) {
+    public function __construct(string $email, string $password, bool $isHashed = false) {
       $this->email = $email;
-      $this->password = password_hash($password, PASSWORD_DEFAULT); // hash the password kaagad
+
+      if ($isHashed) {
+        $this->password = $password; // di na need i hash ule, kasi galing na sya sa database
+      } else {
+        $this->password = password_hash($password, PASSWORD_DEFAULT); // hash the password kaagad
+      }
+
+      // mag ttrue lang yung isHashed if galing sa database yung user 'object', using fromDatabase()
     }
 
     public function getEmail(): string {
@@ -56,13 +63,10 @@
         : "Password does not match the email provided."; // string return pag mali.
     }
 
-    // etong fromDatabase() di muna nagamit, if in the future mag add tayo ng new variables sa User class like
-    // first name, last name, address, etc. sa User class (Enforcer / Officer), and if need yung
-    // User Profile (button) sa dashboard, parang yung sa Figma, tsaka lang magagamit ito
-    public static function fromDatabase(array $row): self {
-      $user = new self ($row['email'], $row['password']);
-      $user->password = $row['password']; // para di ma rehash yung pass
-      return $user;
+    // gagamitin na pala ito, para sa frontend, to fetch Users sa database
+    public static function fromDatabase(array $row): self { // will return 'self' meaning mag-rereturn ng User object
+      return new self($row['email'], $row['password'], true);
+      // yung last argument which is bool true ay para ma 'override' yung isHashed false sa User constructor
     }
   }
 ?>
