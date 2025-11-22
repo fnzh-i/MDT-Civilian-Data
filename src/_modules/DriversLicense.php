@@ -194,6 +194,57 @@
       return $this->bloodType;
     }
 
+    public function save(mysqli $conn): bool { // gagawa ako save() function for db wag mo naman delete ule pls
+      $sql = "
+        INSERT INTO licenses (
+          license_number, license_status, license_type,
+          issue_date, expiry_date, dl_codes
+        ) VALUES (
+          '{$this->getLicenseNumber()}',
+          '{$this->getLicenseStatus()->value}',
+          '{$this->getLicenseType()->value}',
+          '{$this->getIssueDate()->format('Y-m-d')}',
+          '{$this->getExpiryDate()->format('Y-m-d')}',
+          '{$this->getDLCodesToString()}'
+        )
+      ";
+
+      if (!$conn->query($sql)) {
+        echo "Error inserting into licenses: " . $conn->error;
+        return false; // stop if insertion fails
+      }
+
+      $this->license_id = $conn->insert_id;
+
+      $sql = "
+        INSERT INTO personal_information (
+          license_id, first_name, middle_name, last_name,
+          date_of_birth, gender, address, nationality,
+          height, weight, eye_color, blood_type
+        ) VALUES (
+          {$this->getLicenseID()},
+          '{$this->getFirstName()}',
+          " . ($this->getMiddleName() === null ? "NULL" : "'{$this->getMiddleName()}'") . ",
+          '{$this->getLastName()}',
+          '{$this->getDateOfBirth()->format('Y-m-d')}',
+          '{$this->getGender()->value}',
+          '{$this->getAddress()}',
+          '{$this->getNationality()}',
+          '{$this->getHeight()}',
+          '{$this->getWeight()}',
+          '{$this->getEyeColor()}',
+          " . ($this->getBloodType() === null ? "NULL" : "'{$this->getBloodType()}'") . "
+        )
+      ";
+
+      if (!$conn->query($sql)) {
+        echo "Error inserting into personal_information: " . $conn->error;
+        return false;
+      }
+
+      return true;
+    }
+
     public static function inferExpiryOption(string $issueDate, string $expiryDate) {
       $diff = (new DateTime($issueDate))->diff(new DateTime($expiryDate));
       return ($diff->y >=10) ? ExpiryOption::TEN_YEARS : ExpiryOption::FIVE_YEARS;
@@ -216,11 +267,11 @@
         new DateTime($row['date_of_birth']),
         Gender::from($row['gender']),
         $row['address'],
-        $row['nationality'],
-        $row['height'],
-        $row['weight'],
-        $row['eye_color'],
-        $row['blood_type']
+        $row['nationality'], // added nationality
+        $row['height'], // added height
+        $row['weight'], // added weight
+        $row['eye_color'], // added eyeColor
+        $row['blood_type'] // added bloodType
       );
     }
 
