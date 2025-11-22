@@ -7,8 +7,7 @@ Development ongoing — updates posted as time allows.
 - Nov 8, 2025   - Initial commit: create repository structure, add README, and basic configuration files to start development.<br>
 - Nov 11, 2025  - Created core entity classes: Person and DriverLicense. Added .gitignore.<br>
                 - Moved PHP files to src directory and update .gitignore. Removed DBConnect.php
-- Nov 12, 2025  - Updated and refactored licenses, vehicles, and tickets modules to align with the new merged table structure, 
-                resolving schema conflicts and ensuring smooth data migration.<br>
+- Nov 12, 2025  - Updated and refactored licenses, vehicles, and tickets modules to align with the new merged table structure, resolving schema conflicts and ensuring smooth data migration.<br>
                 - Removed commented-out SQL and sample code.<br>
                 - Added REVOKED status to DriversLicenseStatus enum.<br>
 - Nov 14, 2025  - Implemented multiple UI pages (Admin, Create Vehicle, Search Vehicle, Search License, Add Ticket) and introduced a new User class. 
@@ -22,8 +21,7 @@ Development ongoing — updates posted as time allows.
                 - Removed legacy index.php and deprecated modules and Moved admin panel files to a new _admin_panel directory and added new pages for dashboard, landing, license, and vehicle.<br>
                 - Updated .gitignore, and documented changes in TIMELINE.md.<br>
                 - Moved API files to src/api and update bootstrap path.<br>
-
-- Nov 16, 2025  - Implemented backend login and API integration (Replaced the frontend dummy login logic with an API-based login using fetch in script.js)
+- Nov 19, 2025  - Implemented backend login and API integration (Replaced the frontend dummy login logic with an API-based login using fetch in script.js)
 - Nov 21, 2025  - Implemented vehicle plate lookup via AJAX and API refactor. <br>
                 - Added a lookupVehicle() function in script.js to perform AJAX-based vehicle plate searches. <br>
                 - Refactored Controller.php to return JSON responses for plate lookups and updated vehicleAPI.php to encapsulate vehicle-related API logic in a VehicleAPI class.<br>
@@ -35,7 +33,7 @@ Development ongoing — updates posted as time allows.
                 - Added admin user management functionality in password-hash branch.
 - Nov 22, 2025  - Added 'Create User' button to admin menu.<br>
                 - Fixed variable assignment in AdminMenu update logic.<br>
-                - Added password_hash feature on the User class's password property.
-                - Updated the three functions accordingly: searchEmail, checkPassword, and fromDatabase. 
-                - searchEmail function will use the checkPassword function if the entered email is found on the database. checkPassword will compare the entered password to the hashed password from the database, and will return either boolean true if they matched, or a string if they don't. 
-                fromDatabase function is no longer used since the User class is only used for email and password checking or verification for now.<br>
+                - Added password_hash feature on the User class's password property.<br>
+                 - Updated the three functions accordingly: searchEmail, checkPassword, and fromDatabase. <br>
+                 - searchEmail function will use the checkPassword function if the entered email is found on the database. checkPassword will compare the entered password to the hashed password from the database, and will return either boolean true if they matched, or a string if they don't. fromDatabase function is no longer used since the User class is only used for email and password checking or verification for now.<br>
+                - Refactored vehicle VIN handling and update UI links.

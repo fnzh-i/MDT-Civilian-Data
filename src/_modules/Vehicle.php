@@ -10,6 +10,7 @@
   class Vehicle {
     private string $plateNumber;
     private ?string $mvFileNumber;
+    private string $vinNumber;
     private DateTime $issueDate;
     private DateTime $expiryDate;
     private RegistrationStatus $registrationStatus;
@@ -23,6 +24,7 @@
     public function __construct(
       string $plateNumber,
       ?string $mvFileNumber,
+      string $vinNumber,
       DateTime $issueDate,
       RegistrationStatus $registrationStatus,
 
@@ -34,6 +36,7 @@
       ) {
       $this->plateNumber = $plateNumber;
       $this->mvFileNumber = $mvFileNumber;
+      $this->vinNumber = $vinNumber;
       $this->issueDate = $issueDate;
       $this->registrationStatus = $registrationStatus;
 
@@ -53,6 +56,10 @@
 
     public function getMVFileNumber(): ?string {
       return $this->mvFileNumber;
+    }
+
+    public function getVinNumber(): string {
+      return $this->vinNumber;
     }
 
     public function getExpiryDate(): DateTime {
@@ -92,6 +99,7 @@
       return new self(
         $row['plate_number'],
         $row['mv_file_number'] ?? null,
+        $row['vin_number'],
         self::inferIssueDate($row['expiry_date']),
         RegistrationStatus::from($row['registration_status']),
         $row['brand_name'],

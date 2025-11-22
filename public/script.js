@@ -68,7 +68,7 @@ function lookupVehicle() {
                     <p><b>Status:</b> ${v.status}</p>
                     <p><b>Plate Number:</b> ${v.plate}</p>
                     <p><b>MV File Number:</b> ${v.mvFile}</p>
-                    <p><b>Make:</b> ${v.make}</p>
+                    <p><b>Make:</b> ${v.brand}</p>
                     <p><b>Model:</b> ${v.model}</p>
                     <p><b>Year:</b> ${v.year}</p>
                     <p><b>Color:</b> ${v.color}</p>

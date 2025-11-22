@@ -73,14 +73,14 @@ if ($result->num_rows > 0) {
         echo "<td>".$row['password']."</td>";
 
         echo "<td>
-                <a href='index.php?updateID=".$row['user_id'].
+                <a href='AdminCreateUser.php?updateID=".$row['user_id'].
                 "&email=".$row['email'].
                 "&password=".$row['password'].
                 "&email=".$row['email']."'>UPDATE</a>
               </td>";   
 
         echo "<td>
-                <a href='AdminMenu.php?deleteID=".$row['user_id']."'>DELETE</a>
+                <a href='AdminUser.php?deleteID=".$row['user_id']."'>DELETE</a>
               </td>";
 
         echo "</tr>";

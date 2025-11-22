@@ -40,12 +40,12 @@
         <!-- Buttons -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-xl w-full">
             <a href="vehicle.php" class="bg-gradient-to-r from-blue-500 to-blue-700 text-white p-6 rounded-2xl text-xl font-bold shadow-xl hover:from-blue-600 hover:to-blue-800 transition flex items-center justify-center gap-3">
-    <img src="assets/car.png" class="w-6 h-6">
+    <img src="/MDT-CIVILIAN-DATA/public/assets/car.png" class="w-6 h-6">
     Check Vehicle
 </a>
 
             <a href="license.php" class="bg-gradient-to-r from-green-500 to-green-700 text-white p-6 rounded-2xl text-xl font-bold shadow-xl hover:from-green-600 hover:to-green-800 transition flex items-center justify-center gap-3">
-    <img src="assets/id.png" class="w-6 h-6">
+    <img src="/MDT-CIVILIAN-DATA/public/assets/id.png" class="w-6 h-6">
     Check License
 </a>
 
