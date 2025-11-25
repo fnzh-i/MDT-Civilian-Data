@@ -53,6 +53,11 @@
     private DateTime $dateOfBirth;
     private Gender $gender;
     private string $address;
+    private string $nationality;
+    private string $height;
+    private string $weight;
+    private string $eyeColor;
+    private ?string $bloodType;
 
     public function __construct(
       string $licenseNumber,
@@ -67,7 +72,13 @@
       string $lastName,
       DateTime $dateOfBirth,
       Gender $gender,
-      string $address
+      string $address,
+      string $nationality,
+      string $height,
+      string $weight,
+      string $eyeColor,
+      ?string $bloodType
+
     ) {
       $this->licenseNumber = $licenseNumber;
       $this->licenseStatus = $licenseStatus;
@@ -85,6 +96,11 @@
       $this->dateOfBirth = $dateOfBirth;
       $this->gender = $gender;
       $this->address = $address;
+      $this->nationality = $nationality;
+      $this->height = $height;
+      $this->weight = $weight;
+      $this->eyeColor = $eyeColor;
+      $this->bloodType = $bloodType;
     }
 
     public function getLicenseID(): int {
@@ -131,8 +147,19 @@
       return $this->middleName;
     }
 
+    public function getMiddleInitial(): string {
+      if ($this->middleName) {
+        return strtoupper($this->middleName[0]) . ".";
+      }
+      return ""; // return empty string if wala syang middle name
+    }
+
     public function getLastName(): string {
       return $this->lastName;
+    }
+
+    public function getFullName(): string {
+      return "{$this->getFirstName()} {$this->getMiddleInitial()} {$this->getLastName()}";
     }
 
     public function getDateOfBirth(): DateTime {
@@ -145,6 +172,77 @@
 
     public function getAddress(): string {
       return $this->address;
+    }
+
+    public function getNationality(): string {
+      return $this->nationality;
+    }
+
+    public function getHeight(): string {
+      return $this->height;
+    }
+
+    public function getWeight(): string {
+      return $this->weight;
+    }
+
+    public function getEyeColor(): string {
+      return $this->eyeColor;
+    }
+
+    public function getBloodType(): ?string {
+      return $this->bloodType;
+    }
+
+    public function save(mysqli $conn): bool { // gagawa ako save() function for db wag mo naman delete ule pls
+      $sql = "
+        INSERT INTO licenses (
+          license_number, license_status, license_type,
+          issue_date, expiry_date, dl_codes
+        ) VALUES (
+          '{$this->getLicenseNumber()}',
+          '{$this->getLicenseStatus()->value}',
+          '{$this->getLicenseType()->value}',
+          '{$this->getIssueDate()->format('Y-m-d')}',
+          '{$this->getExpiryDate()->format('Y-m-d')}',
+          '{$this->getDLCodesToString()}'
+        )
+      ";
+
+      if (!$conn->query($sql)) {
+        echo "Error inserting into licenses: " . $conn->error;
+        return false; // stop if insertion fails
+      }
+
+      $this->license_id = $conn->insert_id;
+
+      $sql = "
+        INSERT INTO personal_information (
+          license_id, first_name, middle_name, last_name,
+          date_of_birth, gender, address, nationality,
+          height, weight, eye_color, blood_type
+        ) VALUES (
+          {$this->getLicenseID()},
+          '{$this->getFirstName()}',
+          " . ($this->getMiddleName() === null ? "NULL" : "'{$this->getMiddleName()}'") . ",
+          '{$this->getLastName()}',
+          '{$this->getDateOfBirth()->format('Y-m-d')}',
+          '{$this->getGender()->value}',
+          '{$this->getAddress()}',
+          '{$this->getNationality()}',
+          '{$this->getHeight()}',
+          '{$this->getWeight()}',
+          '{$this->getEyeColor()}',
+          " . ($this->getBloodType() === null ? "NULL" : "'{$this->getBloodType()}'") . "
+        )
+      ";
+
+      if (!$conn->query($sql)) {
+        echo "Error inserting into personal_information: " . $conn->error;
+        return false;
+      }
+
+      return true;
     }
 
     public static function inferExpiryOption(string $issueDate, string $expiryDate) {
@@ -168,7 +266,12 @@
         $row['last_name'],
         new DateTime($row['date_of_birth']),
         Gender::from($row['gender']),
-        $row['address']
+        $row['address'],
+        $row['nationality'], // added nationality
+        $row['height'], // added height
+        $row['weight'], // added weight
+        $row['eye_color'], // added eyeColor
+        $row['blood_type'] // added bloodType
       );
     }
 
