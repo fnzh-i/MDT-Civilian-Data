@@ -32,13 +32,58 @@
         
         
       case 'SEARCH-LICENSE-NUMBER':
-
         header('Content-Type: application/json');
 
         $licenseNumber = $_POST['license-number'];
         $licenseAPI = new LicenseAPI($conn);
         echo $licenseAPI->searchLicense($licenseNumber);
         exit();
+
+
+      case 'FETCH-TICKETS':
+        header('Content-Type: application/json');
+
+        $licenseID = $_POST['license_id'];
+        $status = $_POST['status'] ?? null;
+
+        $ticketAPI = new TicketAPI($conn);
+        echo $ticketAPI->fetchTickets($licenseID, $status);
+        exit();
+
+
+      case 'CREATE-TICKET':
+        header('Content-Type: application/json');
+
+        $ticketAPI = new TicketAPI($conn);
+        echo $ticketAPI->createTicket($_POST);
+        exit();
+
+
+      case 'UPDATE-TICKET-STATUS':
+        header('Content-Type: application/json');
+
+        $ticketAPI = new TicketAPI($conn);
+        echo $ticketAPI->updateTicketStatus($_POST['ticket_id'], $_POST['status']);
+        exit();
+
+
+      case 'DELETE-TICKET':
+        header('Content-Type: application/json');
+
+        $ticketAPI = new TicketAPI($conn);
+        echo $ticketAPI->deleteTicket($_POST['ticket_id']);
+        exit();
+
+
+
+
+
+
+
+
+
+
+        
 
         // $licenseNumber = $_POST['license-number'];
         // $result = DriversLicense::searchLicenseNumber($conn, $licenseNumber);
@@ -79,27 +124,27 @@
       //   }
 
       
-      case 'ADD-VIOLATION':
-        $violation = Violation::from($_POST['violation']);
-        $dateOfIncident = $_POST['date-of-incident'];
-        $placeOfIncident = $_POST['place-of-incident'];
-        $note = $_POST['note'];
+      // case 'ADD-VIOLATION':
+      //   $violation = Violation::from($_POST['violation']);
+      //   $dateOfIncident = $_POST['date-of-incident'];
+      //   $placeOfIncident = $_POST['place-of-incident'];
+      //   $note = $_POST['note'];
 
-        $ticket = new TicketViolation($violation, new DateTime($dateOfIncident), $placeOfIncident, $note);
+      //   $ticket = new TicketViolation($violation, new DateTime($dateOfIncident), $placeOfIncident, $note);
 
-        $licenseId = $_SESSION['license-id'];
+      //   $licenseId = $_SESSION['license-id'];
 
-        $result = $ticket->save($conn, $licenseId);
+      //   $result = $ticket->save($conn, $licenseId);
 
-        if (is_string($result)) {
-          $_SESSION['error-message'] = $result;
+      //   if (is_string($result)) {
+      //     $_SESSION['error-message'] = $result;
 
-          header("Location: Error.php");
-          exit();
-        } else {
-          echo "Ticket saved successfully.";
-        }
-        break;
-    }
+      //     header("Location: Error.php");
+      //     exit();
+      //   } else {
+      //     echo "Ticket saved successfully.";
+      //   }
+      //   break;
+      }
   }
 ?>

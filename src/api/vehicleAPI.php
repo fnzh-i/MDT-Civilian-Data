@@ -80,5 +80,4 @@ class VehicleAPI {
         return json_encode(['vehicles' => $vehicles]);
     }
 }
-
 ?>

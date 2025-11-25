@@ -84,4 +84,3 @@ class LicenseAPI{
         return json_encode(['licenses' => $licenses]);
     }
 }
-

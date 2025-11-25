@@ -1,37 +1,109 @@
 <?php
 require_once __DIR__ . '/../bootstrap.php';
 
-header('Content-Type: application/json');
+class TicketAPI {
 
-$response = [];
+    private mysqli $conn;
 
-if ($conn) {
-    $sql = "SELECT * FROM ticket_violations";
-    $result = mysqli_query($conn, $sql);
+    public function __construct($conn) {
+        $this->conn = $conn;
+    }
 
-    if ($result) {
-        $tickets = [];
+    // FETCH TICKETS
+    public function fetchTickets(int $licenseID, ?string $status): string {
 
-        while ($row = mysqli_fetch_assoc($result)) {
-            
-            $ticket = TicketViolation::fromDatabase($row);
+        if ($status !== null) {
+            try {
+                $violationStatus = ViolationStatus::from($status);
+            } catch (ValueError $e) {
+                return json_encode(['status' => 'error', 'message' => 'Invalid status value.']);
+            }
 
-            $tickets[] = [
-                'ticket_id' => $row['ticket_id'],
-                'violation' => $ticket->getViolation(),
+            $tickets = TicketViolation::fetchByStatus($this->conn, $licenseID, $violationStatus);
+        } else {
+            $sql = "SELECT * FROM ticket_violations WHERE license_id = $licenseID ORDER BY date_of_incident DESC";
+            $result = mysqli_query($this->conn, $sql);
+
+            if (!$result) {
+                return json_encode(['status' => 'error', 'message' => mysqli_error($this->conn)]);
+            }
+
+            $tickets = [];
+            while ($row = mysqli_fetch_assoc($result)) {
+                $tickets[] = TicketViolation::fromDatabase($row);
+            }
+        }
+
+        $response = [];
+        foreach ($tickets as $ticket) {
+            $response[] = [
+                'ticket_id' => $ticket->getTicketID(),
+                'violation' => $ticket->getViolation()->value,
                 'date_of_incident' => $ticket->getDateOfIncident()->format('M-d-Y'),
                 'place_of_incident' => $ticket->getPlaceOfIncident(),
-                'status' => $ticket->getViolationStatus(),
-                'note' => $ticket->getNote(),
-                'license_id'=> $ticket->getLicenseID(),
+                'status' => $ticket->getViolationStatus()->value,
+                'note' => $ticket->getNote()
             ];
         }
-        echo json_encode(['tickets' => $tickets], JSON_PRETTY_PRINT);
-    } else {
-        http_response_code(500);
-        echo json_encode(['error' => 'Failed to fetch vehicles from database.']);
+
+        return json_encode(['status' => 'success', 'tickets' => $response]);
     }
-} else {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed.']);
+
+    // CREATE TICKET
+    public function createTicket(array $data): string {
+
+        try {
+            $violation = Violation::from($data['violation']);
+        } catch (ValueError $e) {
+            return json_encode(['status' => 'error', 'message' => 'Invalid violation.']);
+        }
+
+        try {
+            $dateOfIncident = new DateTime($data['date_of_incident']);
+        } catch (Exception $e) {
+            return json_encode(['status' => 'error', 'message' => 'Invalid date format.']);
+        }
+
+        $ticket = new TicketViolation(
+            $violation,
+            $dateOfIncident,
+            $data['place_of_incident'],
+            $data['note'] ?? ''
+        );
+
+        $result = $ticket->save($this->conn, $data['license_id']);
+
+        if ($result === true) {
+            return json_encode(['status' => 'success', 'message' => 'Ticket created.']);
+        }
+        return json_encode(['status' => 'error', 'message' => $result]);
+    }
+
+    // UPDATE STATUS
+    public function updateTicketStatus(int $ticketID, string $status): string {
+
+        try {
+            $newStatus = ViolationStatus::from($status);
+        } catch (ValueError $e) {
+            return json_encode(['status' => 'error', 'message' => 'Invalid status.']);
+        }
+
+        $result = TicketViolation::updateStatus($this->conn, $ticketID, $newStatus);
+
+        if ($result === true) {
+            return json_encode(['status' => 'success', 'message' => 'Ticket updated.']);
+        }
+        return json_encode(['status' => 'error', 'message' => $result]);
+    }
+
+    // DELETE TICKET
+    public function deleteTicket(int $ticketID): string {
+
+        $result = TicketViolation::delete($this->conn, $ticketID);
+
+        if ($result === true) {
+            return json_encode(['status' => 'success', 'message' => 'Ticket deleted.']);
+        }
+        return json_encode(['status' => 'error', 'message' => $result]);
+    }
 }
