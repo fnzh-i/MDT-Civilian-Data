@@ -74,6 +74,11 @@
         echo $ticketAPI->deleteTicket($_POST['ticket_id']);
         exit();
 
+      case 'CREATE-LICENSE': // para sa Admin Panel: Create a License
+        $licenseAPI = new LicenseAPI($conn);
+        echo $licenseAPI->createLicense();
+        exit();
+
 
 
 
