@@ -1,27 +1,6 @@
 <?php
   require_once __DIR__ . '/../bootstrap.php';
 
-  enum Violation: string {
-    case ILLEGAL_PARKING = "ILLEGAL PARKING";
-    case RECKLESS_DRIVING = "RECKLESS DRIVING";
-    case DISOBEYING_TRAFFIC_SIGNS = "DISOBEYING TRAFFIC SIGNS";
-    case OVERSPEEDING = "OVERSPEEDING";
-    case DRIVING_UNDER_INFLUENCE = "DRIVING UNDER INFLUENCE";
-    case OBSTRUCTION = "OBSTRUCTION";
-    case NO_DRIVER_LICENSE = "NO DRIVER LICENSE";
-    case EXPIRED_LICENSE = "EXPIRED DRIVER LICENSE";
-    case UNREGISTERED_VEHICLE = "UNREGISTERED VEHICLE";
-    case NO_OR_CR = "NO OR/CR";
-    case NUMBER_CODING = "NUMBER CODING";
-    case NO_HELMET = "NO HELMET";
-    case NO_SEATBELT = "NO SEATBELT";
-  }
-
-  enum ViolationStatus: string {
-    case SETTLED = "SETTLED";
-    case UNSETTLED = "UNSETTLED";
-  }
-
   class TicketViolation {
     private Violation $violation;
     private DateTime $dateOfIncident;
@@ -94,27 +73,45 @@
       return $ticket;
     }
     
-    // SAVE TO DB (CREATE VIOLATON)
-    public function save(mysqli $conn, int $licenseID): bool|string { // need ng license_id as param
+    // SAVE TO DB (CREATE TICKET)
+    public function save(mysqli $conn, int $licenseID): bool | string {
+
       $sql = "INSERT INTO ticket_violations 
         (violation, date_of_incident, place_of_incident, status, note, license_id)
-        VALUES (
-          '{$this->violation->value}',
-          '{$this->dateOfIncident->format('Y-m-d')}',
-          '{$this->placeOfIncident}',
-          '{$this->violationStatus->value}',
-          '{$this->note}',
-          $licenseID
-        )";
+        VALUES (?, ?, ?, ?, ?, ?)";
 
-      $result = mysqli_query($conn, $sql);
+      $stmt = $conn->prepare($sql);
 
-      if ($result) {
-        return true;
-      } else {
-        return "Error saving ticket: " . mysqli_error($conn);
+      if (!$stmt) {
+        return "Prepare failed: " . $conn->error;
       }
+
+      // galing sa nagawang TicketViolation obj
+      $violation        = $this->getViolation()->value;
+      $dateOfIncident   = $this->getDateOfIncident()->format('Y-m-d');
+      $placeOfIncident  = $this->getPlaceOfIncident();
+      $status           = $this->getViolationStatus()->value;
+      $note             = $this->getNote();
+
+      // binding the parameters
+      $stmt->bind_param(
+        "sssssi",
+        $violation,
+        $dateOfIncident,
+        $placeOfIncident,
+        $status,
+        $note,
+        $licenseID
+      );
+
+      // execute tapos return sa ticketAPI
+      if ($stmt->execute()) {
+        return true;
+      }
+
+      return "Error saving ticket: " . $stmt->error;
     }
+
 
     // DELETE TICKET
     public static function delete(mysqli $conn, int $ticketID): bool|string {

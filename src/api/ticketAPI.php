@@ -50,24 +50,18 @@ class TicketAPI {
     }
 
     // CREATE TICKET
-    public function createTicket(array $data): string {
-
+    public function createTicket(array $data): string { // array is galing sa $_POST pag nagrequest sa CREATE-TICKET
+        // Violation checker
         try {
             $violation = Violation::from($data['violation']);
         } catch (ValueError $e) {
             return json_encode(['status' => 'error', 'message' => 'Invalid violation.']);
         }
 
-        try {
-            $dateOfIncident = new DateTime($data['date_of_incident']);
-        } catch (Exception $e) {
-            return json_encode(['status' => 'error', 'message' => 'Invalid date format.']);
-        }
-
         $ticket = new TicketViolation(
             $violation,
-            $dateOfIncident,
-            $data['place_of_incident'],
+            new DateTime($data['date-of-incident']),
+            $data['place-of-incident'],
             $data['note'] ?? ''
         );
 

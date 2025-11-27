@@ -119,7 +119,7 @@ class LicenseAPI{
             return "Error: Expiry option not selected.";
         }
 
-        $expiryOptionValue = (int) $_POST['expiry-option']; // string to int kasi int yung values ng ExpiryOption enum
+        $expiryOptionValue = (int) $_POST['expiry-option']; // string to int kasi int yung backed values ng ExpiryOption enum
         $expiryOptionEnum = ExpiryOption::from($expiryOptionValue);
 
         // gawa ng DriversLicense object

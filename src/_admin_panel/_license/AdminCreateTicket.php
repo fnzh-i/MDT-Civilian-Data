@@ -1,5 +1,5 @@
 <?php
-  require_once "TicketViolation.php";
+  require_once __DIR__ . '/../../bootstrap.php';
 ?>
 
 <!DOCTYPE html>
@@ -8,15 +8,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create Ticket</title>
-  <link rel="stylesheet" href="AdminStyle.css">
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+    }
+    button, input {
+      font: inherit;
+    }
+  </style>
 </head>
 <body>
     <br>
     <a href="AdminSearchLicenseResult.php" class="btn">Back</a>
     <br>
     <br>
-    <form action="Controller.php" method="POST" class="forms">
-      <input type="hidden" name="action" value="ADD-VIOLATION">
+    <form action="../../_modules/Controller.php" method="POST" class="forms">
+      <input type="hidden" name="action" value="CREATE-TICKET">
+      <input type="hidden" name="license_id" value="<?= htmlspecialchars($_GET['license_id']); ?>">
+
 
       <label for="violation">Violation:</label>
       <input type="text" id="violation" name="violation" list="violations-list">

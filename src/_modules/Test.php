@@ -27,4 +27,13 @@
 
   // $user = new User("raven02@gmail.com", "raven02");
   // $user->save($conn);
+
+  // $ticket = new TicketViolation(
+  //   Violation::DRIVING_UNDER_INFLUENCE,
+  //   new DateTime("November 27, 2025"),
+  //   "Manila City",
+  //   "Crashed to a lamp post"
+  // );
+
+  // $ticketAPI = new TicketAPI($ticket);
 ?>
