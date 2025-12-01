@@ -9,17 +9,17 @@
 <body class="bg-gray-200">
 
     <!-- STICKY NAVBAR -->
-    <nav class="bg-[#47b9d4] shadow-lg px-6 py-3 flex justify-between items-center sticky top-0 z-50">
-        <a href="dashboard.php" class="flex items-center gap-2 text-black font-bold hover:text-gray-200 transition">
+    <nav class="bg-blue-600 shadow-lg px-6 py-3 flex justify-between items-center sticky top-0 z-50">
+        <a href="dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
             <div class="space-y-1">
-                <span class="block w-5 h-0.5 bg-black"></span>
-                <span class="block w-5 h-0.5 bg-black"></span>
-                <span class="block w-5 h-0.5 bg-black"></span>
+                <span class="block w-5 h-0.5 bg-white"></span>
+                <span class="block w-5 h-0.5 bg-white"></span>
+                <span class="block w-5 h-0.5 bg-white"></span>
             </div>
             <span>Dashboard</span>
         </a>
 
-        <a href="/MDT-CIVILIAN-DATA/public/index.php" class="flex items-center gap-2 text-black font-bold hover:text-gray-200 transition">
+        <a href="/MDT-CIVILIAN-DATA/public/index.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
             </svg>
