@@ -153,31 +153,40 @@ function lookupLicense() {
             </div>
 
             <div class="bg-white p-6 rounded-2xl shadow-xl mb-6 overflow-x-auto">
-                <h2 class="text-2xl font-bold mb-4">Violation History</h2>
-                <table class="w-full border-collapse">
-                    <thead class="bg-gray-200 sticky top-0">
-                        <tr>
-                            <th class="border px-3 py-2 text-left">Date</th>
-                            <th class="border px-3 py-2 text-left">Offense</th>
-                            <th class="border px-3 py-2 text-left">Place</th>
-                            <th class="border px-3 py-2 text-left">Notes</th>
-                            <th class="border px-3 py-2 text-left">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="violationTable"></tbody>
-                </table>
+            <h2 class="text-2xl font-bold mb-4">Violation History</h2>
+            <table class="w-full border-collapse">
+                <thead class="bg-gray-200 sticky top-0">
+                    <tr>
+                        <th class="border px-3 py-2 text-left">Date</th>
+                        <th class="border px-3 py-2 text-left">Offense</th>
+                        <th class="border px-3 py-2 text-left">Place</th>
+                        <th class="border px-3 py-2 text-left">Notes</th>
+                        <th class="border px-3 py-2 text-left">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="violationTable"></tbody>
+            </table>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-xl">
-                <h2 class="text-2xl font-bold mb-4">Add New Ticket Violation</h2>
-                <div class="mb-3">
-                    <label class="font-semibold">Date of Violation:</label>
-                    <input id="v_date" type="date" class="p-2 border rounded w-full">
-                </div>
-                <div class="mb-3">
-                    <label class="font-semibold">Violation:</label>
-                    <input id="v_offense" type="text" class="p-2 border rounded w-full" list="violations-list">
-                    <datalist id="violations-list">
+            <!-- Add Violation Modal Trigger Button -->
+            <button id="showViolationFormBtn" 
+                class="bg-green-500 hover:bg-red-700 transition text-white px-5 py-3 rounded-xl hover:from-green-600 hover:to-green-800 transition font-bold mb-4">
+                Add New Ticket Violation
+            </button>
+
+            <!-- Modal -->
+            <div id="violationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md relative">
+                    <button onclick="toggleViolationModal()" class="absolute top-3 right-3 text-gray-600 font-bold text-xl">&times;</button>
+                    <h2 class="text-2xl font-bold mb-4">Add New Ticket Violation</h2>
+                    <div class="mb-3">
+                        <label class="font-semibold">Date of Violation:</label>
+                        <input id="v_date" type="date" class="p-2 border rounded w-full">
+                    </div>
+                    <div class="mb-3">
+                        <label class="font-semibold">Offense Description:</label>
+                        <input id="v_offense" type="text" class="p-2 border rounded w-full" list="violations-list">
+                        <datalist id="violations-list">
                         <option value="ILLEGAL PARKING">
                         <option value="RECKLESS DRIVING">
                         <option value="DISOBEYING TRAFFIC SIGNS">
@@ -192,25 +201,38 @@ function lookupLicense() {
                         <option value="NO HELMET">
                         <option value="NO SEATBELT">
                     </datalist>
+                    </div>
+                    <div class="mb-3">
+                        <label class="font-semibold">Place of Incident:</label>
+                        <input id="v_place" type="text" class="p-2 border rounded w-full">
+                    </div>
+                    <div class="mb-3">
+                        <label class="font-semibold">Note:</label>
+                        <textarea id="v_note" class="p-2 border rounded w-full"></textarea>
+                    </div>
+                    <button onclick="addViolation(); toggleViolationModal();" 
+                        class="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-5 py-3 rounded-xl hover:from-blue-600 hover:to-blue-800 transition font-bold w-full">
+                        Submit Violation
+                    </button>
                 </div>
-                <div class="mb-3">
-                    <label class="font-semibold">Place of Incident:</label>
-                    <input id="v_place" type="text" class="p-2 border rounded w-full">
-                </div>
-                <div class="mb-3">
-                    <label class="font-semibold">Note:</label>
-                    <textarea id="v_note" class="p-2 border rounded w-full"></textarea>
-                </div>
-                <button onclick="addViolation()" class="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-5 py-3 rounded-xl hover:from-blue-600 hover:to-blue-800 transition font-bold">
-                    Add Violation
-                </button>
             </div>
         `;
         box.classList.remove("hidden");
 
         loadViolations();
+
+        const btn = document.getElementById("showViolationFormBtn");
+        if (btn) {
+            btn.addEventListener("click", toggleViolationModal);
+        }
     })
     .catch(err => console.error("Fetch Error:", err));
+}
+
+function toggleViolationModal() {
+    const modal = document.getElementById("violationModal");
+    if (!modal) return;
+    modal.classList.toggle("hidden");
 }
 
 function addViolation() {

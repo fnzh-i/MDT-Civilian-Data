@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <title>Check License</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/MDT-CIVILIAN-DATA/public/style.css">
 </head>
 <body class="bg-gray-200">
 
     <!-- STICKY NAVBAR -->
     <nav class="bg-[#47b9d4] shadow-lg px-6 py-3 flex justify-between items-center sticky top-0 z-50">
-        <a href="dashboard.html" class="flex items-center gap-2 text-black font-bold hover:text-gray-200 transition">
+        <a href="dashboard.php" class="flex items-center gap-2 text-black font-bold hover:text-gray-200 transition">
             <div class="space-y-1">
                 <span class="block w-5 h-0.5 bg-black"></span>
                 <span class="block w-5 h-0.5 bg-black"></span>
@@ -19,7 +19,7 @@
             <span>Dashboard</span>
         </a>
 
-        <a href="index.html" class="flex items-center gap-2 text-black font-bold hover:text-gray-200 transition">
+        <a href="/MDT-CIVILIAN-DATA/public/index.php" class="flex items-center gap-2 text-black font-bold hover:text-gray-200 transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
             </svg>
@@ -30,7 +30,7 @@
     <!-- MAIN CONTENT -->
     <div class="flex flex-col items-center justify-start mt-12 px-4">
         <!-- Titles -->
-        <h1 class="text-3xl font-extrabold mb-5 text-center text-black">Driver’s License Lookup</h1>
+        <h1 class="text-3xl font-extrabold mb-5 text-center text-black">Driver's License Lookup</h1>
 
         <!-- Input and Search Button -->
         <div class="mb-4 flex flex-col sm:flex-row gap-2 justify-center w-full max-w-md">
@@ -42,7 +42,7 @@
 
         <!-- Error Message -->
         <p id="error" class="text-red-600 font-semibold mb-4 text-center hidden">
-            Driver’s License Information doesn’t exist. Please check your input details.
+            Driver's License Information doesn't exist. Please check your input details.
         </p>
 
         <!-- License Info Box -->
