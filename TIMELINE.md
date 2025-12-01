@@ -37,3 +37,4 @@ Development ongoing — updates posted as time allows.
                  - Updated the three functions accordingly: searchEmail, checkPassword, and fromDatabase. <br>
                  - searchEmail function will use the checkPassword function if the entered email is found on the database. checkPassword will compare the entered password to the hashed password from the database, and will return either boolean true if they matched, or a string if they don't. fromDatabase function is no longer used since the User class is only used for email and password checking or verification for now.<br>
                 - Refactored vehicle VIN handling and update UI links.
+- Dec 1, 2025   - Refactored vehicle VIN property and update logout SVG.
