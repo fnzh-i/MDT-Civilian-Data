@@ -1,6 +1,5 @@
 <?php
   require_once __DIR__ . '/../bootstrap.php';
-
   enum RegistrationStatus: string {
     case REGISTERED = "REGISTERED";
     case UNREGISTERED = "UNREGISTERED";
@@ -10,11 +9,11 @@
   class Vehicle {
     private string $plateNumber;
     private ?string $mvFileNumber;
-    private string $vinNumber;
+    private string $vin;
     private DateTime $issueDate;
     private DateTime $expiryDate;
     private RegistrationStatus $registrationStatus;
-   
+
     private string $brandName;
     private string $modelName;
     private int $modelYear;
@@ -24,7 +23,7 @@
     public function __construct(
       string $plateNumber,
       ?string $mvFileNumber,
-      string $vinNumber,
+      string $vin,
       DateTime $issueDate,
       RegistrationStatus $registrationStatus,
 
@@ -36,7 +35,7 @@
       ) {
       $this->plateNumber = $plateNumber;
       $this->mvFileNumber = $mvFileNumber;
-      $this->vinNumber = $vinNumber;
+      $this->vin = $vin;
       $this->issueDate = $issueDate;
       $this->registrationStatus = $registrationStatus;
 
@@ -58,8 +57,8 @@
       return $this->mvFileNumber;
     }
 
-    public function getVinNumber(): string {
-      return $this->vinNumber;
+    public function getVin(): string {
+      return $this->vin;
     }
 
     public function getExpiryDate(): DateTime {
@@ -99,7 +98,7 @@
       return new self(
         $row['plate_number'],
         $row['mv_file_number'] ?? null,
-        $row['vin_number'],
+        $row['vin'],
         self::inferIssueDate($row['expiry_date']),
         RegistrationStatus::from($row['registration_status']),
         $row['brand_name'],

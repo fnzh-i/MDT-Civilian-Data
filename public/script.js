@@ -148,7 +148,7 @@ function lookupLicense() {
 
             <div class="bg-white p-6 rounded-2xl shadow-xl mb-6">
                 <h2 class="text-2xl font-bold mb-3">License Details</h2>
-                <p><b>Restrictions:</b> ${L.restrictions}</p>
+                <p><b>Restrictions:</b> ${L.dl_codes}</p>
                 <p><b>Endorsements:</b> ${L.endorsements}</p>
             </div>
 

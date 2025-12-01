@@ -23,7 +23,7 @@
         <!-- Right: Logout -->
         <a href="/MDT-CIVILIAN-DATA/public/index.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
             </svg>
             <span>Logout</span>
         </a>
