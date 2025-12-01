@@ -1,42 +1,6 @@
 <?php
   require_once __DIR__ . '/../bootstrap.php';
 
-  enum LicenseStatus: string {
-    case REGISTERED = "REGISTERED";
-    case UNREGISTERED = "UNREGISTERED";
-    case EXPIRED = "EXPIRED";
-    case REVOKED = "REVOKED";
-  }
-
-  enum LicenseType: string {
-    case PROFESSIONAL = "PROFESSIONAL";
-    case NON_PROFESSIONAL = "NON-PROFESSIONAL";
-    case STUDENT_PERMIT = "STUDENT PERMIT";
-  }
-
-  enum ExpiryOption: int {
-    case FIVE_YEARS = 5;
-    case TEN_YEARS = 10;
-
-    public function getInterval(): DateInterval {
-      return new DateInterval("P{$this->value}Y");
-    }
-  }
-
-  enum DLCodes: string {
-    case A = "A"; // motorcycles
-    case A1 = "A1"; // tricycles
-    case B = "B";
-    case B1 = "B1";
-    case C = "C"; // large trucks
-    case D = "D"; // buses
-  }
-
-  enum Gender: string {
-    case MALE = "Male";
-    case FEMALE = "Female";
-  }
-
   class DriversLicense {
     private ?int $license_id = null; // will have an auto-incremented value once saved to DB
     private string $licenseNumber;
@@ -53,6 +17,11 @@
     private DateTime $dateOfBirth;
     private Gender $gender;
     private string $address;
+    private string $nationality;
+    private string $height;
+    private string $weight;
+    private string $eyeColor;
+    private ?string $bloodType;
 
     public function __construct(
       string $licenseNumber,
@@ -67,7 +36,12 @@
       string $lastName,
       DateTime $dateOfBirth,
       Gender $gender,
-      string $address
+      string $address,
+      string $nationality,
+      string $height,
+      string $weight,
+      string $eyeColor,
+      ?string $bloodType
     ) {
       $this->licenseNumber = $licenseNumber;
       $this->licenseStatus = $licenseStatus;
@@ -85,6 +59,11 @@
       $this->dateOfBirth = $dateOfBirth;
       $this->gender = $gender;
       $this->address = $address;
+      $this->nationality = $nationality;
+      $this->height = $height;
+      $this->weight = $weight;
+      $this->eyeColor = $eyeColor;
+      $this->bloodType = $bloodType;
     }
 
     public function getLicenseID(): int {
@@ -131,8 +110,19 @@
       return $this->middleName;
     }
 
+    public function getMiddleInitial(): string {
+      if ($this->middleName) {
+        return strtoupper($this->middleName[0]) . ".";
+      }
+      return ""; // return empty string if wala syang middle name
+    }
+
     public function getLastName(): string {
       return $this->lastName;
+    }
+
+    public function getFullName(): string {
+      return "{$this->getFirstName()} {$this->getMiddleInitial()} {$this->getLastName()}";
     }
 
     public function getDateOfBirth(): DateTime {
@@ -145,6 +135,111 @@
 
     public function getAddress(): string {
       return $this->address;
+    }
+
+    public function getNationality(): string {
+      return $this->nationality;
+    }
+
+    public function getHeight(): string {
+      return $this->height;
+    }
+
+    public function getWeight(): string {
+      return $this->weight;
+    }
+
+    public function getEyeColor(): string {
+      return $this->eyeColor;
+    }
+
+    public function getBloodType(): ?string {
+      return $this->bloodType;
+    }
+
+    public function save(mysqli $conn): string | bool {
+      // insert sa licenses table muna
+      $stmt1 = $conn->prepare(
+        "INSERT INTO licenses
+        (license_number, license_status, license_type, issue_date, expiry_date, dl_codes)
+        VALUES (?, ?, ?, ?, ?, ?)"
+      );
+
+      if (!$stmt1) {
+        return "Prepare failed for licenses: " . $conn->error;
+      }
+
+      $licenseNumber = $this->licenseNumber;
+      $licenseStatus = $this->licenseStatus->value;
+      $licenseType = $this->licenseType->value;
+      $issueDate = $this->issueDate->format('Y-m-d');
+      $expiryDate = $this->expiryDate->format('Y-m-d');
+      $dlCodes = $this->getDLCodesToString(); // comma separated strings
+
+      $stmt1->bind_param(
+        "ssssss",
+        $licenseNumber,
+        $licenseStatus,
+        $licenseType,
+        $issueDate,
+        $expiryDate,
+        $dlCodes
+      );
+
+      if (!$stmt1->execute()) {
+        return "Error saving license: " . $stmt1->error;
+      }
+
+      $license_id = $conn->insert_id; // kunin yung auto-incremented license_id key, for foreign key purposes
+
+      $stmt1->close();
+
+      // iinsert na sa personal_information table kasama yung license_id as foreign key
+      $stmt2 = $conn->prepare(
+        "INSERT INTO personal_information
+        (license_id, first_name, middle_name, last_name, date_of_birth, gender, address, nationality, height, weight, eye_color, blood_type)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+      );
+
+      if (!$stmt2) {
+        return "Prepare failed for personal_information: " . $conn->error;
+      }
+
+      $firstName   = $this->firstName;
+      $middleName  = $this->middleName ?? null; // null sa db if left blank
+      $lastName    = $this->lastName;
+      $dateOfBirth = $this->dateOfBirth->format('Y-m-d');
+      $gender      = $this->gender->value;
+      $address     = $this->address;
+      $nationality = $this->nationality;
+      $height      = $this->height;
+      $weight      = $this->weight;
+      $eyeColor    = $this->eyeColor;
+      $bloodType   = $this->bloodType ?? null; // null sa db if left blank
+
+      $stmt2->bind_param(
+        "isssssssssss",
+        $license_id,
+        $firstName,
+        $middleName,
+        $lastName,
+        $dateOfBirth,
+        $gender,
+        $address,
+        $nationality,
+        $height,
+        $weight,
+        $eyeColor,
+        $bloodType
+      );
+
+      if (!$stmt2->execute()) {
+        return "Error saving personal information: " . $stmt2->error;
+      }
+
+      $stmt2->close();
+
+      return true;
     }
 
     public static function inferExpiryOption(string $issueDate, string $expiryDate) {
@@ -168,31 +263,62 @@
         $row['last_name'],
         new DateTime($row['date_of_birth']),
         Gender::from($row['gender']),
-        $row['address']
+        $row['address'],
+        $row['nationality'],
+        $row['height'],
+        $row['weight'],
+        $row['eye_color'],
+        $row['blood_type'] ?? null
       );
     }
 
-      public static function searchLicenseNumber(mysqli $conn, string $licenseNumber): string | array {
-      $checkStmt = $conn->prepare("SELECT * FROM licenses WHERE license_number = ?");
-      $checkStmt->bind_param("s", $licenseNumber);
-      $checkStmt->execute();
+    public static function searchLicenseNumber(mysqli $conn, string $licenseNumber): string | array {
 
+      // SQL left join, yung "l" is lahat ng column data sa licenses table, and "p" is from personal_information table
+      // ON = pumunta sa personal_information table, hanapin yung row na nagmamatch ang license_id
+      // WHERE = hanapin lang yung nag-match na license number na tinype ni User
+      $checkStmt = $conn->prepare("
+        SELECT 
+          l.*, 
+          p.first_name, 
+          p.middle_name, 
+          p.last_name, 
+          p.date_of_birth, 
+          p.gender, 
+          p.address, 
+          p.nationality, 
+          p.height, 
+          p.weight, 
+          p.eye_color, 
+          p.blood_type
+        FROM licenses l
+        LEFT JOIN personal_information p 
+          ON l.license_id = p.license_id
+        WHERE l.license_number = ?
+      ");
+
+      if (!$checkStmt) {
+        return "SQL Prepare failed: " . $conn->error;
+      }
+
+      $checkStmt->bind_param("s", $licenseNumber); // yung entered License number
+      $checkStmt->execute();
       $result = $checkStmt->get_result();
 
-      if ($result->num_rows === 0) {
+      if ($result->num_rows === 0) { // if walang data meaning non-existent yung entered license number
         $checkStmt->close();
-        return "Error: License Number $licenseNumber not found in licenses table.";
-      } else {
-        $row = $result->fetch_assoc();
-        $checkStmt->close();
-        
-        $license = self::fromDatabase($row);
-
-        return [
-          "license" => $license,
-          "license_id" => $row['license_id']
-        ];
+        return "Error: License Number $licenseNumber not found.";
       }
+
+      $row = $result->fetch_assoc(); // kunin lahat ng rows ng "joined" table
+      $checkStmt->close();
+
+      $license = self::fromDatabase($row); // rebuild the DriversLicense object
+
+      return [
+        "license"    => $license,
+        "license_id" => $row['license_id']
+      ];
     }
   }
 ?>

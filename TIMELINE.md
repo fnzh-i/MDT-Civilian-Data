@@ -39,3 +39,4 @@ Development ongoing — updates posted as time allows.
                 - Refactored vehicle VIN handling and update UI links.
 - Dec 1, 2025   - Refactored vehicle VIN property and update logout SVG.
                 - Updated license page UI and add violation modal.
+                - Refactored enums to separate files and extend DriversLicense.
