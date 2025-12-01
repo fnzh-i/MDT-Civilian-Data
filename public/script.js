@@ -1,6 +1,7 @@
 //================= API SCRIPT =================
 
 const API_URL = "../src/Controller.php";
+let currentLicense = null;
 
 function login() {
     const email = document.getElementById("username").value;
@@ -115,6 +116,10 @@ function lookupLicense() {
 
         const L = data.license;
         console.log("Found License:", L);
+
+        currentLicense = L;
+        currentLicense.violations = L.violations || [];
+
         // Fill License Info
         box.innerHTML = `
             <div class="bg-white p-6 rounded-2xl shadow-xl mb-6">
@@ -132,16 +137,18 @@ function lookupLicense() {
                 <p><b>Full Name:</b> ${L.middle_name}</p>
                 <p><b>Full Name:</b> ${L.last_name}</p>
                 <p><b>Date of Birth:</b> ${L.date_of_birth}</p>
-                <p><b>Address:</b> ${L.address}</p>
                 <p><b>Sex:</b> ${L.gender}</p>
+                <p><b>Address:</b> ${L.address}</p>
+                <p><b>Nationality:</b> ${L.nationality}</p>
                 <p><b>Height:</b> ${L.height}</p>
                 <p><b>Weight:</b> ${L.weight}</p>
-                <p><b>Eye Color:</b> ${L.eyeColor}</p>
+                <p><b>Eye Color:</b> ${L.eye_color}</p>
+                <p><b>Blood Type:</b> ${L.blood_type}</p>
             </div>
 
             <div class="bg-white p-6 rounded-2xl shadow-xl mb-6">
                 <h2 class="text-2xl font-bold mb-3">License Details</h2>
-                <p><b>Restrictions:</b> ${L.restrictions}</p>
+                <p><b>Restrictions:</b> ${L.dl_codes}</p>
                 <p><b>Endorsements:</b> ${L.endorsements}</p>
             </div>
 
@@ -168,8 +175,23 @@ function lookupLicense() {
                     <input id="v_date" type="date" class="p-2 border rounded w-full">
                 </div>
                 <div class="mb-3">
-                    <label class="font-semibold">Offense Description:</label>
-                    <input id="v_offense" type="text" class="p-2 border rounded w-full">
+                    <label class="font-semibold">Violation:</label>
+                    <input id="v_offense" type="text" class="p-2 border rounded w-full" list="violations-list">
+                    <datalist id="violations-list">
+                        <option value="ILLEGAL PARKING">
+                        <option value="RECKLESS DRIVING">
+                        <option value="DISOBEYING TRAFFIC SIGNS">
+                        <option value="OVERSPEEDING">
+                        <option value="DRIVING UNDER INFLUENCE">
+                        <option value="OBSTRUCTION">
+                        <option value="NO DRIVER LICENSE">
+                        <option value="EXPIRED LICENSE">
+                        <option value="UNREGISTERED VEHICLE">
+                        <option value="NO OR/CR">
+                        <option value="NUMBER CODING">
+                        <option value="NO HELMET">
+                        <option value="NO SEATBELT">
+                    </datalist>
                 </div>
                 <div class="mb-3">
                     <label class="font-semibold">Place of Incident:</label>
@@ -185,9 +207,99 @@ function lookupLicense() {
             </div>
         `;
         box.classList.remove("hidden");
+
+        loadViolations();
     })
     .catch(err => console.error("Fetch Error:", err));
-    // loadViolations();
+}
+
+function addViolation() {
+    if (!currentLicense) return;
+
+    const violationData = {
+        "license_id": currentLicense.id, // yung current license
+        "violation": document.getElementById("v_offense").value,
+        "date-of-incident": document.getElementById("v_date").value,
+        "place-of-incident": document.getElementById("v_place").value,
+        "note": document.getElementById("v_note").value
+    };
+
+    // validate
+    if (!violationData.violation || !violationData["date-of-incident"] || !violationData["place-of-incident"]) {
+        alert("Please fill in all required fields.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("action", "CREATE-TICKET");
+    for (const key in violationData) {
+        formData.append(key, violationData[key]);
+    }
+
+    fetch("../_modules/Controller.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert(data.message);
+            // reload yung violations table
+            loadViolations(); 
+            
+            // Clear yung mga input sa Add New TicketViolation
+            document.getElementById("v_date").value = "";
+            document.getElementById("v_offense").value = "";
+            document.getElementById("v_place").value = "";
+            document.getElementById("v_note").value = "";
+        } else {
+            alert("Error: " + data.message);
+        }
+    })
+    .catch(err => console.error("Error adding violation:", err));
+}
+
+function loadViolations() { // galing sa AI to Vert sorry di ko kasi kabisado js
+    if (!currentLicense) return;
+
+    const table = document.getElementById("violationTable");
+    table.innerHTML = ""; // clear table
+
+    const formData = new FormData();
+    formData.append("action", "FETCH-TICKETS");
+    formData.append("license_id", currentLicense.id);
+
+    fetch("../_modules/Controller.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            currentLicense.violations = data.tickets.map(t => ({
+                date: t.date_of_incident,
+                offense: t.violation,
+                location: t.place_of_incident,
+                note: t.note,
+                status: t.status
+            }));
+
+            currentLicense.violations.forEach(v => {
+                table.innerHTML += `
+                    <tr>
+                        <td class="border px-3 py-1">${v.date}</td>
+                        <td class="border px-3 py-1">${v.offense}</td>
+                        <td class="border px-3 py-1">${v.location}</td>
+                        <td class="border px-3 py-1">${v.note}</td>
+                        <td class="border px-3 py-1 font-semibold ${v.status === "Paid" ? "text-green-600" : "text-red-600"}">${v.status}</td>
+                    </tr>
+                `;
+            });
+        } else {
+            console.error("Error fetching tickets:", data.message);
+        }
+    })
+    .catch(err => console.error("Fetch error:", err));
 }
 
 

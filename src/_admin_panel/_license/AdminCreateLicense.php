@@ -1,19 +1,37 @@
+<?php
+  require_once __DIR__ . '/../../bootstrap.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create License</title>
-  <link rel="stylesheet" href="AdminStyle.css">
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+    }
+    button, input {
+      font: inherit;
+    }
+  </style>
 </head>
 <body>
     <br>
     <a href="Admin.php" class="btn">Back</a>
     <br>
     <br>
-    <form action="AdminCreateLicenseResult.php" method="POST" class="forms">
-      <label for="license-name">License Number:</label>
-      <input type="text" id="license-name" name="license-name">
+    <strong>CREATE LICENSE</strong>
+    <br>
+    <br>
+
+    <form action="../../_modules/Controller.php" method="POST" class="forms">
+      <input type="hidden" name="action" value="CREATE-LICENSE">
+
+      <label for="license-number">License Number:</label>
+      <input type="text" id="license-number" name="license-number">
       <br> <br>
 
       License Status:
@@ -25,6 +43,9 @@
 
       <input type="radio" id="expired" name="license-status" value="EXPIRED">
       <label for="expired">EXPIRED</label>
+
+      <input type="radio" id="revoked" name="license-status" value="REVOKED">
+      <label for="expired">REVOKED</label>
       <br> <br>
 
       License Type:
@@ -70,6 +91,8 @@
       <label for="d">D</label>
       <br> <br>
 
+      <strong>PERSONAL INFORMATION</strong> <br> <br>
+
       <label for="first-name">First Name:</label>
       <input type="text" id="first-name" name="first-name">
       <br> <br>
@@ -99,10 +122,27 @@
       <input type="text" id="address" name="address">
       <br> <br>
 
+      <label for="nationality">Nationality:</label>
+      <input type="text" id="nationality" name="nationality">
+      <br> <br>
+
+      <label for="height">Height:</label>
+      <input type="text" id="Height" name="height">
+      <br> <br>
+
+      <label for="weight">Weight:</label>
+      <input type="text" id="weight" name="weight">
+      <br> <br>
+
+      <label for="eye-color">Eye Color:</label>
+      <input type="text" id="eye-color" name="eye-color">
+      <br> <br>
+
+      <label for="blood-type">Blood Type:</label>
+      <input type="text" id="blood-type" name="blood-type">
+      <br> <br>
+
       <input type="submit" value="submit" name="submit" class="btn">
     </form>
 </body>
 </html>
-
-<?php
-?>
