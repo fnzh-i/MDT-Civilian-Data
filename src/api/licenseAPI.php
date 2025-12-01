@@ -13,17 +13,17 @@ class LicenseAPI{
 
     public function searchLicense(string $licenseNumber): array|string {
         $result = DriversLicense::searchLicenseNumber($this->conn, $licenseNumber);
-       
+
         // If Vehicle::searchPlateNumber returns an error string
         if (is_string($result)) {
-              return json_encode([
-                  'status' => 'error',
-                  'message' => $result
-              ]);
-          }
+                return json_encode([
+                    'status' => 'error',
+                    'message' => $result
+                ]);
+            }
 
-          $license = $result['license'];
-          $licenseId = $result['license_id']; 
+        $license = $result['license'];
+        $licenseId = $result['license_id']; 
 
         return json_encode([
             'status' => 'success',
