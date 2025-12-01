@@ -4,14 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Search License</title>
-  <link rel="stylesheet" href="AdminStyle.css">
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 20px;
+    }
+    button, input {
+      font: inherit;
+    }
+  </style>
 </head>
 <body>
   <br>
   <a href="Admin.php" class="btn">Back</a>
   <br>
   <br>
-  <form action="index.php?page=AdminSearchLicense" method="POST">
+  <strong>SEARCH LICENSE</strong> <br> <br>
+  <form action="../../_modules/Controller.php" method="POST">
     <input type="hidden" name="action" value="SEARCH-LICENSE-NUMBER">
     <label for="search-license">Enter License Number:</label>
     <input type="text" id="search-license" name="license-number" placeholder="AXX-XX-XXXXXX">

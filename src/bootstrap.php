@@ -6,6 +6,7 @@
     spl_autoload_register(function ($className) {
         $paths = [
             __DIR__ . "/_modules/$className.php",
+            __DIR__ . "/_modules/enums/$className.php",
             __DIR__ . "/api/$className.php"
         ];
 
@@ -18,7 +19,7 @@
     });
 
 
-    ini_set("display_errors",1);
+    ini_set("display_errors","1");
     $page = $_GET["page"] ?? '';
 
     $root = dirname(__DIR__);
