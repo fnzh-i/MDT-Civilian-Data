@@ -1,0 +1,133 @@
+<?php
+declare(strict_types=1);
+
+require_once __DIR__ . '/../bootstrap.php';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MDT System - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="/MDT-CIVILIAN-DATA/public/script.js"></script> 
+    <link rel="stylesheet" href="/MDT-CIVILIAN-DATA/public/style.css">
+</head>
+<body class="bg-gray-200 h-screen flex flex-col items-center justify-center">
+
+<div class="bg-white p-10 rounded-2xl shadow-2xl w-96">
+    <h1 class="text-3xl font-extrabold text-center mb-6">Login</h1>
+    
+    <input id="username" type="text" placeholder="Username" class="w-full p-3 mb-4 border rounded-lg">
+    <input id="password" type="password" placeholder="Password" class="w-full p-3 mb-4 border rounded-lg">
+    <button onclick="login()" class="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-900 transition font-bold">Login</button>
+    <p id="error" class="text-red-500 text-center mt-3 hidden">Invalid login.</p>
+
+    <!-- small links -->
+    <div class="mt-4 text-center text-sm text-gray-600">
+        <a href="#" class="underline hover:text-blue-700 mr-3" onclick="openModal('termsModal')">Terms &amp; Condition</a>
+        <a href="#" class="underline hover:text-blue-700" onclick="openModal('privacyModal')">Privacy Policy</a>
+    </div>
+</div>
+
+<!-- Terms Modal -->
+<div id="termsModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+    <div class="bg-white rounded-lg max-w-2xl w-full max-h-[85vh] overflow-hidden shadow-xl">
+        <div class="p-6">
+            <div class="flex items-start justify-between mb-4">
+                <h2 class="text-xl font-semibold">Terms &amp; Condition — MDT System</h2>
+                <button onclick="closeModal('termsModal')" class="text-gray-500 hover:text-gray-800">&times;</button>
+            </div>
+
+            <div class="text-sm text-gray-700 overflow-y-auto max-h-[55vh] pr-4">
+                <!-- Terms content -->
+                <p class="mb-3"><strong>1. Overview</strong></p>
+                <p class="mb-3">Ang MDT System (Management of Driver and Traffic system) ay isang application na dinisenyo upang tulungan ang awtoridad sa pag-manage ng impormasyon ng mga sasakyan, driver, at traffic violation records. Sa pamamagitan ng system na ito, maaaring mag-create, mag-view, at mag-update ng traffic violation tickets at iba pang kaugnay na records.</p>
+
+                <p class="mb-3"><strong>2. Pangongolekta ng Impormasyon</strong></p>
+                <p class="mb-3">Nangongolekta ang MDT System ng personal at non-personal na impormasyon na kinakailangan upang magbigay ng serbisyo — kasama dito ang pangalan, address, license number, vehicle information, at mga detalye ng violation. Inaalagaan namin ang datos na ito at ginagamit lamang ayon sa layunin ng operasyon ng system.</p>
+
+                <p class="mb-3"><strong>3. Paggamit ng Impormasyon</strong></p>
+                <p class="mb-3">Ang mga nakolektang impormasyon ay gagamitin para sa: (a) pagproseso at pag-iissue ng ticket; (b) record-keeping at reporting; (c) pagpapatupad ng batas at koordinasyon sa ibang ahensya kung kinakailangan; at (d) analytics para sa pagpapabuti ng serbisyo.</p>
+
+                <p class="mb-3"><strong>4. Mga Obligasyon ng User</strong></p>
+                <p class="mb-3">Bilang gumagamit, sumasang-ayon ka na: (a) ibibigay lamang ang totoo at tumpak na impormasyon; (b) hindi gagamitin ang account para sa ilegal na gawain; at (c) susunod sa mga polisiya at batas na aplikable sa paghawak ng personal na impormasyon.</p>
+
+                <p class="mb-3"><strong>5. Limitasyon ng Pananagutan</strong></p>
+                <p class="mb-3">Bagaman nagsisikap ang MDT System na maprotektahan ang data, hindi ito mananagot sa di-inaasahang pangyayari na magreresulta sa pagkawala o hindi awtorisadong pag-access ng impormasyon, maliban kung may malubhang kapabayaan mula sa pamamahala ng system.</p>
+
+                <p class="mb-3"><strong>6. Pagbabago sa Terms</strong></p>
+                <p class="mb-3">Ang terms na ito ay maaaring i-update paminsan-minsan. Ang patuloy na paggamit ng system ay nangangahulugang pumapayag ka sa mga pagbabago. Susubukan naming ipaalam ang malalaking pagbabago sa pamamagitan ng notification o email.</p>
+
+                <p class="mb-3"><strong>7. Contact</strong></p>
+                <p class="mb-3">Para sa tanong tungkol sa Terms, makipag-ugnayan sa system administrator o support team ng MDT System.</p>
+
+                <div class="h-8"></div> <!-- spacing to bottom -->
+            </div>
+
+            <!-- acceptance area -->
+            <div class="mt-4 border-t pt-4 flex items-center justify-between">
+                <label class="flex items-center text-sm text-gray-700">
+                    <input id="acceptTerms" type="checkbox" class="mr-2" onchange="toggleAcceptButton('terms')">
+                    I accept the general terms and condition of use
+                </label>
+                <div>
+                    <button onclick="closeModal('termsModal')" class="mr-2 px-4 py-2 rounded-md border">Close</button>
+                    <button id="termsAcceptBtn" onclick="accept('terms')" class="px-4 py-2 rounded-md bg-blue-600 text-white disabled:opacity-50" disabled>Accept &amp; Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Modal -->
+<div id="privacyModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+    <div class="bg-white rounded-lg max-w-2xl w-full max-h-[85vh] overflow-hidden shadow-xl">
+        <div class="p-6">
+            <div class="flex items-start justify-between mb-4">
+                <h2 class="text-xl font-semibold">Privacy Policy — MDT System</h2>
+                <button onclick="closeModal('privacyModal')" class="text-gray-500 hover:text-gray-800">&times;</button>
+            </div>
+
+            <div class="text-sm text-gray-700 overflow-y-auto max-h-[55vh] pr-4">
+                <!-- Privacy content -->
+                <p class="mb-3"><strong>1. Purpose</strong></p>
+                <p class="mb-3">Layunin ng patakarang ito na ipaliwanag kung paano kinokolekta, ginagamit, iniingatan, at ibinabahagi ng MDT System ang personal na impormasyon ng mga gumagamit at mga naire-record na indibidwal.</p>
+
+                <p class="mb-3"><strong>2. Anong Impormasyon ang Kinokolekta</strong></p>
+                <p class="mb-3">Maaaring mangolekta ng MDT System ang mga sumusunod: pangalan, date of birth, license number, address, contact details, vehicle plate number, larawan ng driver o vehicle (kung naka-upload), at detalye ng violation o case history.</p>
+
+                <p class="mb-3"><strong>3. Paano Ginagamit ang Data</strong></p>
+                <p class="mb-3">Ginagamit ang data para sa pag-verify ng identity, pagproseso ng ticket at case management, pagbuo ng ulat, at pagbibigay ng access sa awtorisadong user. Ginagamit din para sa internal analytics at pagpapabuti ng serbisyo.</p>
+
+                <p class="mb-3"><strong>4. Data Retention</strong></p>
+                <p class="mb-3">Itatago ang data alinsunod sa mga lokal na batas at regulasyon at sa loob ng kinakailangang panahon para sa operasyon at auditing. Ang hindi na kinakailangang data ay tatanggalin nang ligtas o ia-anonymize.</p>
+
+                <p class="mb-3"><strong>5. Pagbabahagi ng Data</strong></p>
+                <p class="mb-3">Maaaring ibahagi ang data sa mga awtorisadong ahensya (hal. traffic enforcement, law enforcement) kung kinakailangan ng batas o para sa pagpapatupad ng mga regulasyon. Hindi ibinebenta ang personal data sa third parties para sa commercial marketing nang walang pahintulot.</p>
+
+                <p class="mb-3"><strong>6. Seguridad</strong></p>
+                <p class="mb-3">May mga teknikal at organisasyonal na kontrol na ipinatutupad upang protektahan ang data (hal. access control, encryption sa transit o storage kung available). Gayunpaman, walang system na 100% secure; kinakailangan ang pag-iingat ng user sa paghawak ng kanilang account credentials.</p>
+
+                <p class="mb-3"><strong>7. Mga Karapatan ng Data Subject</strong></p>
+                <p class="mb-3">May karapatan ang mga taong nakatala sa data na humiling ng access, paglilinaw, pagwawasto, o pagtanggal (kung naaangkop). Para sa mga kahilingan, makipag-ugnayan sa data protection officer o administrator ng MDT System.</p>
+
+                <div class="h-8"></div>
+            </div>
+
+            <!-- acceptance area -->
+            <div class="mt-4 border-t pt-4 flex items-center justify-between">
+                <label class="flex items-center text-sm text-gray-700">
+                    <input id="acceptPrivacy" type="checkbox" class="mr-2" onchange="toggleAcceptButton('privacy')">
+                    I accept Privacy Policy
+                </label>
+                <div>
+                    <button onclick="closeModal('privacyModal')" class="mr-2 px-4 py-2 rounded-md border">Close</button>
+                    <button id="privacyAcceptBtn" onclick="accept('privacy')" class="px-4 py-2 rounded-md bg-blue-600 text-white disabled:opacity-50" disabled>Accept &amp; Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <title>MDT Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+    <script defer src="/MDT-CIVILIAN-DATA/public/script.js"></script> 
+    <link rel="stylesheet" href="/MDT-CIVILIAN-DATA/public/style.css">
 </head>
-<body class="bg-gradient-to-r from-[#63FFFD] to-[#00A8FF] min-h-screen">
+<body class="bg-gray-200">
 
     <!-- STICKY GRADIENT NAVBAR -->
-    <nav class="bg-gradient-to-r from-[#63FFFD] to-[#00A8FF] shadow-lg px-6 py-3 flex justify-between items-center sticky top-0 z-50">
+    <nav class="bg-blue-600 shadow-lg px-6 py-3 flex justify-between items-center sticky top-0 z-50">
         <!-- Left: Dashboard link with burger icon -->
         <a href="dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
             <div class="space-y-1">
@@ -32,26 +33,32 @@
     <!-- MAIN CONTENT CENTERED -->
     <div class="flex flex-col items-center justify-center h-[calc(100vh-64px)] px-4">
         <!-- Titles -->
-        <h1 class="text-3xl font-extrabold mb-2 text-center text-white">Quick Access</h1>
-        <h2 class="text-xl font-normal mb-6 text-center text-white">
+        <h1 class="text-3xl font-extrabold mb-2 text-center text-black">Quick Access</h1>
+        <h2 class="text-xl font-normal mb-10 text-center text-black">
             Select a search type to retrieve civilian data
         </h2>
 
         <!-- Buttons -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-xl w-full">
-            <a href="vehicle.php" class="bg-gradient-to-r from-blue-500 to-blue-700 text-white p-6 rounded-2xl text-xl font-bold shadow-xl hover:from-blue-600 hover:to-blue-800 transition flex items-center justify-center gap-3">
-    <img src="/MDT-CIVILIAN-DATA/public/assets/car.png" class="w-6 h-6">
-    Check Vehicle
-</a>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
+            <!-- VEHICLE BOX -->
+            <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80">
+                <img src="/MDT-CIVILIAN-DATA/public/assets/car.png" class="w-24 h-24 mb-6 opacity-80">
+                <button onclick="window.location.href='vehicle.php'"
+                    class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-red-700 transition">
+                    Check Vehicle
+                </button>
+            </div>
 
-            <a href="license.php" class="bg-gradient-to-r from-green-500 to-green-700 text-white p-6 rounded-2xl text-xl font-bold shadow-xl hover:from-green-600 hover:to-green-800 transition flex items-center justify-center gap-3">
-    <img src="/MDT-CIVILIAN-DATA/public/assets/id.png" class="w-6 h-6">
-    Check License
-</a>
-
+            <!-- LICENSE BOX -->
+            <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80">
+                <img src="/MDT-CIVILIAN-DATA/public/assets/id.png" class="w-24 h-24 mb-6 opacity-80">
+                <button onclick="window.location.href='license.php'"
+                    class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-red-700 transition">
+                    Check License
+                </button>
+            </div>
         </div>
     </div>
-
-    <script src="/MDT-CIVILIAN-DATA/public/script.js"></script>
+    </div>
 </body>
 </html>

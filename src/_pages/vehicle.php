@@ -5,6 +5,7 @@
     <title>Check Vehicle</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/MDT-CIVILIAN-DATA/public/style.css">
+    <script defer src="/MDT-CIVILIAN-DATA/public/script.js"></script> 
 </head>
 <body class="bg-gray-200">
 
@@ -47,7 +48,5 @@
         <!-- Vehicle Info Box -->
         <div id="infoBox" class="hidden mt-6 max-w-3xl w-full bg-white p-6 rounded-2xl shadow-lg text-gray-800"></div>
     </div>
-
-    <script src="/MDT-CIVILIAN-DATA/public/script.js"></script>
 </body>
 </html>

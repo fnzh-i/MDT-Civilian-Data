@@ -42,4 +42,5 @@ Development ongoing — updates posted as time allows.
                 - Refactored enums to separate files and extend DriversLicense.<br>
 - Dec 2, 2025   - Added modal for ticket violation entry.
                 - Updated vehicle page UI colors and input placeholder.<br>
-                - Updated license page UI colors colors for improved contrast.
+                - Updated license page UI colors colors for improved contrast.<br>
+                - Redesigned landing, dashboard, and login pages and moved login form.

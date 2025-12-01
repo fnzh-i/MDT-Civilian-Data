@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Check License</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="/MDT-CIVILIAN-DATA/public/script.js"></script> 
     <link rel="stylesheet" href="/MDT-CIVILIAN-DATA/public/style.css">
 </head>
 <body class="bg-gray-200">
@@ -86,7 +87,5 @@
             </div>
         </div>
     </div>
-
-<script src="/MDT-CIVILIAN-DATA/public/script.js"></script> 
 </body>
 </html>
