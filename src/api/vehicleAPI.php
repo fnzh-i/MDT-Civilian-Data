@@ -11,9 +11,8 @@ class VehicleAPI {
     }
 
     public function searchPlate(string $plateNumber): string {
-        $result = Vehicle::searchPlateNumber($this->conn, $plateNumber);
+        $result = Vehicle::searchVehicle($this->conn, $plateNumber);
 
-        // If Vehicle::searchPlateNumber returns an error string
         if (is_string($result)) {
             return json_encode([
                 'status' => 'error',
@@ -21,7 +20,6 @@ class VehicleAPI {
             ]);
         }
 
-        // Otherwise successful
         $vehicle = $result['vehicle'];
         $vehicleId = $result['vehicle_id'];
 
@@ -39,9 +37,24 @@ class VehicleAPI {
                 'status' => $vehicle->getRegistrationStatus(),
                 'year' => $vehicle->getModelYear(),
                 'license_id' => $vehicle->getLicenseID()
+            ],
+            'license' => [
+                'license_number' => $result['license']['license_number'] ?? null,
+                'license_status' => $result['license']['license_status'] ?? null,
+                'license_type'   => $result['license']['license_type'] ?? null,
+                'issue_date'     => $result['license']['issue_date'] ?? null,
+                'expiry_date'    => $result['license']['expiry_date'] ?? null
+            ],
+            'person' => [
+                'first_name'  => $result['person']['first_name'] ?? null,
+                'middle_name' => $result['person']['middle_name'] ?? null,
+                'full_name'   => $result['person']['full_name'] ?? null,
+                'last_name'   => $result['person']['last_name'] ?? null,
+                'address'     => $result['person']['address'] ?? null
             ]
         ]);
     }
+
 
     public function getAllVehicles(): string {
         if (!$this->conn) {
