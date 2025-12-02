@@ -407,3 +407,14 @@ function updateLoginButton() {
     if (!loginBtn) return;
     loginBtn.disabled = !(acceptance.terms && acceptance.privacy);
 }
+
+// ================= TOGGLE =================
+document.addEventListener("DOMContentLoaded", () => {
+    const sidebar = document.getElementById("sidebar");
+    const toggleBtn = document.getElementById("sidebarToggle");
+
+    toggleBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        sidebar.classList.toggle("-translate-x-full");
+    });
+});

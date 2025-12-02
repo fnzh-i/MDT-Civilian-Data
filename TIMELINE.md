@@ -46,3 +46,4 @@ Development ongoing — updates posted as time allows.
                 - Redesigned landing, dashboard, and login pages and moved login form.<br>
                 - Updated asset paths and enhance login page UI.<br>
                 - Added Firebase Google Authentication login.
+- Dec 3, 2025   - Added responsive sidebar navigation and toggle.
