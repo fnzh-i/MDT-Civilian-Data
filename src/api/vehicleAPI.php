@@ -92,5 +92,34 @@ class VehicleAPI {
 
         return json_encode(['vehicles' => $vehicles]);
     }
+
+    // PARA SA ADMIN CREATE VEHICLE
+    public function createVehicle(): string {
+        // mv_file_number becomes null if empty (DI BA OPTIONAL NAMAN YUNG MV FILE? LIKE NUNG NAPAG USAPAN SA FLOWCHART DATI?)
+        $mvFile = $_POST['mv-file-number'] ?? null;
+        if ($mvFile === '') {
+            $mvFile = null;
+        }
+
+        // Create Vehicle object
+        $vehicle = new Vehicle(
+            $_POST['plate-number'],
+            $mvFile,
+            $_POST['vin'],
+            new DateTime($_POST['issue-date']),
+            RegistrationStatus::from($_POST['registration-status']),
+
+            $_POST['brand-name'],
+            $_POST['model-name'],
+            (int) $_POST['model-year'],
+            $_POST['model-color'],
+            (int) $_POST['license-id'] // foreign key
+        );
+
+        // Save to DB
+        $result = $vehicle->save($this->conn);
+        return $result;
+    }
+
 }
 ?>

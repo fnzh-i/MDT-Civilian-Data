@@ -79,7 +79,10 @@
         echo $licenseAPI->createLicense();
         exit();
 
-
+      case 'CREATE-VEHICLE': // PARA SA ADMIN CREATE VEHICLE
+        $vehicleAPI = new VehicleAPI($conn);
+        echo $vehicleAPI->createVehicle();
+        exit();
 
 
 

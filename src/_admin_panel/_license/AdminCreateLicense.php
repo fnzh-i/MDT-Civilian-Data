@@ -7,11 +7,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create License</title>
+  <title>ADMIN CREATE LICENSE</title>
   <style>
     body {
       font-family: Arial, Helvetica, sans-serif;
-      font-size: 20px;
+      font-size: 18px;
     }
     button, input {
       font: inherit;
@@ -19,11 +19,7 @@
   </style>
 </head>
 <body>
-    <br>
-    <a href="Admin.php" class="btn">Back</a>
-    <br>
-    <br>
-    <strong>CREATE LICENSE</strong>
+    <strong>ADMIN CREATE LICENSE</strong>
     <br>
     <br>
 

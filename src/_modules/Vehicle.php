@@ -1,10 +1,5 @@
 <?php
   require_once __DIR__ . '/../bootstrap.php';
-  enum RegistrationStatus: string {
-    case REGISTERED = "REGISTERED";
-    case UNREGISTERED = "UNREGISTERED";
-    case EXPIRED = "EXPIRED";
-  }
 
   class Vehicle {
     private string $plateNumber;
@@ -163,8 +158,6 @@
       ];
     }
 
-
-
     public static function searchMVfileNumber(mysqli $conn, string $mvFileNumber): string|array {
       $stmt = $conn->prepare("SELECT * FROM vehicles WHERE mv_file_number = ?");
       $stmt->bind_param("s", $mvFileNumber);
@@ -182,6 +175,72 @@
           "vehicle_id" => $row['vehicle_id'] ?? null
         ];
       }
+    }
+
+    // PARA SA ADMIN CREATE VEHICLE (NEED I MANUAL INPUT YUNG LICENSE_ID KASI WALANG JAVASCRIPT OR $_SESSION)
+    public function save(mysqli $conn): string | bool {
+      // check muna if yung license_id ay neg-eexist sa licenses table
+      $check = $conn->prepare("SELECT license_id FROM licenses WHERE license_id = ?");
+      if (!$check) {
+        return "Prepare failed: " . $conn->error;
+      }
+
+      $check->bind_param("i", $this->licenseID);
+      $check->execute();
+      $result = $check->get_result();
+
+      if ($result->num_rows === 0) {
+        return "Error: license_id {$this->licenseID} does not exist.";
+      }
+
+      $check->close();
+
+
+      // iinsert na sa vehicles table
+      $stmt = $conn->prepare(
+        "INSERT INTO vehicles
+        (plate_number, mv_file_number, vin, expiry_date, registration_status,
+        brand_name, model_name, model_year, model_color, license_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+      );
+
+      if (!$stmt) {
+        return "Prepare failed: " . $conn->error;
+      }
+
+      $plate = $this->getPlateNumber();
+      $mv = $this->getMVFileNumber();
+      $vin = $this->getVin();
+      $expiryDate = $this->getExpiryDate()->format("Y-m-d");
+      $status = $this->getRegistrationStatus()->value;
+
+      $brand = $this->getBrandName();
+      $model = $this->getModelName();
+      $year = $this->getModelYear();
+      $color = $this->getModelColor();
+      $licenseID = $this->getLicenseID();
+
+      $stmt->bind_param(
+        "sssssssisi",
+        $plate,
+        $mv,
+        $vin,
+        $expiryDate,
+        $status,
+        $brand,
+        $model,
+        $year,
+        $color,
+        $licenseID
+      );
+
+      if (!$stmt->execute()) {
+        return "Insert failed: " . $stmt->error;
+      }
+
+      $stmt->close();
+
+      return true;
     }
 
   }

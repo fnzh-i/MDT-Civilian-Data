@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: Arial, Helvetica, sans-serif;
-      font-size: 20px;
+      font-size: 18px;
     }
     button, input {
       font: inherit;

@@ -49,15 +49,30 @@ class TicketAPI {
         return json_encode(['status' => 'success', 'tickets' => $response]);
     }
 
-    // CREATE TICKET
-    public function createTicket(array $data): string { // array is galing sa $_POST pag nagrequest sa CREATE-TICKET
-        // Violation checker
+    // CREATE TICKET (GINAGAMIT BOTH SA USER AND SA ADMIN)
+    public function createTicket(array $data): string {
+        // DETERMINE IF SA USER (TRAFFIC ENFORCER) OR ADMIN BA YUNG REQUEST
+        $licenseID = null;
+
+        if (isset($data['license_id'])) {
+            $licenseID = (int)$data['license_id']; // USER WORKFLOW
+        }
+        else if (isset($data['license-id'])) {
+            $licenseID = (int)$data['license-id']; // ADMIN (DEVS) WORKFLOW
+        }
+        else {
+            return json_encode(['status' => 'error', 'message' => 'No license_id provided.']);
+        }
+
+
+        // VIOLATION CHECKER
         try {
             $violation = Violation::from($data['violation']);
         } catch (ValueError $e) {
             return json_encode(['status' => 'error', 'message' => 'Invalid violation.']);
         }
 
+        // CREATE THE TicketViolation OBJECT
         $ticket = new TicketViolation(
             $violation,
             new DateTime($data['date-of-incident']),
@@ -65,13 +80,16 @@ class TicketAPI {
             $data['note'] ?? ''
         );
 
-        $result = $ticket->save($this->conn, $data['license_id']);
+        // SAVE
+        $result = $ticket->save($this->conn, $licenseID);
 
         if ($result === true) {
             return json_encode(['status' => 'success', 'message' => 'Ticket created.']);
         }
+
         return json_encode(['status' => 'error', 'message' => $result]);
     }
+
 
     // UPDATE STATUS
     public function updateTicketStatus(int $ticketID, string $status): string {
