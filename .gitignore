@@ -2,3 +2,4 @@ DBConnect.php
 *.log
 *.ini
 .htaccess
+mdt-glogin.js

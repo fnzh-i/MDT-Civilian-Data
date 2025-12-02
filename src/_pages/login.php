@@ -9,18 +9,32 @@ require_once __DIR__ . '/../bootstrap.php';
     <meta charset="UTF-8">
     <title>MDT System - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="/MDT-CIVILIAN-DATA/public/script.js"></script> 
-    <link rel="stylesheet" href="/MDT-CIVILIAN-DATA/public/style.css">
+    <script defer src="../../public/script.js"></script> 
+    <script type="module" src="../../mdt-glogin.js"></script>
+    <link rel="stylesheet" href="../../public/style.css">
 </head>
 <body class="bg-gray-200 h-screen flex flex-col items-center justify-center">
 
 <div class="bg-white p-10 rounded-2xl shadow-2xl w-96">
     <h1 class="text-3xl font-extrabold text-center mb-6">Login</h1>
+
+    <div class="mb-4">
+        <p class="text-gray-600 text-center">Welcome to the MDT System. Please log in to continue.</p>
+    </div>
+
+    <div class="mb-6">
+        <input id="username" type="text" placeholder="Username" class="w-full p-3 mb-4 border rounded-lg">
+        <input id="password" type="password" placeholder="Password" class="w-full p-3 mb-4 border rounded-lg">
+    </div>
+
+    <div class="mb-6">
+        <button onclick="login()" class="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-900 transition font-bold">Login</button>
+        <p id="error" class="text-red-500 text-center mt-3 hidden">Invalid login.</p>
+    </div>
+    <div class="mb-6">
+        <button id="google-login-btn" class="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-900 transition font-bold">Login with Google</button>
+    </div>
     
-    <input id="username" type="text" placeholder="Username" class="w-full p-3 mb-4 border rounded-lg">
-    <input id="password" type="password" placeholder="Password" class="w-full p-3 mb-4 border rounded-lg">
-    <button onclick="login()" class="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-900 transition font-bold">Login</button>
-    <p id="error" class="text-red-500 text-center mt-3 hidden">Invalid login.</p>
 
     <!-- small links -->
     <div class="mt-4 text-center text-sm text-gray-600">

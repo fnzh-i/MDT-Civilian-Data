@@ -43,4 +43,6 @@ Development ongoing — updates posted as time allows.
 - Dec 2, 2025   - Added modal for ticket violation entry.
                 - Updated vehicle page UI colors and input placeholder.<br>
                 - Updated license page UI colors colors for improved contrast.<br>
-                - Redesigned landing, dashboard, and login pages and moved login form.
+                - Redesigned landing, dashboard, and login pages and moved login form.<br>
+                - Updated asset paths and enhance login page UI.<br>
+                - Added Firebase Google Authentication login.
