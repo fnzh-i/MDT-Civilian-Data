@@ -109,24 +109,61 @@
       );
     }
 
-    public static function searchPlateNumber(mysqli $conn, string $plateNumber): string|array {
-      $stmt = $conn->prepare("SELECT * FROM vehicles WHERE plate_number = ?");
-      $stmt->bind_param("s", $plateNumber);
+
+    // I SE-SEARCH PAREHONG PLATE AT MV FILE NUMBER, PARA IISANG FUNCTION CALL NALANG
+    public static function searchVehicle(mysqli $conn, string $query): string|array {
+      $sql = "SELECT 
+        v.*, 
+        l.license_number, l.license_status, l.license_type, 
+        l.issue_date, l.expiry_date AS license_expiry,
+        p.first_name, p.middle_name, p.last_name, p.address
+        FROM vehicles v
+        LEFT JOIN licenses l ON v.license_id = l.license_id
+        LEFT JOIN personal_information p ON l.license_id = p.license_id
+        WHERE v.plate_number = ? OR v.mv_file_number = ?";
+
+      $stmt = $conn->prepare($sql);
+      $stmt->bind_param("ss", $query, $query);
       $stmt->execute();
       $result = $stmt->get_result();
 
       if ($result->num_rows === 0) {
         $stmt->close();
-        return "Error: Vehicle with plate number $plateNumber not found.";
-      } else {
-        $row = $result->fetch_assoc();
-        $stmt->close();
-        return [
-          "vehicle" => self::fromDatabase($row),
-          "vehicle_id" => $row['vehicle_id'] ?? null
-        ];
+        return "Error: Vehicle with Plate or MV File Number '$query' not found.";
       }
+
+      $row = $result->fetch_assoc();
+      $stmt->close();
+
+      // full name formatting
+      $fullName = trim($row["first_name"] ?? '');
+      if (!empty($row["middle_name"])) {
+        $fullName .= ' ' . strtoupper($row["middle_name"][0]) . '.';
+      }
+      $fullName .= ' ' . ($row["last_name"] ?? '');
+      $fullName = trim($fullName);
+
+      return [
+        "vehicle" => self::fromDatabase($row),
+        "vehicle_id" => $row['vehicle_id'] ?? null,
+        "license" => [
+          "license_number" => $row['license_number'],
+          "license_status" => $row['license_status'],
+          "license_type"   => $row['license_type'],
+          "issue_date"     => $row['issue_date'],
+          "expiry_date"    => $row['license_expiry']
+        ],
+        "person" => [
+          "first_name"  => $row['first_name'],
+          "middle_name" => $row['middle_name'],
+          "last_name"   => $row['last_name'],
+          "full_name"   => $fullName,
+          "address"     => $row['address']
+        ]
+      ];
     }
+
+
 
     public static function searchMVfileNumber(mysqli $conn, string $mvFileNumber): string|array {
       $stmt = $conn->prepare("SELECT * FROM vehicles WHERE mv_file_number = ?");

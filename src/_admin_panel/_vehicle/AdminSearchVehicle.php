@@ -11,7 +11,7 @@
   <a href="Admin.php" class="btn">Back</a>
   <br>
   <br>
-  <form action="Controller.php" method="POST" class="forms">
+  <form action="../../_modules/Controller.php" method="POST" class="forms">
     <input type="hidden" name="action" value="SEARCH-PLATE-NUMBER">
 
     <label for="search-plate">Enter Plate Number:</label>

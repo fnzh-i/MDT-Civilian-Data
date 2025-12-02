@@ -85,9 +85,9 @@ function lookupVehicle() {
                     <p><b>Registration Expiry:</b> ${v.regExpiry}</p>
                 </div>
                 <h3 class="text-xl font-bold mt-4">Registered Owner</h3>
-                <p><b>Name:</b> ${v.ownerName}</p>
-                <p><b>License Number:</b> ${v.ownerLicense}</p>
-                <p><b>Address:</b> ${v.ownerAddress}</p>
+                <p><b>Name:</b> ${data.person.full_name}</p>
+                <p><b>License Number:</b> ${data.license.license_number}</p>
+                <p><b>Address:</b> ${data.person.address}</p>
                 <h3 class="text-xl font-bold mt-4">Insurance Information</h3>
                 <p><b>Insurance Company:</b> ${v.insuranceCompany}</p>
                 <p><b>Policy No.:</b> ${v.policyNumber}</p>
@@ -389,8 +389,8 @@ function accept(which) {
     if (which === 'terms') {
         const checked = document.getElementById('acceptTerms').checked;
         if (!checked) return;
-        localStorage.setItem('mdt_accept_terms', 'true');
-        acceptance.terms = true;
+        localStorage.setItem('mdt_accept_terms', 'false');
+        acceptance.terms = false;
         closeModal('termsModal');
     } else if (which === 'privacy') {
         const checked = document.getElementById('acceptPrivacy').checked;
