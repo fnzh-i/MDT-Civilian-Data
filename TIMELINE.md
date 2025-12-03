@@ -40,13 +40,13 @@ Development ongoing — updates posted as time allows.
 - Dec 1, 2025   - Refactored vehicle VIN property and update logout SVG.<br>
                 - Updated license page UI and add violation modal.<br>
                 - Refactored enums to separate files and extend DriversLicense.<br>
-- Dec 2, 2025   - Added modal for ticket violation entry.
+- Dec 2, 2025   - Added modal for ticket violation entry.<br>
                 - Updated vehicle page UI colors and input placeholder.<br>
                 - Updated license page UI colors colors for improved contrast.<br>
                 - Redesigned landing, dashboard, and login pages and moved login form.<br>
                 - Updated asset paths and enhance login page UI.<br>
-                - Added Firebase Google Authentication login.
-- Dec 3, 2025   - Added responsive sidebar navigation and toggle.
+                - Added Firebase Google Authentication login.<br>
+- Dec 3, 2025   - Added responsive sidebar navigation and toggle.<br>
                 - Redesigned navbar and sidebar for dashboard pages.
-- Dec 3, 2025   - Refactored officer/user dashboard and updated UI.
+- Dec 4, 2025   - Refactored officer/user dashboard and updated UI.<br>
                 - Updated index.php and script.js to use SVG icons and dynamic dashboard panels. 
