@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Check Vehicle</title>
+    <title>MDT Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="../../public/script.js"></script> 
     <link rel="stylesheet" href="../../public/style.css">
-
 </head>
 <body class="bg-gray-200">
 
@@ -22,7 +21,7 @@
             <span class="text-white block font-semibold truncate max-w-xs">Tarub Salsalini</span>
         </div>
         <div class="absolute left-1/2 transform -translate-x-1/2">
-            <a href="dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+            <a href="user_dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
                 <span>Mobile Data Terminal</span>
             </a>    
         </div>
@@ -47,25 +46,30 @@
                         <div class="flex items-center gap-3 mt-10">
                             <span><img src="../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
                             <div>
-                                <span class="block font-bold">LTO Officer</span>
+                                <span class="block font-bold">Civilian</span>
                                 <span  class="block font-semibold">Tarub Salsalini</span>
                             </div>
                         </div>
                     </span>
                 </li>
                 <li>
-                    <button onclick="window.location.href='dashboard.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                    <button onclick="window.location.href='user_dashboard.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         Dashboard
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='vehicle.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
-                        Vehicle Lookup
+                    <button onclick="window.location.href='user_license.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        View Full License
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='license.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
-                        License Lookup
+                    <button onclick="window.location.href='user_vehicle.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        View All Vehicles
+                    </button>
+                </li>
+                <li>
+                    <button onclick="window.location.href='user_violations.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        View Violations
                     </button>
                 </li>
                 <li>
@@ -75,27 +79,21 @@
                 </li>
             </ul>
         </div>
-
-    <!-- MAIN CONTENT -->
-    <div class="flex flex-col items-center justify-start h-[calc(100vh-64px)] px-4 w-[calc(100vw-64px)] mt-32 md:mt-0 py-32">
         
-        <h1 class="text-3xl font-extrabold mb-6 text-center text-black">Vehicle Lookup</h1>
 
-        <!-- Input and Search Button -->
-        <div class="flex flex-col sm:flex-row gap-2 justify-center mb-4 w-full max-w-md  mx-auto">
-            <input id="plateInput" type="text" placeholder="Enter Plate Number or MV File No." class="p-3 border rounded-lg w-full sm:w-80">
-            <button onclick="lookupVehicle()" class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition font-bold">
-                Search
-            </button>
-        </div>
+        <!-- MAIN CONTENT -->
+<div class="flex flex-col md:ml-56 w-full px-6 py-10">
 
-        <!-- Error Message -->
-        <p id="error" class="text-red-600 mt-3 text-center hidden mx-auto">
-            Vehicle Information doesn't exist. Please check your input details.
-        </p>
+    <h1 class="text-4xl font-extrabold mb-2 text-gray-800">User Dashboard</h1>
+    <p class="text-lg text-gray-600 mb-8">Overview of your violations</p>
 
-        <!-- Vehicle Info Box -->
-        <div id="infoBox" class="hidden mt-6 max-w-3xl w-full bg-white p-6 rounded-2xl shadow-lg text-gray-800 mx-auto"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- VIOLATIONS PANEL -->
+        <div id="violationBox" class="bg-white rounded-2xl shadow-xl p-6"></div>
+
     </div>
+</div>
+
 </body>
 </html>

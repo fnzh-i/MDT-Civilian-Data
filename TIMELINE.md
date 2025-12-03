@@ -48,3 +48,5 @@ Development ongoing — updates posted as time allows.
                 - Added Firebase Google Authentication login.
 - Dec 3, 2025   - Added responsive sidebar navigation and toggle.
                 - Redesigned navbar and sidebar for dashboard pages.
+- Dec 3, 2025   - Refactored officer/user dashboard and updated UI.
+                - Updated index.php and script.js to use SVG icons and dynamic dashboard panels. 

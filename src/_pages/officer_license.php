@@ -21,7 +21,7 @@
             <span class="text-white block font-semibold truncate max-w-xs">Tarub Salsalini</span>
         </div>
         <div class="absolute left-1/2 transform -translate-x-1/2">
-            <a href="dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+            <a href="officer_dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
                 <span>Mobile Data Terminal</span>
             </a>    
         </div>
@@ -35,6 +35,7 @@
             </a>
         </div>
     </nav>
+
 
     <div class="flex flex-col md:flex-row">
         <!-- sidebar -->
@@ -53,17 +54,17 @@
                     </span>
                 </li>
                 <li>
-                    <button onclick="window.location.href='dashboard.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                    <button onclick="window.location.href='officer_dashboard.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         Dashboard
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='vehicle.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                    <button onclick="window.location.href='officer_vehicle.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         Vehicle Lookup
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='license.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                    <button onclick="window.location.href='officer_license.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         License Lookup
                     </button>
                 </li>

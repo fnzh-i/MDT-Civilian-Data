@@ -21,7 +21,7 @@
             <span class="text-white block font-semibold truncate max-w-xs">Tarub Salsalini</span>
         </div>
         <div class="absolute left-1/2 transform -translate-x-1/2">
-            <a href="dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+            <a href="user_dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
                 <span>Mobile Data Terminal</span>
             </a>    
         </div>
@@ -46,25 +46,30 @@
                         <div class="flex items-center gap-3 mt-10">
                             <span><img src="../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
                             <div>
-                                <span class="block font-bold">LTO Officer</span>
+                                <span class="block font-bold">Civilian</span>
                                 <span  class="block font-semibold">Tarub Salsalini</span>
                             </div>
                         </div>
                     </span>
                 </li>
                 <li>
-                    <button onclick="window.location.href='dashboard.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                    <button onclick="window.location.href='user_dashboard.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         Dashboard
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='vehicle.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
-                        Vehicle Lookup
+                    <button onclick="window.location.href='user_license.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        View Full License
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='license.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
-                        License Lookup
+                    <button onclick="window.location.href='user_vehicle.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        View All Vehicles
+                    </button>
+                </li>
+                <li>
+                    <button onclick="window.location.href='user_violations.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        View Violations
                     </button>
                 </li>
                 <li>
@@ -76,35 +81,25 @@
         </div>
         
 
-        <!-- MAIN CONTENT CENTERED -->
-        <div class="flex flex-col items-center justify-start h-[calc(100vh-64px)] px-4 w-[calc(100vw-64px)] mt-32 md:mt-0 py-32">
-            <!-- Titles -->
-            <h1 class="text-3xl font-extrabold mb-2 text-center text-black">Quick Access</h1>
-            <h2 class="text-xl font-normal mb-10 text-center text-black">
-                Select a search type to retrieve civilian data
-            </h2>
+        <!-- MAIN CONTENT -->
+<div class="flex flex-col md:ml-56 w-full px-6 py-10">
 
-            <!-- Buttons -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 sm:px-6 md:px-10">
-                <!-- VEHICLE BOX -->
-                <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
-                    <img src="../../public/assets/car.png" class="w-24 h-24 mb-6 opacity-80">
-                    <button onclick="window.location.href='vehicle.php'"
-                        class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-red-700 transition">
-                        Check Vehicle
-                    </button>
-                </div>
+    <h1 class="text-4xl font-extrabold mb-2 text-gray-800">User Dashboard</h1>
+    <p class="text-lg text-gray-600 mb-8">Overview of your license, vehicles, and violations</p>
 
-                <!-- LICENSE BOX -->
-                <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
-                    <img src="../../public/assets/id.png" class="w-24 h-24 mb-6 opacity-80">
-                    <button onclick="window.location.href='license.php'"
-                        class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-red-700 transition">
-                        Check License
-                    </button>
-                </div>
-            </div>
-        </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- LICENSE PANEL -->
+        <div id="licenseBox" class="bg-white rounded-2xl shadow-xl p-6"></div>
+
+        <!-- VEHICLES PANEL -->
+        <div id="vehicleBox" class="bg-white rounded-2xl shadow-xl p-6"></div>
+
+        <!-- VIOLATIONS PANEL -->
+        <div id="violationBox" class="bg-white rounded-2xl shadow-xl p-6"></div>
+
     </div>
+</div>
+
 </body>
 </html>
