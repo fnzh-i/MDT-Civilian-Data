@@ -79,6 +79,14 @@
         echo $licenseAPI->createLicense();
         exit();
 
+      case 'UPDATE-LICENSE':
+        header('Content-Type: application/json');
+
+        $licenseAPI = new LicenseAPI($conn);
+        echo $licenseAPI->updateLicense();
+        exit();
+
+
       case 'CREATE-VEHICLE': // PARA SA ADMIN CREATE VEHICLE
         $vehicleAPI = new VehicleAPI($conn);
         echo $vehicleAPI->createVehicle();

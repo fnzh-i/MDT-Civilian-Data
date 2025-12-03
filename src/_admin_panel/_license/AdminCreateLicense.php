@@ -1,5 +1,6 @@
 <?php
   require_once __DIR__ . '/../../bootstrap.php';
+  $licenseNumber = $_GET['license-number'] ?? ''; // PAG UPDATING NA
 ?>
 
 <!DOCTYPE html>
@@ -140,5 +141,71 @@
 
       <input type="submit" value="submit" name="submit" class="btn">
     </form>
+
+    <script>
+      const licenseNumber = "<?php echo $licenseNumber; ?>";
+
+      if (licenseNumber) {
+        fetch("../../_modules/Controller.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: "action=SEARCH-LICENSE-NUMBER&license-number=" + encodeURIComponent(licenseNumber)
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            const lic = data.license;
+
+            // YUNG MGA TEXT INPUTS
+            document.getElementById("license-number").value = lic.licenseNumber;
+            document.getElementById("issue-date").value = lic.issueDate ? new Date(lic.issueDate).toISOString().split("T")[0] : "";
+            document.getElementById("first-name").value = lic.first_name;
+            document.getElementById("middle-name").value = lic.middle_name ?? "";
+            document.getElementById("last-name").value = lic.last_name;
+            document.getElementById("date-of-birth").value = lic.date_of_birth ? new Date(lic.date_of_birth).toISOString().split("T")[0] : "";
+            document.getElementById("address").value = lic.address;
+            document.getElementById("nationality").value = lic.nationality;
+            document.getElementById("Height").value = lic.height;
+            document.getElementById("weight").value = lic.weight;
+            document.getElementById("eye-color").value = lic.eye_color;
+            document.getElementById("blood-type").value = lic.blood_type;
+
+            // LICENSE STATUS
+            const statusRadios = document.getElementsByName("license-status");
+            statusRadios.forEach(radio => { if(radio.value === lic.status) radio.checked = true; });
+
+            // LICENSE TYPE
+            const typeRadios = document.getElementsByName("license-type");
+            typeRadios.forEach(radio => { if(radio.value === lic.type) radio.checked = true; });
+
+            // EXPIRY OPTION
+            const expiryRadios = document.getElementsByName("expiry-option");
+            if (lic.expiryDate && lic.issueDate) {
+              const issue = new Date(lic.issueDate);
+              const expiry = new Date(lic.expiryDate);
+              const diffYears = expiry.getFullYear() - issue.getFullYear();
+              expiryRadios.forEach(radio => { if(radio.value === diffYears.toString()) radio.checked = true; });
+            }
+
+            // DL CODES
+            const dlCodes = lic.dl_codes.split(",").map(code => code.trim()); // TRIM SPACES
+            const dlCheckboxes = document.querySelectorAll('input[name="dl-codes[]"]');
+            dlCheckboxes.forEach(cb => { if(dlCodes.includes(cb.value)) cb.checked = true; });
+
+            // GENDER (SEX)
+            const sexRadios = document.getElementsByName("sex");
+            sexRadios.forEach(radio => { if(radio.value === lic.gender) radio.checked = true; });
+
+            if (licenseNumber) {
+              const form = document.querySelector(".forms");
+              // MAGIGING UPDATE NA SYA
+              form.querySelector('input[name="action"]').value = "UPDATE-LICENSE";
+              form.querySelector('input[type="submit"]').value = "Update";
+            }
+          }
+        });
+      }
+    </script>
+
 </body>
 </html>
