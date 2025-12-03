@@ -49,4 +49,6 @@ Development ongoing — updates posted as time allows.
 - Dec 3, 2025   - Added responsive sidebar navigation and toggle.<br>
                 - Redesigned navbar and sidebar for dashboard pages.
 - Dec 4, 2025   - Refactored officer/user dashboard and updated UI.<br>
-                - Updated index.php and script.js to use SVG icons and dynamic dashboard panels. 
+                - Updated index.php and script.js to use SVG icons and dynamic dashboard panels.<br>
+                - Refactored dashboard panel logic to user_script.js.<br>
+                - Updated the violations table to include row numbers, actions (edit/delete), and a print button for each violation.

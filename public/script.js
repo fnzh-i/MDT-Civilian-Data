@@ -165,11 +165,14 @@ function lookupLicense() {
             <table class="w-full border-collapse">
                 <thead class="bg-gray-200 sticky top-0">
                     <tr>
+                        <th class="border px-3 py-2 text-left">#</th>
                         <th class="border px-3 py-2 text-left">Date</th>
                         <th class="border px-3 py-2 text-left">Offense</th>
                         <th class="border px-3 py-2 text-left">Place</th>
                         <th class="border px-3 py-2 text-left">Notes</th>
                         <th class="border px-3 py-2 text-left">Status</th>
+                        <th class="border px-3 py-2 text-left">Actions</th>
+                        <th class="border px-3 py-2 text-left">Print</th>
                     </tr>
                 </thead>
                 <tbody id="violationTable"></tbody>
@@ -308,14 +311,24 @@ function loadViolations() {
                 status: t.status
             }));
 
-            currentLicense.violations.forEach(v => {
+            currentLicense.violations.forEach((v, idx)=> {
                 table.innerHTML += `
                     <tr>
+                        <td class="border px-3 py-1">${idx + 1}</td>
                         <td class="border px-3 py-1">${v.date}</td>
                         <td class="border px-3 py-1">${v.offense}</td>
                         <td class="border px-3 py-1">${v.location}</td>
                         <td class="border px-3 py-1">${v.note}</td>
                         <td class="border px-3 py-1 font-semibold ${v.status === "Paid" ? "text-green-600" : "text-red-600"}">${v.status}</td>
+                        <td class="border px-3 py-1 text-sm">
+                            <div class="inline-flex gap-2">
+                                <button class="px-2 py-1 text-sm rounded bg-yellow-400 text-white" onclick="openEditViolation(${idx})">Edit</button>
+                                <button class="px-2 py-1 text-sm rounded bg-red-500 text-white" onclick="deleteViolation(${idx})">Delete</button>
+                            </div>
+                        </td>
+                        <td class="border px-3 py-1 text-sm">
+                            <button class="px-2 py-1 rounded bg-blue-600 text-white text-sm" onclick="printViolation(${idx})">Print</button>
+                        </td>
                     </tr>
                 `;
             });
@@ -417,95 +430,4 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         sidebar.classList.toggle("-translate-x-full");
     });
-});
-
-// ================= LOAD LICENSE PANEL =================
-function loadLicenseBox() {
-    const L = sampleDashboardData.user;
-    const box = document.getElementById("licenseBox");
-
-    box.innerHTML = `
-        <div class="flex items-center gap-4 mb-4">
-            <img src="../../public/assets/id.png" class="w-14 h-14 opacity-90">
-            <h2 class="text-2xl font-bold text-gray-800">Driver's License</h2>
-        </div>
-
-        <p><b>Name:</b> ${L.name}</p>
-        <p><b>License #:</b> ${L.licenseNumber}</p>
-        <p><b>Status:</b> ${L.licenseStatus}</p>
-        <p><b>Expiration:</b> ${L.expiry}</p>
-
-        <button onclick="window.location.href='user_license.php'"
-            class="mt-6 w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
-            View Full License Details
-        </button>
-    `;
-}
-
-
-// ================= LOAD VEHICLE PANEL =================
-function loadVehicleBox() {
-    const V = sampleDashboardData.vehicles;
-    const box = document.getElementById("vehicleBox");
-
-    let vehiclesHTML = V.map(v => `
-        <li class="border-b pb-2">
-            <p class="font-bold">${v.name}</p>
-            <p class="text-sm text-gray-600">Plate: ${v.plate}</p>
-        </li>
-    `).join("");
-
-    box.innerHTML = `
-        <div class="flex items-center gap-4 mb-4">
-            <img src="../../public/assets/car.png" class="w-14 h-14 opacity-90">
-            <h2 class="text-2xl font-bold text-gray-800">Registered Vehicles</h2>
-        </div>
-
-        <ul class="space-y-3">
-            ${vehiclesHTML}
-        </ul>
-
-        <button onclick="window.location.href='user_vehicle.php'"
-            class="mt-6 w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
-            View All Vehicles
-        </button>
-    `;
-}
-
-
-// ================= LOAD VIOLATION PANEL =================
-function loadViolationBox() {
-    const V = sampleDashboardData.violations;
-    const box = document.getElementById("violationBox");
-
-    let violationsHTML = V.map(v => `
-        <li class="border-b pb-2">
-            <p class="font-bold text-red-600">${v.offense}</p>
-            <p class="text-sm text-gray-600">Issued: ${v.date} - ₱${v.fine} Fine</p>
-        </li>
-    `).join("");
-
-    box.innerHTML = `
-        <div class="flex items-center gap-4 mb-4">
-            <img src="../../public/assets/ticket.png" class="w-14 h-14 opacity-90">
-            <h2 class="text-2xl font-bold text-gray-800">Ticket Violations</h2>
-        </div>
-
-        <ul class="space-y-3">
-            ${violationsHTML}
-        </ul>
-
-        <button onclick="window.location.href='user_violations.php'"
-            class="mt-6 w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition">
-            View Violations
-        </button>
-    `;
-}
-
-
-// ================= INIT DASHBOARD =================
-document.addEventListener("DOMContentLoaded", () => {
-    loadLicenseBox();
-    loadVehicleBox();
-    loadViolationBox();
 });
