@@ -24,31 +24,62 @@ require_once __DIR__ . '/../bootstrap.php';
         </p>
 
         <!-- Registration Form -->
-        <div class="space-y-4">
+        <div class="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
 
-            <input id="fullname" type="text" placeholder="Full Name" class="w-full p-3 border rounded-lg">
-
-            <input id="license" type="text" placeholder="License Number" class="w-full p-3 border rounded-lg">
-
-            <label class="text-gray-700 text-sm font-semibold">Date of Birth</label>
-            <input id="dob" type="date" class="w-full p-3 border rounded-lg">
-
-            <div class="grid grid-cols-2 gap-4">
+            <!-- PERSONAL INFO -->
+            <div class="space-y-4">
                 <div>
-                    <label class="text-gray-700 text-sm font-semibold">Weight (kg)</label>
-                    <input id="weight" type="number" placeholder="Weight" class="w-full p-3 border rounded-lg">
+                    <label class="text-gray-700 text-sm font-semibold">Full Name</label>
+                    <input id="fullname" type="text" placeholder="Tarub Salsalini" class="w-full p-3 border rounded-lg">
                 </div>
 
                 <div>
-                    <label class="text-gray-700 text-sm font-semibold">Height (cm)</label>
-                    <input id="height" type="number" placeholder="Height" class="w-full p-3 border rounded-lg">
+                    <label class="text-gray-700 text-sm font-semibold">License Number</label>
+                    <input id="license" type="text" placeholder="N69-21-173867" class="w-full p-3 border rounded-lg">
+                </div>
+
+                <div>
+                    <label class="text-gray-700 text-sm font-semibold">Date of Birth</label>
+                    <input id="dob" type="date" class="w-full p-3 border rounded-lg">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-gray-700 text-sm font-semibold">Weight (kg)</label>
+                        <input id="weight" type="number" placeholder="45" class="w-full p-3 border rounded-lg">
+                    </div>
+
+                    <div>
+                        <label class="text-gray-700 text-sm font-semibold">Height (m)</label>
+                        <input id="height" type="number" placeholder="1.70" class="w-full p-3 border rounded-lg">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-gray-700 text-sm font-semibold">Expiration Date</label>
+                    <input id="expdate" type="date" class="w-full p-3 border rounded-lg">
                 </div>
             </div>
 
-            <label class="text-gray-700 text-sm font-semibold">Expiration Date</label>
-            <input id="expdate" type="date" class="w-full p-3 border rounded-lg">
+            <!-- DIVIDER -->
+            <hr class="border-gray-300 my-4">
+
+            <!-- ACCOUNT INFO -->
+            <div class="space-y-4">
+                <div>
+                    <label class="text-gray-700 text-sm font-semibold">Email</label>
+                    <input id="email" type="email" placeholder="example@example.com"
+                        class="w-full p-3 border rounded-lg">
+                </div>
+
+                <div>
+                    <label class="text-gray-700 text-sm font-semibold">Password</label>
+                    <input id="password" type="password" placeholder="********" class="w-full p-3 border rounded-lg">
+                </div>
+            </div>
 
         </div>
+
 
         <div class="mt-6">
             <button onclick="registerUser()"

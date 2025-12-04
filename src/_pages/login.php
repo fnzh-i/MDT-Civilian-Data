@@ -24,12 +24,12 @@ require_once __DIR__ . '/../bootstrap.php';
             <p class="text-gray-600 text-center">Welcome to the MDT System. Please log in to continue.</p>
         </div>
 
-        <div class="mb-6">
+        <div class="mb-4">
             <input id="username" type="text" placeholder="Username" class="w-full p-3 mb-4 border rounded-lg">
             <input id="password" type="password" placeholder="Password" class="w-full p-3 mb-4 border rounded-lg">
         </div>
 
-        <div class="mb-6">
+        <div class="mb-2">
             <button onclick="login()"
                 class="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-900 transition font-bold">Login</button>
             <p id="error" class="text-red-500 text-center mt-3 hidden">Invalid login.</p>
@@ -40,8 +40,10 @@ require_once __DIR__ . '/../bootstrap.php';
                 Google</button>
         </div>
 
+                    <hr class="border-gray-300 my-4">
+
         <!-- Registration Section -->
-        <div class="mt-6 text-center">
+        <div class="mt-2 text-center">
             <p class="text-gray-600 text-sm">Don't have an account?</p>
             <button onclick="window.location.href='registration.php'"
                 class="mt-2 w-full bg-green-600 text-white py-3 rounded-xl hover:bg-green-700 transition font-bold">

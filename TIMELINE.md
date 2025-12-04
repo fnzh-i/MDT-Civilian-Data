@@ -51,4 +51,6 @@ Development ongoing — updates posted as time allows.
 - Dec 4, 2025   - Refactored officer/user dashboard and updated UI.<br>
                 - Updated index.php and script.js to use SVG icons and dynamic dashboard panels.<br>
                 - Refactored dashboard panel logic to user_script.js.<br>
-                - Updated the violations table to include row numbers, actions (edit/delete), and a print button for each violation.
+                - Updated the violations table to include row numbers, actions (edit/delete), and a print button for each violation.<br>
+                - Added user registration function and code cleanup.<br>
+- Dec 5, 2025   - Improved login and registration UI and add registration function.
