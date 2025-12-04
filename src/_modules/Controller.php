@@ -1,83 +1,83 @@
 <?php
-  session_start();
-  require_once __DIR__ . '/../bootstrap.php';
+session_start();
+require_once __DIR__ . '/../bootstrap.php';
 
 
-  if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? null;
+if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+  $action = $_POST['action'] ?? null;
 
-    switch ($action) {
-      case 'USER-LOGIN':
-          $email = $_POST['email'] ?? null;
-          $password = $_POST['password'] ?? null;
-          
+  switch ($action) {
+    case 'USER-LOGIN':
+      $email = $_POST['email'] ?? null;
+      $password = $_POST['password'] ?? null;
 
-          $loginResult = User::searchEmail($conn, $email, $password);
 
-          if ($loginResult === true) {
-              echo "SUCCESS";
-          } else {
-              echo $loginResult; // the error message from User::searchEmail()
-          }
+      $loginResult = User::searchEmail($conn, $email, $password);
+
+      if ($loginResult === true) {
+        echo "SUCCESS";
+      } else {
+        echo $loginResult; // the error message from User::searchEmail()
+      }
       exit;
 
-      case 'SEARCH-PLATE-NUMBER':
-        header('Content-Type: application/json');
+    case 'SEARCH-PLATE-NUMBER':
+      header('Content-Type: application/json');
 
-        $plateNumber = $_POST['plate-number'];
-        $vehicleAPI = new VehicleAPI($conn);
+      $plateNumber = $_POST['plate-number'];
+      $vehicleAPI = new VehicleAPI($conn);
 
-        echo $vehicleAPI->searchPlate($plateNumber);
-        exit();
-        
-        
-      case 'SEARCH-LICENSE-NUMBER':
-        header('Content-Type: application/json');
-
-        $licenseNumber = $_POST['license-number'];
-        $licenseAPI = new LicenseAPI($conn);
-        echo $licenseAPI->searchLicense($licenseNumber);
-        exit();
+      echo $vehicleAPI->searchPlate($plateNumber);
+      exit();
 
 
-      case 'FETCH-TICKETS':
-        header('Content-Type: application/json');
+    case 'SEARCH-LICENSE-NUMBER':
+      header('Content-Type: application/json');
 
-        $licenseID = $_POST['license_id'];
-        $status = $_POST['status'] ?? null;
-
-        $ticketAPI = new TicketAPI($conn);
-        echo $ticketAPI->fetchTickets($licenseID, $status);
-        exit();
+      $licenseNumber = $_POST['license-number'];
+      $licenseAPI = new LicenseAPI($conn);
+      echo $licenseAPI->searchLicense($licenseNumber);
+      exit();
 
 
-      case 'CREATE-TICKET':
-        header('Content-Type: application/json');
+    case 'FETCH-TICKETS':
+      header('Content-Type: application/json');
 
-        $ticketAPI = new TicketAPI($conn);
-        echo $ticketAPI->createTicket($_POST);
-        exit();
+      $licenseID = $_POST['license_id'];
+      $status = $_POST['status'] ?? null;
 
-
-      case 'UPDATE-TICKET-STATUS':
-        header('Content-Type: application/json');
-
-        $ticketAPI = new TicketAPI($conn);
-        echo $ticketAPI->updateTicketStatus($_POST['ticket_id'], $_POST['status']);
-        exit();
+      $ticketAPI = new TicketAPI($conn);
+      echo $ticketAPI->fetchTickets($licenseID, $status);
+      exit();
 
 
-      case 'DELETE-TICKET':
-        header('Content-Type: application/json');
+    case 'CREATE-TICKET':
+      header('Content-Type: application/json');
 
-        $ticketAPI = new TicketAPI($conn);
-        echo $ticketAPI->deleteTicket($_POST['ticket_id']);
-        exit();
+      $ticketAPI = new TicketAPI($conn);
+      echo $ticketAPI->createTicket($_POST);
+      exit();
 
-      case 'CREATE-LICENSE': // para sa Admin Panel: Create a License
-        $licenseAPI = new LicenseAPI($conn);
-        echo $licenseAPI->createLicense();
-        exit();
-      }
+
+    case 'UPDATE-TICKET-STATUS':
+      header('Content-Type: application/json');
+
+      $ticketAPI = new TicketAPI($conn);
+      echo $ticketAPI->updateTicketStatus($_POST['ticket_id'], $_POST['status']);
+      exit();
+
+
+    case 'DELETE-TICKET':
+      header('Content-Type: application/json');
+
+      $ticketAPI = new TicketAPI($conn);
+      echo $ticketAPI->deleteTicket($_POST['ticket_id']);
+      exit();
+
+    case 'CREATE-LICENSE': // para sa Admin Panel: Create a License
+      $licenseAPI = new LicenseAPI($conn);
+      echo $licenseAPI->createLicense();
+      exit();
   }
+}
 ?>

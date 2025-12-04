@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>MDT Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="../../public/script.js"></script> 
+    <script defer src="../../public/script.js"></script>
     <link rel="stylesheet" href="../../public/style.css">
 </head>
+
 <body class="bg-gray-200">
 
     <!-- STICKY NAVBAR -->
@@ -21,15 +23,19 @@
             <span class="text-white block font-semibold truncate max-w-xs">Tarub Salsalini</span>
         </div>
         <div class="absolute left-1/2 transform -translate-x-1/2">
-            <a href="officer_dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+            <a href="officer_dashboard.php"
+                class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
                 <span>Mobile Data Terminal</span>
-            </a>    
+            </a>
         </div>
         <div>
             <!-- Right: Logout -->
-            <a href="../../public/index.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+            <a href="../../public/index.php"
+                class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
                 </svg>
                 <span>Logout</span>
             </a>
@@ -47,37 +53,42 @@
                             <span><img src="../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
                             <div>
                                 <span class="block font-bold">LTO Officer</span>
-                                <span  class="block font-semibold">Tarub Salsalini</span>
+                                <span class="block font-semibold">Tarub Salsalini</span>
                             </div>
                         </div>
                     </span>
                 </li>
                 <li>
-                    <button onclick="window.location.href='officer_dashboard.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                    <button onclick="window.location.href='officer_dashboard.php'"
+                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         Dashboard
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='officer_vehicle.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                    <button onclick="window.location.href='officer_vehicle.php'"
+                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         Vehicle Lookup
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='officer_license.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                    <button onclick="window.location.href='officer_license.php'"
+                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         License Lookup
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='officer_settings.php'" class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                    <button onclick="window.location.href='officer_settings.php'"
+                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         Settings
                     </button>
                 </li>
             </ul>
         </div>
-        
+
 
         <!-- MAIN CONTENT CENTERED -->
-        <div class="flex flex-col items-center justify-start h-[calc(100vh-64px)] px-4 w-[calc(101vw-64px)] mt-32 md:mt-0 py-32">
+        <div
+            class="flex flex-col items-center justify-start h-[calc(100vh-64px)] px-4 w-[calc(101vw-64px)] mt-32 md:mt-0 py-32">
             <!-- Titles -->
             <h1 class="text-4xl font-extrabold mb-2 text-gray-800">Officer Dashboard</h1>
             <p class="text-lg text-gray-600 mb-8">Select a search type to retrieve civilian data</p>
@@ -105,4 +116,5 @@
         </div>
     </div>
 </body>
+
 </html>

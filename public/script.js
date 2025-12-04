@@ -44,6 +44,23 @@ function login() {
 
 }
 
+function registerUser() {
+    const fullname = document.getElementById("fullname").value;
+    const license = document.getElementById("license").value;
+    const dob = document.getElementById("dob").value;
+    const weight = document.getElementById("weight").value;
+    const height = document.getElementById("height").value;
+    const expdate = document.getElementById("expdate").value;
+
+    if (!fullname || !license || !dob || !weight || !height || !expdate) {
+        document.getElementById("registerError").classList.remove("hidden");
+        return;
+    }
+
+    // TODO: AJAX/Fetch call to backend to save registration
+    alert("Registration submitted!");
+}
+
 // ================= VEHICLE LOOKUP =================
 function lookupVehicle() {
     const box = document.getElementById("infoBox");
