@@ -8,11 +8,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Search License Results</title>
+  <title>ADMIN LICENSE RESULT</title>
   <style>
     body {
       font-family: Arial, Helvetica, sans-serif;
-      font-size: 20px;
+      font-size: 18px;
     }
     button, input {
       font: inherit;
@@ -20,7 +20,7 @@
   </style>
 </head>
 <body>
-  <h2>SEARCH LICENSE RESULT</h2> <br>
+  <h2>ADMIN SEARCH LICENSE RESULT</h2> <br>
   <div id="result"></div>
 
   <script>
@@ -61,10 +61,31 @@
 
         <br>
         <a href="AdminCreateLicense.php?license-number=${lic.licenseNumber}">UPDATE</a>
-        <a href="">DELETE</a> <br> <br>
+        <button id="deleteBtn">DELETE</button>
       `;
 
       document.getElementById("result").innerHTML = table;
+
+
+      document.getElementById("deleteBtn").addEventListener("click", () => {
+        if (!confirm("Are you sure you want to delete this license?")) return;
+
+        fetch("../../_modules/Controller.php", {
+          method: "POST",
+          headers: {"Content-Type": "application/x-www-form-urlencoded"},
+          body: "action=DELETE-LICENSE&license-number=" + encodeURIComponent(lic.licenseNumber)
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "success") {
+            alert(data.message);
+            window.location.href = "AdminSearchLicense.php"; // BACK TO SEARCH LICENSE PAGE
+          } else {
+            alert("Error: " + data.message);
+          }
+        })
+        .catch(err => alert("Fetch error: " + err));
+      });
     });
   </script>
 </body>

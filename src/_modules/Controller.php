@@ -74,22 +74,45 @@
         echo $ticketAPI->deleteTicket($_POST['ticket_id']);
         exit();
 
-      case 'CREATE-LICENSE': // para sa Admin Panel: Create a License
+      case 'CREATE-LICENSE': // PARA SA ADMIN CREATE LICENSE
         $licenseAPI = new LicenseAPI($conn);
         echo $licenseAPI->createLicense();
         exit();
 
-      case 'UPDATE-LICENSE':
+      case 'UPDATE-LICENSE': // PARA SA ADMIN CREATE LICENSE
         header('Content-Type: application/json');
 
         $licenseAPI = new LicenseAPI($conn);
         echo $licenseAPI->updateLicense();
         exit();
 
+        
+      case 'DELETE-LICENSE': // PARA SA ADMIN DELETE LICENSE
+        header('Content-Type: application/json');
+
+        $licenseAPI = new LicenseAPI($conn);
+        echo $licenseAPI->deleteLicense();
+        exit();
+
 
       case 'CREATE-VEHICLE': // PARA SA ADMIN CREATE VEHICLE
         $vehicleAPI = new VehicleAPI($conn);
         echo $vehicleAPI->createVehicle();
+        exit();
+
+
+      case 'UPDATE-VEHICLE': // PARA SA ADMIN UPDATE VEHICLE
+        header('Content-Type: application/json');
+
+        $vehicleAPI = new VehicleAPI($conn);
+        echo $vehicleAPI->updateVehicle();
+        exit();
+
+      case 'DELETE-VEHICLE': // PARA SA ADMIN DELETE VEHICLE
+        header('Content-Type: application/json');
+
+        $vehicleAPI = new VehicleAPI($conn);
+        echo $vehicleAPI->deleteVehicle();
         exit();
 
 

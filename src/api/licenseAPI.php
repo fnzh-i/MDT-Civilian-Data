@@ -210,5 +210,34 @@ class LicenseAPI{
         return $result;
     }
 
+    // PARA SA ADMIN DELETE LICENSE
+    public function deleteLicense(): string {
+        if (empty($_POST['license-number'])) {
+            return json_encode([
+                "status" => "error",
+                "message" => "License number not provided."
+            ]);
+        }
+
+        $licenseNumber = $_POST['license-number'];
+
+        // YUNG STATIC FUNCTION SA DRIVERSLICENSE CLASS
+        $result = DriversLicense::delete($this->conn, $licenseNumber);
+
+        // YUNG RESPONSE
+        if ($result === true) {
+            return json_encode([
+                "status" => "success",
+                "message" => "License deleted successfully."
+            ]);
+        } else {
+            return json_encode([
+                "status" => "error",
+                "message" => $result
+            ]);
+        }
+    }
+
+
 
 }

@@ -243,5 +243,114 @@
       return true;
     }
 
+    // PARA SA ADMIN UPDATE VEHICLE
+    public function update(mysqli $conn): string|bool {
+      $plateNumber = $this->getPlateNumber();
+
+      // GET VEHICLE ID
+      $stmtId = $conn->prepare("SELECT vehicle_id FROM vehicles WHERE plate_number = ?");
+      if (!$stmtId) {
+        return "Prepare failed: " . $conn->error;
+      } 
+
+      $stmtId->bind_param("s", $plateNumber);
+      $stmtId->execute();
+      $stmtId->bind_result($vehicle_id);
+
+      if (!$stmtId->fetch()) {
+        $stmtId->close();
+        return "Vehicle not found.";
+      }
+
+      $stmtId->close();
+
+      // UPDATE VEHICLES TABLE
+      $stmt = $conn->prepare(
+        "UPDATE vehicles SET 
+          license_id = ?, 
+          mv_file_number = ?, 
+          vin = ?, 
+          registration_status = ?, 
+          brand_name = ?, 
+          model_name = ?, 
+          model_year = ?, 
+          model_color = ?, 
+          expiry_date = ?
+        WHERE vehicle_id = ?"
+      );
+
+      if (!$stmt) {
+        return "Prepare failed: " . $conn->error;
+      }
+
+      $licenseId = $this->getLicenseID();
+      $mvFile = $this->getMVFileNumber() ?? ''; // DATING NULL LOL
+      $vin = $this->getVin();
+      $status = $this->getRegistrationStatus()->value;
+      $brand = $this->getBrandName();
+      $model = $this->getModelName();
+      $year = $this->getModelYear();
+      $color = $this->getModelColor();
+      $expiryDate = $this->getExpiryDate()->format('Y-m-d');
+
+      $stmt->bind_param(
+        "isssssissi",
+        $licenseId,
+        $mvFile,
+        $vin,
+        $status,
+        $brand,
+        $model,
+        $year,
+        $color,
+        $expiryDate,
+        $vehicle_id
+      );
+
+      if (!$stmt->execute()) {
+        return "Error updating vehicle: " . $stmt->error;
+      }
+
+      $stmt->close();
+      return true;
+    }
+
+    // PARA SA ADMIN DELETE VEHICLE
+    public static function delete(mysqli $conn, string $plateNumber): string|bool {
+      // GET VEHICLE ID
+      $stmtId = $conn->prepare("SELECT vehicle_id FROM vehicles WHERE plate_number = ?");
+      if (!$stmtId) {
+        return "Prepare failed (fetch vehicle_id): " . $conn->error;
+      }
+
+      $stmtId->bind_param("s", $plateNumber);
+      $stmtId->execute();
+      $stmtId->bind_result($vehicle_id);
+
+      if (!$stmtId->fetch()) {
+        $stmtId->close();
+        return "Vehicle not found.";
+      }
+
+      $stmtId->close();
+
+      // DELETE SA vehicles TABLE
+      $stmt = $conn->prepare("DELETE FROM vehicles WHERE vehicle_id = ?");
+      if (!$stmt) {
+        return "Prepare failed (delete vehicle): " . $conn->error;
+      }
+
+      $stmt->bind_param("i", $vehicle_id);
+
+      if (!$stmt->execute()) {
+        return "Error deleting vehicle: " . $stmt->error;
+      }
+
+      $stmt->close();
+      return true;
+    }
+
+
+
   }
 ?>

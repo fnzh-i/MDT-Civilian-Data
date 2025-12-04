@@ -436,5 +436,58 @@
       return true;
     }
 
+
+    // STATIC YUNG DELETE FUNCTION PARA DI NA GUMAWA NG DRIVERSLICENSE OBJECT
+    public static function delete(mysqli $conn, string $licenseNumber): string|bool {
+      // GET LICENSE ID
+      $stmtId = $conn->prepare("SELECT license_id FROM licenses WHERE license_number = ?");
+      if (!$stmtId) {
+        return "Prepare failed: " . $conn->error;
+      } 
+
+      $stmtId->bind_param("s", $licenseNumber);
+      $stmtId->execute();
+      $stmtId->bind_result($license_id);
+
+      if (!$stmtId->fetch()) {
+        $stmtId->close();
+        return "License not found.";
+      }
+
+      $stmtId->close();
+
+      // DELETE FROM personal_information FIRST
+      $stmt1 = $conn->prepare("DELETE FROM personal_information WHERE license_id = ?");
+      if (!$stmt1) {
+        return "Prepare failed: " . $conn->error;
+      } 
+
+      $stmt1->bind_param("i", $license_id);
+
+      if (!$stmt1->execute()) {
+        return "Error deleting personal information: " . $stmt1->error;
+      }
+      
+      $stmt1->close();
+
+      // DELETE FROM licenses TABLE
+      $stmt2 = $conn->prepare("DELETE FROM licenses WHERE license_id = ?");
+      if (!$stmt2) {
+        return "Prepare failed (delete license): " . $conn->error;
+      }
+
+      $stmt2->bind_param("i", $license_id);
+
+      if (!$stmt2->execute()) {
+        return "Error deleting license: " . $stmt2->error;
+      }
+
+      $stmt2->close();
+
+      return true;
+    }
+
+
+
   }
 ?>
