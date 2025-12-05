@@ -53,4 +53,5 @@ Development ongoing — updates posted as time allows.
                 - Refactored dashboard panel logic to user_script.js.<br>
                 - Updated the violations table to include row numbers, actions (edit/delete), and a print button for each violation.<br>
                 - Added user registration function and code cleanup.<br>
-- Dec 5, 2025   - Improved login and registration UI and add registration function.
+- Dec 5, 2025   - Improved login and registration UI and add registration function.<br>
+                - Refactored and add methods to DriversLicense, TicketViolation, Vehicle.

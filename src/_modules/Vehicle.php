@@ -1,6 +1,50 @@
 <?php
   require_once __DIR__ . '/../bootstrap.php';
 
+  class Vehicle
+{
+  private string $plateNumber;
+  private ?string $mvFileNumber;
+  private string $vin;
+  private DateTime $issueDate;
+  private DateTime $expiryDate;
+  private RegistrationStatus $registrationStatus;
+
+  private string $brandName;
+  private string $modelName;
+  private int $modelYear;
+  private string $modelColor;
+  private int $licenseID;
+
+  public function __construct(
+    string $plateNumber,
+    ?string $mvFileNumber,
+    string $vin,
+    DateTime $issueDate,
+    RegistrationStatus $registrationStatus,
+
+    string $brandName,
+    string $modelName,
+    int $modelYear,
+    string $modelColor,
+    int $licenseID
+  ) {
+    $this->plateNumber = $plateNumber;
+    $this->mvFileNumber = $mvFileNumber;
+    $this->vin = $vin;
+    $this->issueDate = $issueDate;
+    $this->registrationStatus = $registrationStatus;
+
+    $this->expiryDate = clone $this->issueDate;
+    $this->expiryDate->add(new DateInterval("P1Y"));
+
+    $this->brandName = $brandName;
+    $this->modelName = $modelName;
+    $this->modelYear = $modelYear;
+    $this->modelColor = $modelColor;
+    $this->licenseID = $licenseID;
+  }
+
   public function getPlateNumber(): string
   {
     return $this->plateNumber;
@@ -321,10 +365,5 @@
       $stmt->close();
       return true;
     }
-
-
-
   }
-
-}
 ?>

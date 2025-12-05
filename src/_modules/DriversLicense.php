@@ -179,28 +179,29 @@ class DriversLicense
     return $this->bloodType;
   }
 
-    public function save(mysqli $conn): string | bool {
-      // CHECK MUNA IF EXISTING NA YUNG LICENSE-NUMBER SA DB TO AVOID DUPLICATION
-      $licenseNumber = $this->getLicenseNumber();
+  public function save(mysqli $conn): string|bool
+  {
+    // CHECK MUNA IF EXISTING NA YUNG LICENSE-NUMBER SA DB TO AVOID DUPLICATION
+    $licenseNumber = $this->getLicenseNumber();
 
-      $check = $conn->prepare("SELECT 1 FROM licenses WHERE license_number = ?");
-      if (!$check) {
-        return "Check prepare failed: " . $conn->error;
-      }
+    $check = $conn->prepare("SELECT 1 FROM licenses WHERE license_number = ?");
+    if (!$check) {
+      return "Check prepare failed: " . $conn->error;
+    }
 
-      $check->bind_param("s", $licenseNumber);
-      $check->execute();
-      $check->store_result();
+    $check->bind_param("s", $licenseNumber);
+    $check->execute();
+    $check->store_result();
 
-      if ($check->num_rows > 0) {
-        return "License number already exists.";
-      }
+    if ($check->num_rows > 0) {
+      return "License number already exists.";
+    }
 
-      $check->close();
+    $check->close();
 
-      // insert sa licenses table muna
-      $stmt1 = $conn->prepare(
-        "INSERT INTO licenses
+    // insert sa licenses table muna
+    $stmt1 = $conn->prepare(
+      "INSERT INTO licenses
         (license_number, license_status, license_type, issue_date, expiry_date, dl_codes)
         VALUES (?, ?, ?, ?, ?, ?)"
     );
@@ -356,65 +357,70 @@ class DriversLicense
     $row = $result->fetch_assoc(); // kunin lahat ng rows ng "joined" table
     $checkStmt->close();
 
-      return [
-        "license"    => $license,
-        "license_id" => $row['license_id']
-      ];
-    }
+    $license = self::fromDatabase($row);
 
-    // PARA SA ADMIN UPDATE LICENSE
-    public function update(mysqli $conn): string | bool {
-      $licenseNumber = $this->getLicenseNumber();
+    return [
+      "license" => $license,
+      "license_id" => $row['license_id']
+    ];
+  }
 
-      // GET LICENSE ID
-      $stmtId = $conn->prepare("SELECT license_id FROM licenses WHERE license_number = ?");
-      if (!$stmtId) return "Prepare failed (fetch license_id): " . $conn->error;
+  // PARA SA ADMIN UPDATE LICENSE
+  public function update(mysqli $conn): string|bool
+  {
+    $licenseNumber = $this->getLicenseNumber();
 
-      $stmtId->bind_param("s", $licenseNumber);
-      $stmtId->execute();
-      $stmtId->bind_result($license_id);
-      if (!$stmtId->fetch()) {
-        $stmtId->close();
-        return "License not found.";
-      }
+    // GET LICENSE ID
+    $stmtId = $conn->prepare("SELECT license_id FROM licenses WHERE license_number = ?");
+    if (!$stmtId)
+      return "Prepare failed (fetch license_id): " . $conn->error;
+
+    $stmtId->bind_param("s", $licenseNumber);
+    $stmtId->execute();
+    $stmtId->bind_result($license_id);
+    if (!$stmtId->fetch()) {
       $stmtId->close();
+      return "License not found.";
+    }
+    $stmtId->close();
 
-      // UPDATE LICENSES TABLE
-      $stmt1 = $conn->prepare(
-        "UPDATE licenses SET 
+    // UPDATE LICENSES TABLE
+    $stmt1 = $conn->prepare(
+      "UPDATE licenses SET 
           license_status = ?, 
           license_type = ?, 
           issue_date = ?, 
           expiry_date = ?, 
           dl_codes = ?
         WHERE license_id = ?"
-      );
-      if (!$stmt1) return "Prepare failed (update licenses): " . $conn->error;
+    );
+    if (!$stmt1)
+      return "Prepare failed (update licenses): " . $conn->error;
 
-      $licenseStatus = $this->licenseStatus->value;
-      $licenseType   = $this->licenseType->value;
-      $issueDate     = $this->issueDate->format('Y-m-d');
-      $expiryDate    = $this->expiryDate->format('Y-m-d');
-      $dlCodes       = $this->getDLCodesToString();
+    $licenseStatus = $this->licenseStatus->value;
+    $licenseType = $this->licenseType->value;
+    $issueDate = $this->issueDate->format('Y-m-d');
+    $expiryDate = $this->expiryDate->format('Y-m-d');
+    $dlCodes = $this->getDLCodesToString();
 
-      $stmt1->bind_param(
-        "sssssi",
-        $licenseStatus,
-        $licenseType,
-        $issueDate,
-        $expiryDate,
-        $dlCodes,
-        $license_id
-      );
+    $stmt1->bind_param(
+      "sssssi",
+      $licenseStatus,
+      $licenseType,
+      $issueDate,
+      $expiryDate,
+      $dlCodes,
+      $license_id
+    );
 
-      if (!$stmt1->execute()) {
-        return "Error updating license: " . $stmt1->error;
-      }
-      $stmt1->close();
+    if (!$stmt1->execute()) {
+      return "Error updating license: " . $stmt1->error;
+    }
+    $stmt1->close();
 
-      // UPDATE PERSONAL INFORMATION TABLE
-      $stmt2 = $conn->prepare(
-        "UPDATE personal_information SET 
+    // UPDATE PERSONAL INFORMATION TABLE
+    $stmt2 = $conn->prepare(
+      "UPDATE personal_information SET 
           first_name = ?, 
           middle_name = ?, 
           last_name = ?, 
@@ -427,91 +433,89 @@ class DriversLicense
           eye_color = ?, 
           blood_type = ?
         WHERE license_id = ?"
-      );
-      if (!$stmt2) return "Prepare failed (update personal_information): " . $conn->error;
+    );
+    if (!$stmt2)
+      return "Prepare failed (update personal_information): " . $conn->error;
 
-      $middleName = $this->middleName ?? null;
-      $bloodType = $this->bloodType ?? null;
-      $dob = $this->dateOfBirth->format('Y-m-d');
-      $gender = $this->gender->value;
+    $middleName = $this->middleName ?? null;
+    $bloodType = $this->bloodType ?? null;
+    $dob = $this->dateOfBirth->format('Y-m-d');
+    $gender = $this->gender->value;
 
-      $stmt2->bind_param(
-        "sssssssssssi",
-        $this->firstName,
-        $middleName,
-        $this->lastName,
-        $dob,
-        $gender,
-        $this->address,
-        $this->nationality,
-        $this->height,
-        $this->weight,
-        $this->eyeColor,
-        $bloodType,
-        $license_id
-      );
-      
-      if (!$stmt2->execute()) {
-        return "Error updating personal information: " . $stmt2->error;
-      }
-      $stmt2->close();
+    $stmt2->bind_param(
+      "sssssssssssi",
+      $this->firstName,
+      $middleName,
+      $this->lastName,
+      $dob,
+      $gender,
+      $this->address,
+      $this->nationality,
+      $this->height,
+      $this->weight,
+      $this->eyeColor,
+      $bloodType,
+      $license_id
+    );
 
-      return true;
+    if (!$stmt2->execute()) {
+      return "Error updating personal information: " . $stmt2->error;
+    }
+    $stmt2->close();
+
+    return true;
+  }
+
+
+  // STATIC YUNG DELETE FUNCTION PARA DI NA GUMAWA NG DRIVERSLICENSE OBJECT
+  public static function delete(mysqli $conn, string $licenseNumber): string|bool
+  {
+    // GET LICENSE ID
+    $stmtId = $conn->prepare("SELECT license_id FROM licenses WHERE license_number = ?");
+    if (!$stmtId) {
+      return "Prepare failed: " . $conn->error;
     }
 
+    $stmtId->bind_param("s", $licenseNumber);
+    $stmtId->execute();
+    $stmtId->bind_result($license_id);
 
-    // STATIC YUNG DELETE FUNCTION PARA DI NA GUMAWA NG DRIVERSLICENSE OBJECT
-    public static function delete(mysqli $conn, string $licenseNumber): string|bool {
-      // GET LICENSE ID
-      $stmtId = $conn->prepare("SELECT license_id FROM licenses WHERE license_number = ?");
-      if (!$stmtId) {
-        return "Prepare failed: " . $conn->error;
-      } 
-
-      $stmtId->bind_param("s", $licenseNumber);
-      $stmtId->execute();
-      $stmtId->bind_result($license_id);
-
-      if (!$stmtId->fetch()) {
-        $stmtId->close();
-        return "License not found.";
-      }
-
+    if (!$stmtId->fetch()) {
       $stmtId->close();
-
-      // DELETE FROM personal_information FIRST
-      $stmt1 = $conn->prepare("DELETE FROM personal_information WHERE license_id = ?");
-      if (!$stmt1) {
-        return "Prepare failed: " . $conn->error;
-      } 
-
-      $stmt1->bind_param("i", $license_id);
-
-      if (!$stmt1->execute()) {
-        return "Error deleting personal information: " . $stmt1->error;
-      }
-      
-      $stmt1->close();
-
-      // DELETE FROM licenses TABLE
-      $stmt2 = $conn->prepare("DELETE FROM licenses WHERE license_id = ?");
-      if (!$stmt2) {
-        return "Prepare failed (delete license): " . $conn->error;
-      }
-
-      $stmt2->bind_param("i", $license_id);
-
-      if (!$stmt2->execute()) {
-        return "Error deleting license: " . $stmt2->error;
-      }
-
-      $stmt2->close();
-
-      return true;
+      return "License not found.";
     }
 
+    $stmtId->close();
 
+    // DELETE FROM personal_information FIRST
+    $stmt1 = $conn->prepare("DELETE FROM personal_information WHERE license_id = ?");
+    if (!$stmt1) {
+      return "Prepare failed: " . $conn->error;
+    }
 
+    $stmt1->bind_param("i", $license_id);
+
+    if (!$stmt1->execute()) {
+      return "Error deleting personal information: " . $stmt1->error;
+    }
+
+    $stmt1->close();
+
+    // DELETE FROM licenses TABLE
+    $stmt2 = $conn->prepare("DELETE FROM licenses WHERE license_id = ?");
+    if (!$stmt2) {
+      return "Prepare failed (delete license): " . $conn->error;
+    }
+
+    $stmt2->bind_param("i", $license_id);
+
+    if (!$stmt2->execute()) {
+      return "Error deleting license: " . $stmt2->error;
+    }
+
+    $stmt2->close();
+
+    return true;
   }
 }
 ?>
