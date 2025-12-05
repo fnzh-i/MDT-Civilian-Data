@@ -28,7 +28,7 @@ function login() {
     .then(response => {
         console.log("Response from PHP:", response);
         if (response.trim() === "SUCCESS") {
-            window.location.href = "../_pages/dashboard.php";
+            window.location.href = "../_pages/officer_dashboard.php";
             console.log("Login successful");
         } else {
             const errorElement = document.getElementById("error");
@@ -42,6 +42,23 @@ function login() {
         alert("Error connecting to server.");
     });
 
+}
+
+function registerUser() {
+    const fullname = document.getElementById("fullname").value;
+    const license = document.getElementById("license").value;
+    const dob = document.getElementById("dob").value;
+    const weight = document.getElementById("weight").value;
+    const height = document.getElementById("height").value;
+    const expdate = document.getElementById("expdate").value;
+
+    if (!fullname || !license || !dob || !weight || !height || !expdate) {
+        document.getElementById("registerError").classList.remove("hidden");
+        return;
+    }
+
+    // TODO: AJAX/Fetch call to backend to save registration
+    alert("Registration submitted!");
 }
 
 // ================= VEHICLE LOOKUP =================
@@ -165,11 +182,14 @@ function lookupLicense() {
             <table class="w-full border-collapse">
                 <thead class="bg-gray-200 sticky top-0">
                     <tr>
+                        <th class="border px-3 py-2 text-left">#</th>
                         <th class="border px-3 py-2 text-left">Date</th>
                         <th class="border px-3 py-2 text-left">Offense</th>
                         <th class="border px-3 py-2 text-left">Place</th>
                         <th class="border px-3 py-2 text-left">Notes</th>
                         <th class="border px-3 py-2 text-left">Status</th>
+                        <th class="border px-3 py-2 text-left">Actions</th>
+                        <th class="border px-3 py-2 text-left">Print</th>
                     </tr>
                 </thead>
                 <tbody id="violationTable"></tbody>
@@ -308,14 +328,24 @@ function loadViolations() {
                 status: t.status
             }));
 
-            currentLicense.violations.forEach(v => {
+            currentLicense.violations.forEach((v, idx)=> {
                 table.innerHTML += `
                     <tr>
+                        <td class="border px-3 py-1">${idx + 1}</td>
                         <td class="border px-3 py-1">${v.date}</td>
                         <td class="border px-3 py-1">${v.offense}</td>
                         <td class="border px-3 py-1">${v.location}</td>
                         <td class="border px-3 py-1">${v.note}</td>
                         <td class="border px-3 py-1 font-semibold ${v.status === "Paid" ? "text-green-600" : "text-red-600"}">${v.status}</td>
+                        <td class="border px-3 py-1 text-sm">
+                            <div class="inline-flex gap-2">
+                                <button class="px-2 py-1 text-sm rounded bg-yellow-400 text-white" onclick="openEditViolation(${idx})">Edit</button>
+                                <button class="px-2 py-1 text-sm rounded bg-red-500 text-white" onclick="deleteViolation(${idx})">Delete</button>
+                            </div>
+                        </td>
+                        <td class="border px-3 py-1 text-sm">
+                            <button class="px-2 py-1 rounded bg-blue-600 text-white text-sm" onclick="printViolation(${idx})">Print</button>
+                        </td>
                     </tr>
                 `;
             });
@@ -407,3 +437,14 @@ function updateLoginButton() {
     if (!loginBtn) return;
     loginBtn.disabled = !(acceptance.terms && acceptance.privacy);
 }
+
+// ================= TOGGLE =================
+document.addEventListener("DOMContentLoaded", () => {
+    const sidebar = document.getElementById("sidebar");
+    const toggleBtn = document.getElementById("sidebarToggle");
+
+    toggleBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        sidebar.classList.toggle("-translate-x-full");
+    });
+});
