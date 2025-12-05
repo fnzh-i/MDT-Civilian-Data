@@ -55,4 +55,5 @@ Development ongoing — updates posted as time allows.
                 - Added user registration function and code cleanup.<br>
 - Dec 5, 2025   - Improved login and registration UI and add registration function.<br>
                 - Refactored and add methods to DriversLicense, TicketViolation, Vehicle.<br>
-                - Removed unused API case handlers from Controller.php.
+                - Removed unused API case handlers from Controller.php.<br>
+- Dec 6, 2025   - Redesigned admin panel and license form and add JS for auto-fill.

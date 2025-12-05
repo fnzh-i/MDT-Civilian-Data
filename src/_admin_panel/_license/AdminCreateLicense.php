@@ -1,211 +1,214 @@
 <?php
-  require_once __DIR__ . '/../../bootstrap.php';
-  $licenseNumber = $_GET['license-number'] ?? ''; // PAG UPDATING NA
+require_once __DIR__ . '/../../bootstrap.php';
+$licenseNumber = $_GET['license-number'] ?? '';
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADMIN CREATE LICENSE</title>
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 18px;
-    }
-    button, input {
-      font: inherit;
-    }
-  </style>
+  <title>MDT Admin Create License</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="../../../public/admin_script.js"></script>
+  <link rel="stylesheet" href="../../../public/style.css">
 </head>
-<body>
-    <strong>ADMIN CREATE LICENSE</strong>
-    <br>
-    <br>
 
-    <form action="../../_modules/Controller.php" method="POST" class="forms">
-      <input type="hidden" name="action" value="CREATE-LICENSE">
+<body class="bg-gray-200">
 
-      <label for="license-number">License Number:</label>
-      <input type="text" id="license-number" name="license-number">
-      <br> <br>
+  <!-- STICKY NAVBAR -->
+  <nav class="bg-blue-600 shadow-lg px-6 py-3 relative flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <!-- burgir toggle -->
+      <button id="sidebarToggle" class="flex flex-col justify-center space-y-1">
+        <span class="block w-6 h-0.5 bg-white"></span>
+        <span class="block w-6 h-0.5 bg-white"></span>
+        <span class="block w-6 h-0.5 bg-white"></span>
+      </button>
+      <span class="text-white block font-semibold truncate max-w-xs">Administrator</span>
+    </div>
+    <div class="absolute left-1/2 transform -translate-x-1/2">
+      <a href="admin_dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+        <span>MDT Admin Panel (Create License)</span>
+      </a>
+    </div>
+    <div>
+      <!-- Right: Logout -->
+      <a href="../../../public/index.php"
+        class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+        </svg>
+        <span>Logout</span>
+      </a>
+    </div>
+  </nav>
+  <div class="flex flex-col md:flex-row">
+    <!-- sidebar -->
+    <div id="sidebar" class="bg-white w-56 h-screen shadow-2xl p-6 hidden md:block fixed top-0 left-0">
+      <ul class="space-y-4">
 
-      License Status:
-      <input type="radio" id="registered" name="license-status" value="REGISTERED">
-      <label for="registered">REGISTERED</label>
+        <li>
+          <span class="items-start w-full text-left text-gray-700 hover:text-blue-600 font-bold">
+            <div class="flex items-center gap-3 mt-10">
+              <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
+              <div>
+                <span class="block font-bold">Administrator</span>
+                <span class="block font-semibold">MDT System</span>
+              </div>
+            </div>
+          </span>
+        </li>
 
-      <input type="radio" id="unregistered" name="license-status" value="UNREGISTERED">
-      <label for="unregistered">UNREGISTERED</label>
+        <li>
+          <button onclick="window.location.href='../admin_dashboard.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Dashboard
+          </button>
+        </li>
 
-      <input type="radio" id="expired" name="license-status" value="EXPIRED">
-      <label for="expired">EXPIRED</label>
+        <li>
+          <button onclick="window.location.href='adminCreateLicense.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Create License
+          </button>
+        </li>
 
-      <input type="radio" id="revoked" name="license-status" value="REVOKED">
-      <label for="expired">REVOKED</label>
-      <br> <br>
+        <li>
+          <button onclick="window.location.href='adminSearchLicense.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Edit License
+          </button>
+        </li>
 
-      License Type:
-      <input type="radio" id="pro" name="license-type" value="PROFESSIONAL">
-      <label for="pro">PROFESSIONAL</label>
+        <li>
+          <button onclick="window.location.href='admin_settings.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Settings
+          </button>
+        </li>
 
-      <input type="radio" id="nonpro" name="license-type" value="NON-PROFESSIONAL">
-      <label for="nonpro">NON-PROFESSIONAL</label>
+      </ul>
+    </div>
+  </div>
 
-      <input type="radio" id="student" name="license-type" value="STUDENT PERMIT">
-      <label for="student">STUDENT PERMIT</label>
-      <br> <br>
+  <!-- MAIN CONTENT -->
+  <div
+    class="flex flex-col items-center justify-start h-[calc(100vh-64px)] px-4 w-[calc(101vw-64px)] mt-32 md:mt-0 py-32">
+    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-4xl mx-auto h-[85vh] overflow-y-auto">
 
-      <label for="issue-date">Issue Date:</label>
-      <input type="date" id="issue-date" name="issue-date">
-      <br> <br>
+      <h1 class="text-3xl font-extrabold text-gray-800 mb-6">
+        <?= $licenseNumber ? "Update License" : "Create New License" ?>
+      </h1>
 
-      Expiry Option:
-      <input type="radio" id="five" name="expiry-option" value="5">
-      <label for="five">5 years</label>
+      <form action="../../_modules/Controller.php" method="POST" class="forms space-y-6">
 
-      <input type="radio" id="ten" name="expiry-option" value="10">
-      <label for="ten">10 years</label>
-      <br> <br>
+        <input type="hidden" name="action" value="CREATE-LICENSE">
 
-      DL Codes:
-      <input type="checkbox" id="a" name="dl-codes[]" value="A">
-      <label for="a">A</label>
+        <!-- SECTION: LICENSE INFO -->
+        <h2 class="text-xl font-bold text-gray-700 border-b pb-2">License Information</h2>
 
-      <input type="checkbox" id="a1" name="dl-codes[]" value="A1">
-      <label for="a1">A1</label>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="font-semibold text-gray-700">License Number</label>
+            <input type="text" id="license-number" name="license-number" class="w-full p-3 border rounded-lg">
+          </div>
 
-      <input type="checkbox" id="b" name="dl-codes[]" value="B">
-      <label for="b">B</label>
+          <div>
+            <label class="font-semibold text-gray-700">Issue Date</label>
+            <input type="date" id="issue-date" name="issue-date" class="w-full p-3 border rounded-lg">
+          </div>
+        </div>
 
-      <input type="checkbox" id="b1" name="dl-codes[]" value="B1">
-      <label for="b1">B1</label>
+        <div class="space-y-4">
+          <div>
+            <label class="font-semibold text-gray-700">License Status</label>
+            <div class="flex flex-wrap gap-4 mt-1">
+              <?php
+              $statuses = ["REGISTERED", "UNREGISTERED", "EXPIRED", "REVOKED"];
+              foreach ($statuses as $s): ?>
+                <label class="flex items-center gap-2">
+                  <input type="radio" name="license-status" value="<?= $s ?>">
+                  <span><?= $s ?></span>
+                </label>
+              <?php endforeach; ?>
+            </div>
+          </div>
 
-      <input type="checkbox" id="c" name="dl-codes[]" value="C">
-      <label for="c">C</label>
+          <div>
+            <label class="font-semibold text-gray-700">License Type</label>
+            <div class="flex flex-wrap gap-4 mt-1">
+              <?php
+              $types = ["PROFESSIONAL", "NON-PROFESSIONAL", "STUDENT PERMIT"];
+              foreach ($types as $t): ?>
+                <label class="flex items-center gap-2">
+                  <input type="radio" name="license-type" value="<?= $t ?>">
+                  <span><?= $t ?></span>
+                </label>
+              <?php endforeach; ?>
+            </div>
+          </div>
 
-      <input type="checkbox" id="d" name="dl-codes[]" value="D">
-      <label for="d">D</label>
-      <br> <br>
+          <div>
+            <label class="font-semibold text-gray-700">Expiry Option</label>
+            <div class="flex gap-4 mt-1">
+              <label class="flex items-center gap-2"><input type="radio" name="expiry-option" value="5"> <span>5
+                  Years</span></label>
+              <label class="flex items-center gap-2"><input type="radio" name="expiry-option" value="10"> <span>10
+                  Years</span></label>
+            </div>
+          </div>
 
-      <strong>PERSONAL INFORMATION</strong> <br> <br>
+          <div>
+            <label class="font-semibold text-gray-700">DL Codes</label>
+            <div class="flex flex-wrap gap-3 mt-2">
+              <?php foreach (["A", "A1", "B", "B1", "C", "D"] as $code): ?>
+                <label class="flex items-center gap-2">
+                  <input type="checkbox" name="dl-codes[]" value="<?= $code ?>">
+                  <span><?= $code ?></span>
+                </label>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        </div>
 
-      <label for="first-name">First Name:</label>
-      <input type="text" id="first-name" name="first-name">
-      <br> <br>
+        <!-- SECTION: PERSONAL INFO -->
+        <h2 class="text-xl font-bold text-gray-700 border-b pb-2">Personal Information</h2>
 
-      <label for="middle-name">Middle Name:</label>
-      <input type="text" id="middle-name" name="middle-name">
-      <br> <br>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input id="first-name" name="first-name" placeholder="First Name" class="w-full p-3 border rounded-lg">
+          <input id="middle-name" name="middle-name" placeholder="Middle Name" class="w-full p-3 border rounded-lg">
+          <input id="last-name" name="last-name" placeholder="Last Name" class="w-full p-3 border rounded-lg">
+        </div>
 
-      <label for="last-name">Last Name:</label>
-      <input type="text" id="last-name" name="last-name">
-      <br> <br>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input type="date" id="date-of-birth" name="date-of-birth" class="w-full p-3 border rounded-lg">
+          <div class="flex items-center gap-6">
+            <label class="flex items-center gap-2"><input type="radio" name="sex" value="Male"> Male</label>
+            <label class="flex items-center gap-2"><input type="radio" name="sex" value="Female"> Female</label>
+          </div>
+        </div>
 
-      <label for="date-of-birth">Date Of Birth:</label>
-      <input type="date" id="date-of-birth" name="date-of-birth">
-      <br> <br>
+        <input id="address" name="address" placeholder="Address" class="w-full p-3 border rounded-lg">
+        <input id="nationality" name="nationality" placeholder="Nationality" class="w-full p-3 border rounded-lg">
 
-      Sex:
-      <input type="radio" id="male" name="sex" value="Male">
-      <label for="male">Male</label>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input id="Height" name="height" placeholder="Height (cm)" class="w-full p-3 border rounded-lg">
+          <input id="weight" name="weight" placeholder="Weight (kg)" class="w-full p-3 border rounded-lg">
+          <input id="eye-color" name="eye-color" placeholder="Eye Color" class="w-full p-3 border rounded-lg">
+        </div>
 
+        <input id="blood-type" name="blood-type" placeholder="Blood Type" class="w-full p-3 border rounded-lg">
 
-      <input type="radio" id="female" name="sex" value="Female">
-      <label for="female">Female</label>
-      <br> <br>
-
-      <label for="address">Address:</label>
-      <input type="text" id="address" name="address">
-      <br> <br>
-
-      <label for="nationality">Nationality:</label>
-      <input type="text" id="nationality" name="nationality">
-      <br> <br>
-
-      <label for="height">Height:</label>
-      <input type="text" id="Height" name="height">
-      <br> <br>
-
-      <label for="weight">Weight:</label>
-      <input type="text" id="weight" name="weight">
-      <br> <br>
-
-      <label for="eye-color">Eye Color:</label>
-      <input type="text" id="eye-color" name="eye-color">
-      <br> <br>
-
-      <label for="blood-type">Blood Type:</label>
-      <input type="text" id="blood-type" name="blood-type">
-      <br> <br>
-
-      <input type="submit" value="submit" name="submit" class="btn">
-    </form>
-
-    <script>
-      const licenseNumber = "<?php echo $licenseNumber; ?>";
-
-      if (licenseNumber) {
-        fetch("../../_modules/Controller.php", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: "action=SEARCH-LICENSE-NUMBER&license-number=" + encodeURIComponent(licenseNumber)
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === "success") {
-            const lic = data.license;
-
-            // YUNG MGA TEXT INPUTS
-            document.getElementById("license-number").value = lic.licenseNumber;
-            document.getElementById("issue-date").value = lic.issueDate ? new Date(lic.issueDate).toISOString().split("T")[0] : "";
-            document.getElementById("first-name").value = lic.first_name;
-            document.getElementById("middle-name").value = lic.middle_name ?? "";
-            document.getElementById("last-name").value = lic.last_name;
-            document.getElementById("date-of-birth").value = lic.date_of_birth ? new Date(lic.date_of_birth).toISOString().split("T")[0] : "";
-            document.getElementById("address").value = lic.address;
-            document.getElementById("nationality").value = lic.nationality;
-            document.getElementById("Height").value = lic.height;
-            document.getElementById("weight").value = lic.weight;
-            document.getElementById("eye-color").value = lic.eye_color;
-            document.getElementById("blood-type").value = lic.blood_type;
-
-            // LICENSE STATUS
-            const statusRadios = document.getElementsByName("license-status");
-            statusRadios.forEach(radio => { if(radio.value === lic.status) radio.checked = true; });
-
-            // LICENSE TYPE
-            const typeRadios = document.getElementsByName("license-type");
-            typeRadios.forEach(radio => { if(radio.value === lic.type) radio.checked = true; });
-
-            // EXPIRY OPTION
-            const expiryRadios = document.getElementsByName("expiry-option");
-            if (lic.expiryDate && lic.issueDate) {
-              const issue = new Date(lic.issueDate);
-              const expiry = new Date(lic.expiryDate);
-              const diffYears = expiry.getFullYear() - issue.getFullYear();
-              expiryRadios.forEach(radio => { if(radio.value === diffYears.toString()) radio.checked = true; });
-            }
-
-            // DL CODES
-            const dlCodes = lic.dl_codes.split(",").map(code => code.trim()); // TRIM SPACES
-            const dlCheckboxes = document.querySelectorAll('input[name="dl-codes[]"]');
-            dlCheckboxes.forEach(cb => { if(dlCodes.includes(cb.value)) cb.checked = true; });
-
-            // GENDER (SEX)
-            const sexRadios = document.getElementsByName("sex");
-            sexRadios.forEach(radio => { if(radio.value === lic.gender) radio.checked = true; });
-
-            if (licenseNumber) {
-              const form = document.querySelector(".forms");
-              // MAGIGING UPDATE NA SYA
-              form.querySelector('input[name="action"]').value = "UPDATE-LICENSE";
-              form.querySelector('input[type="submit"]').value = "Update";
-            }
-          }
-        });
-      }
-    </script>
-
+        <button type="submit"
+          class="bg-blue-600 text-white py-3 px-6 rounded-xl font-bold hover:bg-blue-900 transition w-full">
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+  </div>
 </body>
+
 </html>
