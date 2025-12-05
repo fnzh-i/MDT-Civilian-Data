@@ -26,8 +26,8 @@
     <form action="../../_modules/Controller.php" method="POST" class="forms">
       <input type="hidden" name="action" value="CREATE-VEHICLE">
 
-      <label for="license-id">License ID:</label>
-      <input type="number" id="license-id" name="license-id" placeholder="FOR FOREIGN KEY">
+      <label for="license-number">License Number:</label>
+      <input type="text" id="license-number" name="license-number" placeholder="AXX-XX-XXXX">
       <br><br>
 
       <label for="plate-number">Plate Number:</label>

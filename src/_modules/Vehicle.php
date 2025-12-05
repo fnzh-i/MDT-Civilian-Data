@@ -178,25 +178,27 @@
     }
 
     // PARA SA ADMIN CREATE VEHICLE (NEED I MANUAL INPUT YUNG LICENSE_ID KASI WALANG JAVASCRIPT OR $_SESSION)
-    public function save(mysqli $conn): string | bool {
-      // check muna if yung license_id ay neg-eexist sa licenses table
-      $check = $conn->prepare("SELECT license_id FROM licenses WHERE license_id = ?");
+    public function save(mysqli $conn, string $licenseNumber): string|bool {
+      // HANAPIN YUNG LICENSE_ID SA LICENSES TABLE GAMIT LICENSE_NUMBER
+      $check = $conn->prepare("SELECT license_id FROM licenses WHERE license_number = ?");
       if (!$check) {
         return "Prepare failed: " . $conn->error;
       }
 
-      $check->bind_param("i", $this->licenseID);
+      $check->bind_param("s", $licenseNumber);
       $check->execute();
       $result = $check->get_result();
 
       if ($result->num_rows === 0) {
-        return "Error: license_id {$this->licenseID} does not exist.";
+        $check->close();
+        return "Error: license_number '{$licenseNumber}' does not exist.";
       }
 
+      $row = $result->fetch_assoc();
+      $licenseID = (int)$row['license_id']; // FOREIGN KEY
       $check->close();
 
-
-      // iinsert na sa vehicles table
+      // INSERTING NA ETO
       $stmt = $conn->prepare(
         "INSERT INTO vehicles
         (plate_number, mv_file_number, vin, expiry_date, registration_status,
@@ -218,7 +220,6 @@
       $model = $this->getModelName();
       $year = $this->getModelYear();
       $color = $this->getModelColor();
-      $licenseID = $this->getLicenseID();
 
       $stmt->bind_param(
         "sssssssisi",
@@ -242,6 +243,7 @@
 
       return true;
     }
+
 
     // PARA SA ADMIN UPDATE VEHICLE
     public function update(mysqli $conn): string|bool {

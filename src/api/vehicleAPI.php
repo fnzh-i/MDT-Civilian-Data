@@ -93,33 +93,42 @@ class VehicleAPI {
         return json_encode(['vehicles' => $vehicles]);
     }
 
-    // PARA SA ADMIN CREATE VEHICLE
     public function createVehicle(): string {
-        // mv_file_number becomes null if empty (DI BA OPTIONAL NAMAN YUNG MV FILE? LIKE NUNG NAPAG USAPAN SA FLOWCHART DATI?)
+    // Check if license-number is provided
+        $licenseNumber = $_POST['license-number'] ?? '';
+        if (trim($licenseNumber) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter a license-number.'
+            ]);
+        }
+
+        // MV FILE NUMBER NULL
         $mvFile = $_POST['mv-file-number'] ?? null;
         if ($mvFile === '') {
             $mvFile = null;
         }
 
-        // Create Vehicle object
+        // VEHICLE OBJECT
         $vehicle = new Vehicle(
             $_POST['plate-number'],
             $mvFile,
             $_POST['vin'],
             new DateTime($_POST['issue-date']),
             RegistrationStatus::from($_POST['registration-status']),
-
             $_POST['brand-name'],
             $_POST['model-name'],
             (int) $_POST['model-year'],
             $_POST['model-color'],
-            (int) $_POST['license-id'] // foreign key
+            0 // PLACEHOLDER SA LICENSE_ID MUNA, SINCE DI PA NASASAVE SA DB
         );
 
-        // Save to DB
-        $result = $vehicle->save($this->conn);
+        // SAVING
+        $result = $vehicle->save($this->conn, $licenseNumber);
+
         return $result;
     }
+
 
     // PARA SA ADMIN UPDATE VEHICLE
     public function updateVehicle(): string {

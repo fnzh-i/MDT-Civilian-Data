@@ -54,14 +54,46 @@ class TicketAPI {
         // DETERMINE IF SA USER (TRAFFIC ENFORCER) OR ADMIN BA YUNG REQUEST
         $licenseID = null;
 
+        // USER WORKFLOW (passes license_id)
         if (isset($data['license_id'])) {
-            $licenseID = (int)$data['license_id']; // USER WORKFLOW
+            $licenseID = (int)$data['license_id'];
         }
-        else if (isset($data['license-id'])) {
-            $licenseID = (int)$data['license-id']; // ADMIN (DEVS) WORKFLOW
+        // ADMIN WORKFLOW (passes license_number)
+        else if (isset($data['license_number'])) {
+
+            $licenseNumber = $data['license_number'];
+
+            $stmt = $this->conn->prepare(
+                "SELECT license_id FROM licenses WHERE license_number = ?"
+            );
+            if (!$stmt) {
+                return json_encode([
+                    'status' => 'error',
+                    'message' => 'Prepare failed: ' . $this->conn->error
+                ]);
+            }
+
+            $stmt->bind_param("s", $licenseNumber);
+            $stmt->execute();
+            $res = $stmt->get_result();
+
+            if ($res->num_rows === 0) {
+                return json_encode([
+                    'status' => 'error',
+                    'message' => "License number '{$licenseNumber}' not found."
+                ]);
+            }
+
+            $row = $res->fetch_assoc();
+            $licenseID = (int)$row['license_id'];
+
+            $stmt->close();
         }
         else {
-            return json_encode(['status' => 'error', 'message' => 'No license_id provided.']);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'You must provide license_id (user) or license_number (admin).'
+            ]);
         }
 
 
@@ -69,10 +101,14 @@ class TicketAPI {
         try {
             $violation = Violation::from($data['violation']);
         } catch (ValueError $e) {
-            return json_encode(['status' => 'error', 'message' => 'Invalid violation.']);
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Invalid violation.'
+            ]);
         }
 
-        // CREATE THE TicketViolation OBJECT
+
+        // CREATE TicketViolation OBJECT
         $ticket = new TicketViolation(
             $violation,
             new DateTime($data['date-of-incident']),
@@ -84,11 +120,18 @@ class TicketAPI {
         $result = $ticket->save($this->conn, $licenseID);
 
         if ($result === true) {
-            return json_encode(['status' => 'success', 'message' => 'Ticket created.']);
+            return json_encode([
+                'status' => 'success',
+                'message' => 'Ticket created.'
+            ]);
         }
 
-        return json_encode(['status' => 'error', 'message' => $result]);
+        return json_encode([
+            'status' => 'error',
+            'message' => $result
+        ]);
     }
+
 
 
     // UPDATE STATUS

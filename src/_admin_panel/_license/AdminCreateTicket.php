@@ -25,9 +25,9 @@
     <form action="../../_modules/Controller.php" method="POST" class="forms">
       <input type="hidden" name="action" value="CREATE-TICKET">
 
-      <label for="license-id">License ID:</label>
-      <input type="number" id="license-id" name="license_id" placeholder="FOR FOREIGN KEY">
-      <br> <br>
+      <label for="license-number">License Number:</label>
+      <input type="text" id="license-number" name="license_number" placeholder="AXX-XX-XXXX">
+      <br><br>
 
       <label for="violation">Violation:</label>
       <input type="text" id="violation" name="violation" list="violations-list">
