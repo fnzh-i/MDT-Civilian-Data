@@ -1,6 +1,7 @@
 <?php
   require_once __DIR__ . '/../../bootstrap.php';
   $plateNumber = $_GET['plate-number'] ?? '';
+  $vehicleId = $_GET['vehicle-id'] ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -74,6 +75,8 @@
       <br><br>
 
       <input type="submit" value="submit" name="submit" class="btn">
+
+      <input type="hidden" name="vehicle-id" id="vehicle-id" value="<?php echo htmlspecialchars($vehicleId); ?>">
     </form>
 
     <script>
@@ -91,15 +94,17 @@
             const veh = data.vehicle;
 
             // YUNG MGA STRING TYPES
-            document.getElementById("license-id").value = veh.license_id ?? "";
+            document.getElementById("license-number").value = data.license.license_number ?? "";
             document.getElementById("plate-number").value = veh.plate ?? "";
             document.getElementById("mv-file-number").value = veh.mvFile ?? "";
             document.getElementById("vin").value = veh.vin ?? "";
-            document.getElementById("issue-date").value = veh.regExpiry ? new Date(veh.regExpiry).toISOString().split("T")[0] : "";
+            document.getElementById("issue-date").value = veh.issueDate ?? "";
             document.getElementById("brand-name").value = veh.brand ?? "";
             document.getElementById("model-name").value = veh.model ?? "";
             document.getElementById("model-year").value = veh.year ?? "";
             document.getElementById("model-color").value = veh.color ?? "";
+
+            document.getElementById("vehicle-id").value = veh.id; // NEED TO BASTA HAHHAHA NEED TO SA UPDATE
 
             // REGISTRATION STATUS
             const statusRadios = document.getElementsByName("registration-status");
@@ -116,5 +121,6 @@
         .catch(err => console.error("Fetch error:", err));
       }
     </script>
+
 </body>
 </html>

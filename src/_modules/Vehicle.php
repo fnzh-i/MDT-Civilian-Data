@@ -3,7 +3,7 @@
 
   class Vehicle {
     private string $plateNumber;
-    private ?string $mvFileNumber;
+    private string $mvFileNumber;
     private string $vin;
     private DateTime $issueDate;
     private DateTime $expiryDate;
@@ -17,7 +17,7 @@
 
     public function __construct(
       string $plateNumber,
-      ?string $mvFileNumber,
+      string $mvFileNumber,
       string $vin,
       DateTime $issueDate,
       RegistrationStatus $registrationStatus,
@@ -48,7 +48,7 @@
       return $this->plateNumber;
     }
 
-    public function getMVFileNumber(): ?string {
+    public function getMVFileNumber(): string {
       return $this->mvFileNumber;
     }
 
@@ -83,7 +83,7 @@
     public function getLicenseID(): int {
       return $this->licenseID;
     }
-    private static function inferIssueDate(string $expiryDate): DateTime {
+    public static function inferIssueDate(string $expiryDate): DateTime {
       $date = new DateTime($expiryDate);
       $date->sub(new DateInterval("P1Y")); // subtract 1 year
       return $date;
@@ -177,9 +177,8 @@
       }
     }
 
-    // PARA SA ADMIN CREATE VEHICLE (NEED I MANUAL INPUT YUNG LICENSE_ID KASI WALANG JAVASCRIPT OR $_SESSION)
     public function save(mysqli $conn, string $licenseNumber): string|bool {
-      // HANAPIN YUNG LICENSE_ID SA LICENSES TABLE GAMIT LICENSE_NUMBER
+      // KUNIN LICENSE_ID SA LICENSES TABLE GAMIT ANG LICENSE_NUMBER
       $check = $conn->prepare("SELECT license_id FROM licenses WHERE license_number = ?");
       if (!$check) {
         return "Prepare failed: " . $conn->error;
@@ -195,10 +194,40 @@
       }
 
       $row = $result->fetch_assoc();
-      $licenseID = (int)$row['license_id']; // FOREIGN KEY
+      $licenseID = (int)$row['license_id']; // FOREIGN KEY, ETO YUNG GALING SA LICENSES TABLE
       $check->close();
 
-      // INSERTING NA ETO
+      // CHECK FOR DUPLICATE PLATE NUMBER
+      $stmtCheck = $conn->prepare("SELECT 1 FROM vehicles WHERE plate_number = ?");
+      $stmtCheck->bind_param("s", $this->plateNumber);
+      $stmtCheck->execute();
+      $resultCheck = $stmtCheck->get_result();
+      $stmtCheck->close();
+      if ($resultCheck->num_rows > 0) {
+        return "Error: plate_number '{$this->plateNumber}' already exists.";
+      }
+
+      // CHECK FOR DUPLICATE MV FILE NUMBER
+      $stmtCheck = $conn->prepare("SELECT 1 FROM vehicles WHERE mv_file_number = ?");
+      $stmtCheck->bind_param("s", $this->mvFileNumber);
+      $stmtCheck->execute();
+      $resultCheck = $stmtCheck->get_result();
+      $stmtCheck->close();
+      if ($resultCheck->num_rows > 0) {
+        return "Error: mv_file_number '{$this->mvFileNumber}' already exists.";
+      }
+
+      // CHECK FOR DUPLICATE VIN
+      $stmtCheck = $conn->prepare("SELECT 1 FROM vehicles WHERE vin = ?");
+      $stmtCheck->bind_param("s", $this->vin);
+      $stmtCheck->execute();
+      $resultCheck = $stmtCheck->get_result();
+      $stmtCheck->close();
+      if ($resultCheck->num_rows > 0) {
+        return "Error: vin '{$this->vin}' already exists.";
+      }
+
+      // IINSERT NA SA VEHICLES TABLE
       $stmt = $conn->prepare(
         "INSERT INTO vehicles
         (plate_number, mv_file_number, vin, expiry_date, registration_status,
@@ -244,27 +273,45 @@
       return true;
     }
 
-
+    
     // PARA SA ADMIN UPDATE VEHICLE
-    public function update(mysqli $conn): string|bool {
-      $plateNumber = $this->getPlateNumber();
+    public function update(mysqli $conn, int $vehicleId): string|bool {
 
-      // GET VEHICLE ID
-      $stmtId = $conn->prepare("SELECT vehicle_id FROM vehicles WHERE plate_number = ?");
-      if (!$stmtId) {
-        return "Prepare failed: " . $conn->error;
-      } 
-
-      $stmtId->bind_param("s", $plateNumber);
-      $stmtId->execute();
-      $stmtId->bind_result($vehicle_id);
-
-      if (!$stmtId->fetch()) {
-        $stmtId->close();
-        return "Vehicle not found.";
+      // CHECK PLATE NUMBER UNIQUENESS
+      $plate = $this->getPlateNumber();
+      $stmtCheck = $conn->prepare("SELECT 1 FROM vehicles WHERE plate_number = ? AND vehicle_id != ?");
+      $stmtCheck->bind_param("si", $plate, $vehicleId);
+      $stmtCheck->execute();
+      $stmtCheck->store_result();
+      if ($stmtCheck->num_rows > 0) {
+        $stmtCheck->close();
+        return "Error: Another vehicle with the same Plate Number already exists.";
       }
+      $stmtCheck->close();
 
-      $stmtId->close();
+      // CHECK MV FILE NUMBER UNIQUENESS
+      $mv = $this->getMVFileNumber();
+      $stmtCheck = $conn->prepare("SELECT 1 FROM vehicles WHERE mv_file_number = ? AND vehicle_id != ?");
+      $stmtCheck->bind_param("si", $mv, $vehicleId);
+      $stmtCheck->execute();
+      $stmtCheck->store_result();
+      if ($stmtCheck->num_rows > 0) {
+        $stmtCheck->close();
+        return "Error: Another vehicle with the same MV File Number already exists.";
+      }
+      $stmtCheck->close();
+
+      // CHECK VIN UNIQUENESS
+      $vin = $this->getVin();
+      $stmtCheck = $conn->prepare("SELECT 1 FROM vehicles WHERE vin = ? AND vehicle_id != ?");
+      $stmtCheck->bind_param("si", $vin, $vehicleId);
+      $stmtCheck->execute();
+      $stmtCheck->store_result();
+      if ($stmtCheck->num_rows > 0) {
+        $stmtCheck->close();
+        return "Error: Another vehicle with the same VIN already exists.";
+      }
+      $stmtCheck->close();
 
       // UPDATE VEHICLES TABLE
       $stmt = $conn->prepare(
@@ -280,13 +327,10 @@
           expiry_date = ?
         WHERE vehicle_id = ?"
       );
-
-      if (!$stmt) {
-        return "Prepare failed: " . $conn->error;
-      }
+      if (!$stmt) return "Prepare failed: " . $conn->error;
 
       $licenseId = $this->getLicenseID();
-      $mvFile = $this->getMVFileNumber() ?? ''; // DATING NULL LOL
+      $mvFile = $this->getMVFileNumber();
       $vin = $this->getVin();
       $status = $this->getRegistrationStatus()->value;
       $brand = $this->getBrandName();
@@ -306,7 +350,7 @@
         $year,
         $color,
         $expiryDate,
-        $vehicle_id
+        $vehicleId
       );
 
       if (!$stmt->execute()) {
@@ -316,6 +360,9 @@
       $stmt->close();
       return true;
     }
+
+
+
 
     // PARA SA ADMIN DELETE VEHICLE
     public static function delete(mysqli $conn, string $plateNumber): string|bool {

@@ -57,11 +57,18 @@
         </table>
 
         <br>
-        <a href="AdminCreateVehicle.php?plate-number=${veh.plate}">UPDATE</a>
         <button id="deleteBtn">DELETE</button>
       `;
 
       document.getElementById("result").innerHTML = table;
+
+      // CREATE UPDATE LINK USING CORRECT VEHICLE ID, SOBRANG NEED TO SA UPDATE
+      const updateLink = document.createElement('a');
+      updateLink.href = `AdminCreateVehicle.php?vehicle-id=${veh.id}&plate-number=${veh.plate}`;
+      updateLink.textContent = "UPDATE";
+      updateLink.style.display = "inline-block"; // optional, to put it on its own line
+      updateLink.style.marginTop = "10px";
+      document.getElementById("result").appendChild(updateLink);
 
       document.getElementById("deleteBtn").addEventListener("click", () => {
         if (!confirm("Are you sure you want to delete this vehicle?")) return;
