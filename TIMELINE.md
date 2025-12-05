@@ -54,4 +54,5 @@ Development ongoing — updates posted as time allows.
                 - Updated the violations table to include row numbers, actions (edit/delete), and a print button for each violation.<br>
                 - Added user registration function and code cleanup.<br>
 - Dec 5, 2025   - Improved login and registration UI and add registration function.<br>
-                - Refactored and add methods to DriversLicense, TicketViolation, Vehicle.
+                - Refactored and add methods to DriversLicense, TicketViolation, Vehicle.<br>
+                - Removed unused API case handlers from Controller.php.
