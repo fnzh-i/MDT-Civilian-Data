@@ -69,7 +69,7 @@ function lookupVehicle() {
     formData.append("action", "SEARCH-PLATE-NUMBER");
     formData.append("plate-number", document.getElementById("plateInput").value);
 
-    fetch("../_modules/Controller.php", {
+    fetch("../../_modules/Controller.php", {
         method: "POST",
         body: formData
     })
@@ -126,7 +126,7 @@ function lookupLicense() {
     formData.append("action", "SEARCH-LICENSE-NUMBER");
     formData.append("license-number", document.getElementById("licenseInput").value.trim());
 
-    fetch("../_modules/Controller.php", {
+    fetch("../../_modules/Controller.php", {
         method: "POST",
         body: formData
     })
@@ -280,7 +280,7 @@ function addViolation() {
         formData.append(key, violationData[key]);
     }
 
-    fetch("../_modules/Controller.php", {
+    fetch("../../_modules/Controller.php", {
         method: "POST",
         body: formData
     })
@@ -313,7 +313,7 @@ function loadViolations() {
     formData.append("action", "FETCH-TICKETS");
     formData.append("license_id", currentLicense.id);
 
-    fetch("../_modules/Controller.php", {
+    fetch("../../_modules/Controller.php", {
         method: "POST",
         body: formData
     })

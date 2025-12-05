@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <title>Check License</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="../../public/script.js"></script>
-    <link rel="stylesheet" href="../../public/style.css">
+    <script defer src="../../../public/script.js"></script>
+    <link rel="stylesheet" href="../../../public/style.css">
 </head>
 
 <body class="bg-gray-200">
@@ -30,7 +30,7 @@
         </div>
         <div>
             <!-- Right: Logout -->
-            <a href="../../public/index.php"
+            <a href="../../../public/index.php"
                 class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -51,7 +51,7 @@
                     <span class="items-start w-full text-left text-gray-700 hover:text-blue-600 font-bold">
 
                         <div class="flex items-center gap-3 mt-10">
-                            <span><img src="../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
+                            <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
                             <div>
                                 <span class="block font-bold">LTO Officer</span>
                                 <span class="block font-semibold">Tarub Salsalini</span>

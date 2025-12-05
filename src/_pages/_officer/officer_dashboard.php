@@ -3,11 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Check Vehicle</title>
+    <title>MDT Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="../../public/script.js"></script>
-    <link rel="stylesheet" href="../../public/style.css">
-
+    <script defer src="../../../public/script.js"></script>
+    <link rel="stylesheet" href="../../../public/style.css">
 </head>
 
 <body class="bg-gray-200">
@@ -31,7 +30,7 @@
         </div>
         <div>
             <!-- Right: Logout -->
-            <a href="../../public/index.php"
+            <a href="../../../public/index.php"
                 class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -43,7 +42,6 @@
         </div>
     </nav>
 
-
     <div class="flex flex-col md:flex-row">
         <!-- sidebar -->
         <div id="sidebar" class="bg-white w-56 h-screen shadow-2xl p-6 hidden md:block fixed top-0 left-0">
@@ -52,7 +50,7 @@
                     <span class="items-start w-full text-left text-gray-700 hover:text-blue-600 font-bold">
 
                         <div class="flex items-center gap-3 mt-10">
-                            <span><img src="../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
+                            <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
                             <div>
                                 <span class="block font-bold">LTO Officer</span>
                                 <span class="block font-semibold">Tarub Salsalini</span>
@@ -79,7 +77,7 @@
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='settings.php'"
+                    <button onclick="window.location.href='officer_settings.php'"
                         class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         Settings
                     </button>
@@ -87,31 +85,36 @@
             </ul>
         </div>
 
-        <!-- MAIN CONTENT -->
+
+        <!-- MAIN CONTENT CENTERED -->
         <div
-            class="flex flex-col items-center justify-start h-[calc(100vh-64px)] px-4 w-[calc(100vw-64px)] mt-32 md:mt-0 py-32">
+            class="flex flex-col items-center justify-start h-[calc(100vh-64px)] px-4 w-[calc(101vw-64px)] mt-32 md:mt-0 py-32">
+            <!-- Titles -->
+            <h1 class="text-4xl font-extrabold mb-2 text-gray-800">Officer Dashboard</h1>
+            <p class="text-lg text-gray-600 mb-8">Select a search type to retrieve civilian data</p>
 
-            <h1 class="text-3xl font-extrabold mb-6 text-center text-black">Vehicle Lookup</h1>
+            <!-- Buttons -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 px-4 sm:px-6 md:px-10">
+                <!-- VEHICLE BOX -->
+                <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
+                    <img src="../../../public/assets/car.png" class="w-24 h-24 mb-6 opacity-80">
+                    <button onclick="window.location.href='officer_vehicle.php'"
+                        class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-red-700 transition">
+                        Check Vehicle
+                    </button>
+                </div>
 
-            <!-- Input and Search Button -->
-            <div class="flex flex-col sm:flex-row gap-2 justify-center mb-4 w-full max-w-md  mx-auto">
-                <input id="plateInput" type="text" placeholder="Enter Plate Number or MV File No."
-                    class="p-3 border rounded-lg w-full sm:w-80">
-                <button onclick="lookupVehicle()"
-                    class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition font-bold">
-                    Search
-                </button>
+                <!-- LICENSE BOX -->
+                <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
+                    <img src="../../../public/assets/id.png" class="w-24 h-24 mb-6 opacity-80">
+                    <button onclick="window.location.href='officer_license.php'"
+                        class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-red-700 transition">
+                        Check License
+                    </button>
+                </div>
             </div>
-
-            <!-- Error Message -->
-            <p id="error" class="text-red-600 mt-3 text-center hidden mx-auto">
-                Vehicle Information doesn't exist. Please check your input details.
-            </p>
-
-            <!-- Vehicle Info Box -->
-            <div id="infoBox"
-                class="hidden mt-6 max-w-3xl w-full bg-white p-6 rounded-2xl shadow-lg text-gray-800 mx-auto"></div>
         </div>
+    </div>
 </body>
 
 </html>
