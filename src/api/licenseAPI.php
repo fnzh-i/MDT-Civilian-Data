@@ -14,6 +14,15 @@ class LicenseAPI{
     public function searchLicense(string $licenseNumber): array|string {
         $result = DriversLicense::searchLicenseNumber($this->conn, $licenseNumber);
 
+        // IF BLANK YUNG INPUT
+        if (empty(trim($licenseNumber))) {
+            $result = "Please enter a license number.";
+            return json_encode([
+                'status' => 'error',
+                'message' => $result
+            ]);
+        }
+
         // If Vehicle::searchPlateNumber returns an error string
         if (is_string($result)) {
             return json_encode([
@@ -148,5 +157,87 @@ class LicenseAPI{
         $result = $license->save($this->conn);
         return $result;
     }
+
+    // PARA SA ADMIN UPDATE LICENSE
+    public function updateLicense(): string|bool {
+        // DLCodes (FROM ARRAY OF STRINGS TO ARRAY OF ENUM OBJECTS)
+        $dlCodes = [];
+        if (!empty($_POST['dl-codes']) && is_array($_POST['dl-codes'])) {
+            foreach ($_POST['dl-codes'] as $codeString) {
+                $dlCodes[] = DLCodes::from($codeString);
+            }
+        }
+
+        // NULL HANDLING
+        $middleName = $_POST['middle-name'] ?? null;
+        if ($middleName === '') $middleName = null;
+
+        $bloodType = $_POST['blood-type'] ?? null;
+        if ($bloodType === '') $bloodType = null;
+
+        // EXPIRY OPTION CHECK
+        if (!isset($_POST['expiry-option'])) {
+            return "Error: Expiry option not selected.";
+        }
+
+        $expiryOptionValue = (int) $_POST['expiry-option'];
+        $expiryOptionEnum = ExpiryOption::from($expiryOptionValue);
+
+        // DRIVERSLICENSE OBJECT
+        $license = new DriversLicense(
+            $_POST['license-number'],
+            LicenseStatus::from($_POST['license-status']),
+            LicenseType::from($_POST['license-type']),
+            new DateTime($_POST['issue-date']),
+            $expiryOptionEnum,
+            $dlCodes,
+
+            $_POST['first-name'],
+            $middleName,
+            $_POST['last-name'],
+            new DateTime($_POST['date-of-birth']),
+            Gender::from($_POST['sex']),
+            $_POST['address'],
+            $_POST['nationality'],
+            $_POST['height'],
+            $_POST['weight'],
+            $_POST['eye-color'],
+            $bloodType
+        );
+
+        // UPDATE DB
+        $result = $license->update($this->conn);
+        return $result;
+    }
+
+    // PARA SA ADMIN DELETE LICENSE
+    public function deleteLicense(): string {
+        if (empty($_POST['license-number'])) {
+            return json_encode([
+                "status" => "error",
+                "message" => "License number not provided."
+            ]);
+        }
+
+        $licenseNumber = $_POST['license-number'];
+
+        // YUNG STATIC FUNCTION SA DRIVERSLICENSE CLASS
+        $result = DriversLicense::delete($this->conn, $licenseNumber);
+
+        // YUNG RESPONSE
+        if ($result === true) {
+            return json_encode([
+                "status" => "success",
+                "message" => "License deleted successfully."
+            ]);
+        } else {
+            return json_encode([
+                "status" => "error",
+                "message" => $result
+            ]);
+        }
+    }
+
+
 
 }

@@ -3,24 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Search Vehicle</title>
-  <link rel="stylesheet" href="AdminStyle.css">
+  <title>ADMIN SEARCH VEHICLE</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 18px;
+    }
+    button, input {
+      font: inherit;
+    }
+  </style>
 </head>
 <body>
-  <br>
-  <a href="Admin.php" class="btn">Back</a>
-  <br>
-  <br>
-  <form action="../../_modules/Controller.php" method="POST" class="forms">
+  <strong>ADMIN SEARCH VEHICLE</strong> <br> <br>
+  <form action="AdminSearchVehicleResult.php" method="GET" class="forms">
     <input type="hidden" name="action" value="SEARCH-PLATE-NUMBER">
 
-    <label for="search-plate">Enter Plate Number:</label>
-    <input type="text" id="search-plate" name="plate-number" placeholder="ABC 1234">
-    <br> <br>
+    <label for="search-vehicle">Enter Plate or MV File Number:</label>
+    <input type="text" id="search-vehicle" name="plate-number">
 
-    <label for="search-mv">Enter MV File Number:</label>
-    <input type="text" id="search-mv" name="mv-file-number" placeholder="1234-1234567">
-    <br> <br>
     <input type="submit" value="Search" class="btn">
   </form>
 </body>

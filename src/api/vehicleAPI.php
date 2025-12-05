@@ -92,5 +92,111 @@ class VehicleAPI {
 
         return json_encode(['vehicles' => $vehicles]);
     }
+
+    public function createVehicle(): string {
+    // Check if license-number is provided
+        $licenseNumber = $_POST['license-number'] ?? '';
+        if (trim($licenseNumber) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter a license-number.'
+            ]);
+        }
+
+        // MV FILE NUMBER NULL
+        $mvFile = $_POST['mv-file-number'] ?? null;
+        if ($mvFile === '') {
+            $mvFile = null;
+        }
+
+        // VEHICLE OBJECT
+        $vehicle = new Vehicle(
+            $_POST['plate-number'],
+            $mvFile,
+            $_POST['vin'],
+            new DateTime($_POST['issue-date']),
+            RegistrationStatus::from($_POST['registration-status']),
+            $_POST['brand-name'],
+            $_POST['model-name'],
+            (int) $_POST['model-year'],
+            $_POST['model-color'],
+            0 // PLACEHOLDER SA LICENSE_ID MUNA, SINCE DI PA NASASAVE SA DB
+        );
+
+        // SAVING
+        $result = $vehicle->save($this->conn, $licenseNumber);
+
+        return $result;
+    }
+
+
+    // PARA SA ADMIN UPDATE VEHICLE
+    public function updateVehicle(): string {
+        // MV FILE NUMBER NA DATING OPTIONAL HAHAHAHA
+        $mvFile = $_POST['mv-file-number'] ?? null;
+        if ($mvFile === '') {
+            $mvFile = null;
+        }
+
+        // VEHICLE OBJECT
+        $vehicle = new Vehicle(
+            $_POST['plate-number'],
+            $mvFile,
+            $_POST['vin'],
+            new DateTime($_POST['issue-date']),
+            RegistrationStatus::from($_POST['registration-status']),
+
+            $_POST['brand-name'],
+            $_POST['model-name'],
+            (int) $_POST['model-year'],
+            $_POST['model-color'],
+            (int) $_POST['license-id'] // FOREIGN KEY
+        );
+
+        // UPDATE YUNG SA DB (vehicles TABLE)
+        $result = $vehicle->update($this->conn);
+
+        if ($result === true) {
+            return json_encode([
+                'status' => 'success',
+                'message' => 'Vehicle updated successfully.'
+            ]);
+        } else {
+            return json_encode([
+                'status' => 'error',
+                'message' => $result
+            ]);
+        }
+    }
+
+    // PARA SA ADMIN DELETE VEHICLE
+    public function deleteVehicle(): string {
+        if (empty($_POST['plate-number'])) {
+            return json_encode([
+                "status" => "error",
+                "message" => "Plate number not provided."
+            ]);
+        }
+
+        $plateNumber = $_POST['plate-number'];
+
+        // YUNG STATIC FUNCT THE DELETE SA VEHICLE CLASS
+        $result = Vehicle::delete($this->conn, $plateNumber);
+
+        // YUNG RESPONSE
+        if ($result === true) {
+            return json_encode([
+                "status" => "success",
+                "message" => "Vehicle deleted successfully."
+            ]);
+        } else {
+            return json_encode([
+                "status" => "error",
+                "message" => $result
+            ]);
+        }
+    }
+
+
 }
 ?>

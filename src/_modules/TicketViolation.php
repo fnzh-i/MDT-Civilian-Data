@@ -82,11 +82,27 @@ class TicketViolation
     return $ticket;
   }
 
-  // SAVE TO DB (CREATE TICKET)
-  public function save(mysqli $conn, int $licenseID): bool|string
-  {
+      // I CHECHECK MUNA IF EXISTING YUNG LICENSE_ID, YES PARANG REDUNDANT SYA
+      // PERO KASI GAGAMITIN KO RIN ITONG SAVE FUNCTION SA ADMIN CREATE TICKET
+      // PARA DI NA AKO GUMAWA PA NG ANOTHER FUNCTION
+      $check = $conn->prepare("SELECT license_id FROM licenses WHERE license_id = ?");
+      if (!$check) {
+        return "Prepare failed: " . $conn->error;
+      }
 
-    $sql = "INSERT INTO ticket_violations 
+      $check->bind_param("i", $licenseID);
+      $check->execute();
+      $res = $check->get_result();
+
+      if ($res->num_rows === 0) {
+        return "Error: license_id {$licenseID} does not exist.";
+      }
+
+      $check->close();
+
+
+      // DITO NA YUNG START NG ACTUAL SAVING SA ticket_violations
+      $sql = "INSERT INTO ticket_violations 
         (violation, date_of_incident, place_of_incident, status, note, license_id)
         VALUES (?, ?, ?, ?, ?, ?)";
 
