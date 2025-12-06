@@ -79,7 +79,7 @@
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='settings.php'"
+                    <button onclick="window.location.href='officer_settings.php'"
                         class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         Settings
                     </button>
@@ -107,11 +107,9 @@
             <p id="error" class="text-red-600 mt-3 text-center hidden mx-auto">
                 Vehicle Information doesn't exist. Please check your input details.
             </p>
-
             <!-- Vehicle Info Box -->
             <div id="infoBox"
                 class="hidden mt-6 max-w-3xl w-full bg-white p-6 rounded-2xl shadow-lg text-gray-800 mx-auto"></div>
         </div>
 </body>
-
 </html>

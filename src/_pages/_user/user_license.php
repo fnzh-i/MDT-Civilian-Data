@@ -91,7 +91,6 @@
             </ul>
         </div>
 
-
         <!-- MAIN CONTENT -->
         <div class="flex flex-col md:ml-56 w-full px-6 py-10">
 
@@ -99,13 +98,10 @@
             <p class="text-lg text-gray-600 mb-8">Overview of your license</p>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
                 <!-- LICENSE PANEL -->
                 <div id="licenseBox" class="bg-white rounded-2xl shadow-xl p-6"></div>
-
             </div>
         </div>
 
 </body>
-
 </html>

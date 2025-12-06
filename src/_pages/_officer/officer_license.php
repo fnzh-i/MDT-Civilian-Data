@@ -78,7 +78,7 @@
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='settings.php'"
+                    <button onclick="window.location.href='officer_settings.php'"
                         class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         Settings
                     </button>
@@ -155,5 +155,4 @@
             </div>
         </div>
 </body>
-
 </html>

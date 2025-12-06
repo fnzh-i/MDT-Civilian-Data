@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <title>Settings | MDT Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="../../public/script.js"></script>
-    <link rel="stylesheet" href="../../public/style.css">
+    <script defer src="../../../public/script.js"></script>
+    <link rel="stylesheet" href="../../../public/style.css">
 </head>
 
 <body class="bg-gray-200">
@@ -30,7 +30,7 @@
         </div>
         <div>
             <!-- Right: Logout -->
-            <a href="../../public/index.php"
+            <a href="../../../public/index.php"
                 class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -49,7 +49,7 @@
             <ul class="space-y-4">
                 <li>
                     <div class="flex items-center gap-3 mt-10">
-                        <img src="../../public/assets/user.png" class="w-6 h-6">
+                        <img src="../../../public/assets/user.png" class="w-6 h-6">
                         <div>
                             <span class="block font-bold">LTO Officer</span>
                             <span class="block font-semibold">Tarub Salsalini</span>
@@ -64,7 +64,7 @@
                 <li><button onclick="window.location.href='officer_license.php'"
                         class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">License Lookup</button>
                 </li>
-                <li><button onclick="window.location.href='settings.php'"
+                <li><button onclick="window.location.href='officer_settings.php'"
                         class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">Settings</button></li>
             </ul>
         </div>
@@ -73,41 +73,62 @@
         <div class="flex flex-col md:ml-56 w-full px-6 py-10">
 
             <h1 class="text-4xl font-extrabold mb-2 text-gray-800">Settings</h1>
-            <p class="text-lg text-gray-600 mb-8">Manage your account and preferences</p>
+            <p class="text-lg text-gray-600 mb-8">
+                Submit a ticket for account-related changes or to contact support.
+            </p>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- SUPPORT FORM CARD -->
+            <div class="bg-white rounded-2xl shadow-xl p-8 max-w-2xl">
 
-                <!-- Account Settings -->
-                <div class="bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center">
-                    <img src="../../public/assets/user.png" class="w-16 h-16 mb-4 opacity-80">
-                    <h2 class="text-xl font-bold mb-2">Account Settings</h2>
-                    <p class="text-gray-600 text-center mb-4">Update your personal information, username, and email.</p>
-                    <button onclick="window.location.href='account_settings.php'"
-                        class="bg-blue-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-blue-700 transition">Edit</button>
-                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Support Ticket Form</h2>
 
-                <!-- Security Settings -->
-                <div class="bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center">
-                    <img src="../../public/assets/lock.png" class="w-16 h-16 mb-4 opacity-80">
-                    <h2 class="text-xl font-bold mb-2">Security Settings</h2>
-                    <p class="text-gray-600 text-center mb-4">Change your password, enable 2FA, and manage security
-                        options.</p>
-                    <button onclick="window.location.href='security_settings.php'"
-                        class="bg-blue-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-blue-700 transition">Edit</button>
-                </div>
+                <p class="text-gray-600 mb-6">
+                    Administrators must manually approve account changes.
+                    Use this form to request:
+                </p>
 
-                <!-- Support -->
-                <div class="bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center">
-                    <img src="../../public/assets/support.png" class="w-16 h-16 mb-4 opacity-80">
-                    <h2 class="text-xl font-bold mb-2">Support</h2>
-                    <p class="text-gray-600 text-center mb-4">Contact support or report a problem.</p>
-                    <button onclick="window.location.href='support.php'"
-                        class="bg-blue-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-blue-700 transition">Contact</button>
-                </div>
+                <ul class="text-gray-700 text-sm mb-8 space-y-2 ml-2">
+                    <li>• Password change or reset</li>
+                    <li>• Update to account name or officer details</li>
+                    <li>• Recovery for forgotten password</li>
+                    <li>• Report account or login issues</li>
+                    <li>• Contact administrative support</li>
+                </ul>
 
+                <!-- FORM -->
+                <form action="support_submit.php" method="POST" class="space-y-6">
+
+                    <!-- Category -->
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">Support Category</label>
+                        <select name="category"
+                            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            required>
+                            <option value="">Select a category</option>
+                            <option value="password-change">Password Change</option>
+                            <option value="password-reset">Forgot Password / Reset</option>
+                            <option value="account-update">Account Name / Details Update</option>
+                            <option value="account-issue">Account or Login Issue</option>
+                            <option value="other">Other Request</option>
+                        </select>
+                    </div>
+
+                    <!-- Message -->
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">Describe Your Issue</label>
+                        <textarea name="message" rows="5"
+                            class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            placeholder="Explain what you need help with..." required></textarea>
+                    </div>
+
+                    <!-- Submit -->
+                    <button
+                        class="bg-blue-600 w-full text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">
+                        Submit Ticket
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 </body>
-
 </html>
