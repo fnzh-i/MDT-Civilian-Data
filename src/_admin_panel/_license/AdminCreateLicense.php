@@ -113,6 +113,14 @@ $licenseNumber = $_GET['license-number'] ?? '';
           <div>
             <label class="font-semibold text-gray-700">License Number</label>
             <input type="text" id="license-number" name="license-number" class="w-full p-3 border rounded-lg">
+
+            <input 
+              type="text" 
+              id="license-number" 
+              name="license-number"
+              value="<?php echo htmlspecialchars($licenseNumber); ?>" 
+              <?php echo $licenseNumber ? "readonly" : ""; ?>
+            >
           </div>
 
           <div>

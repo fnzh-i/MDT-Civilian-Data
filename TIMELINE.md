@@ -58,4 +58,5 @@ Development ongoing — updates posted as time allows.
                 - Removed unused API case handlers from Controller.php.<br>
 - Dec 6, 2025   - Redesigned admin panel and license form and add JS for auto-fill.<br>
                 - Refactored officer and user pages into subdirectories.<br>
-                - Enhance vehicle admin CRUD validation and update logic.
+                - Enhance vehicle admin CRUD validation and update logic.<br>
+                - Added input validation for license and ticket creation.
