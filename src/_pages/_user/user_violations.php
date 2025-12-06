@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <title>MDT Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="../../public/script.js"></script>
-    <link rel="stylesheet" href="../../public/style.css">
+    <script defer src="../../../public/script.js"></script>
+    <link rel="stylesheet" href="../../../public/style.css">
 </head>
 
 <body class="bg-gray-200">
@@ -50,7 +50,7 @@
                     <span class="items-start w-full text-left text-gray-700 hover:text-blue-600 font-bold">
 
                         <div class="flex items-center gap-3 mt-10">
-                            <span><img src="../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
+                            <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
                             <div>
                                 <span class="block font-bold">Civilian</span>
                                 <span class="block font-semibold">Tarub Salsalini</span>
@@ -83,7 +83,7 @@
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='settings.php'"
+                    <button onclick="window.location.href='user_settings.php'"
                         class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         Settings
                     </button>
