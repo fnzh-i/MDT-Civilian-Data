@@ -1,94 +1,130 @@
 <?php
-  require_once __DIR__ . '/../../bootstrap.php';
-  $plateNumber = $_GET['plate-number'] ?? '';
+require_once __DIR__ . '/../../bootstrap.php';
+$plateNumber = $_GET['plate-number'] ?? '';
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADMIN VEHICLE RESULT</title>
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 18px;
-    }
-    button, input {
-      font: inherit;
-    }
-  </style>
+  <title>MDT Admin Search Vehicle Result</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="../../../public/admin_script.js"></script>
+  <link rel="stylesheet" href="../../../public/style.css">
 </head>
-<body>
-  <h2>ADMIN SEARCH VEHICLE RESULT</h2> <br>
-  <div id="result"></div>
+
+<body class="bg-gray-200">
+
+  <!-- STICKY NAVBAR -->
+  <nav class="bg-blue-600 shadow-lg px-6 py-3 relative flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <!-- burgir toggle -->
+      <button id="sidebarToggle" class="flex flex-col justify-center space-y-1">
+        <span class="block w-6 h-0.5 bg-white"></span>
+        <span class="block w-6 h-0.5 bg-white"></span>
+        <span class="block w-6 h-0.5 bg-white"></span>
+      </button>
+      <span class="text-white block font-semibold truncate max-w-xs">Administrator</span>
+    </div>
+
+    <!-- Title centered -->
+    <div class="absolute left-1/2 transform -translate-x-1/2">
+      <a href="../admin_dashboard.php"
+        class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+        <span>MDT Admin Dashboard</span>
+      </a>
+    </div>
+
+    <!-- Right: Logout -->
+    <div>
+      <a href="../../../public/index.php"
+        class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+        </svg>
+        <span>Logout</span>
+      </a>
+    </div>
+  </nav>
+
+  <div class="flex flex-col md:flex-row"> <!-- sidebar (Admin Version) -->
+    <div id="sidebar" class="bg-white w-56 h-screen shadow-2xl p-6 hidden md:block fixed top-0 left-0">
+      <ul class="space-y-4">
+
+        <li>
+          <span class="items-start w-full text-left text-gray-700 hover:text-blue-600 font-bold">
+            <div class="flex items-center gap-3 mt-10">
+              <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
+              <div>
+                <span class="block font-bold">Administrator</span>
+                <span class="block font-semibold">MDT System</span>
+              </div>
+            </div>
+          </span>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../admin_dashboard.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Dashboard
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../_license/adminCreateLicense.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Create License
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../_vehicle/adminCreateVehicle.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Create Vehicle
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../_license/adminSearchLicense.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Search & Edit License
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../_vehicle/adminSearchVehicle.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Search & Edit Vehicle
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../admin_settings.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Settings
+          </button>
+        </li>
+
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex flex-col items-center justify-start px-4 w-full mt-32 md:mt-0 py-32">
+      <div class="bg-white p-8 rounded-2xl shadow-xl max-w-4xl mx-auto">
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-6">Search Result</h1>
+
+        <div id="vehicle-result" class="text-lg"></div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    const plateNumber = "<?php echo $plateNumber; ?>";
-
-    fetch("../../_modules/Controller.php", {
-      method: "POST",
-      headers: {"Content-Type": "application/x-www-form-urlencoded"},
-      body: "action=SEARCH-PLATE-NUMBER&plate-number=" + encodeURIComponent(plateNumber)
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === "error") {
-        document.getElementById("result").innerHTML = `<p>${data.message}</p>`;
-        return;
-      }
-
-      const veh = data.vehicle;
-      const lic = data.license;
-      const person = data.person;
-
-      let table = `
-        <table border="1" cellpadding="8">
-          <tr><th>Plate Number</th><td>${veh.plate}</td></tr>
-          <tr><th>MV File Number</th><td>${veh.mvFile ?? ""}</td></tr>
-          <tr><th>VIN</th><td>${veh.vin}</td></tr>
-          <tr><th>Brand</th><td>${veh.brand}</td></tr>
-          <tr><th>Model</th><td>${veh.model}</td></tr>
-          <tr><th>Color</th><td>${veh.color}</td></tr>
-          <tr><th>Year</th><td>${veh.year}</td></tr>
-          <tr><th>Registration Expiry</th><td>${veh.regExpiry}</td></tr>
-          <tr><th>Status</th><td>${veh.status}</td></tr>
-          <tr><th>License Number</th><td>${lic.license_number ?? ""}</td></tr>
-        </table>
-
-        <br>
-        <button id="deleteBtn">DELETE</button>
-      `;
-
-      document.getElementById("result").innerHTML = table;
-
-      const updateLink = document.createElement('a');
-      updateLink.href = `AdminCreateVehicle.php?vehicle-id=${veh.id}&plate-number=${veh.plate}`;
-      updateLink.textContent = "UPDATE";
-      updateLink.style.display = "inline-block"; // optional, to put it on its own line
-      updateLink.style.marginTop = "10px";
-      document.getElementById("result").appendChild(updateLink);
-
-      document.getElementById("deleteBtn").addEventListener("click", () => {
-        if (!confirm("Are you sure you want to delete this vehicle?")) return;
-
-        fetch("../../_modules/Controller.php", {
-          method: "POST",
-          headers: {"Content-Type": "application/x-www-form-urlencoded"},
-          body: "action=DELETE-VEHICLE&plate-number=" + encodeURIComponent(veh.plate)
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === "success") {
-            alert(data.message);
-            window.location.href = "AdminSearchVehicle.php"; // BACK TO ADMIN SEARCH VEHICLE
-          } else {
-            alert("Error: " + data.message);
-          }
-        })
-        .catch(err => alert("Fetch error: " + err));
-      });
-    });
+    window.pagePlateNumber = "<?= $plateNumber ?>";
+    window.pageMode = "vehicle-search-result";
   </script>
 </body>
+
 </html>

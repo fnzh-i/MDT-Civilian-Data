@@ -43,9 +43,7 @@
     </div>
   </nav>
 
-  <div class="flex flex-col md:flex-row">
-
-    <!-- sidebar (Admin Version) -->
+  <div class="flex flex-col md:flex-row"> <!-- sidebar (Admin Version) -->
     <div id="sidebar" class="bg-white w-56 h-screen shadow-2xl p-6 hidden md:block fixed top-0 left-0">
       <ul class="space-y-4">
 
@@ -76,9 +74,23 @@
         </li>
 
         <li>
+          <button onclick="window.location.href='_vehicle/adminCreateVehicle.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Create Vehicle
+          </button>
+        </li>
+
+        <li>
           <button onclick="window.location.href='_license/adminSearchLicense.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Search & Edit License
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='_vehicle/adminSearchVehicle.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Search & Edit Vehicle
           </button>
         </li>
 
@@ -106,17 +118,35 @@
         <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
           <img src="../../public/assets/id.png" class="w-24 h-24 mb-6 opacity-80">
           <button onclick="window.location.href='_license/adminCreateLicense.php'"
-            class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-red-700 transition">
+            class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-blue-700 transition">
             Create License
           </button>
         </div>
 
-        <!-- Edit License -->
+        <!-- Search & Edit License -->
         <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
           <img src="../../public/assets/id.png" class="w-24 h-24 mb-6 opacity-80">
           <button onclick="window.location.href='_license/adminSearchLicense.php'"
-            class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-red-700 transition">
+            class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-blue-700 transition">
             Search & Edit License
+          </button>
+        </div>
+
+        <!-- Create Vehicle -->
+        <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
+          <img src="../../public/assets/car.png" class="w-24 h-24 mb-6 opacity-80">
+          <button onclick="window.location.href='_vehicle/adminCreateVehicle.php'"
+            class="bg-blue-600  text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-blue-700 transition">
+            Create Vehicle
+          </button>
+        </div>
+
+        <!-- Search & Edit Vehicle -->
+        <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
+          <img src="../../public/assets/car.png" class="w-24 h-24 mb-6 opacity-80">
+          <button onclick="window.location.href='_vehicle/adminSearchVehicle.php'"
+            class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-blue-700 transition">
+            Search & Edit Vehicle
           </button>
         </div>
 

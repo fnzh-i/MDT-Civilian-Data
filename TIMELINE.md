@@ -60,4 +60,5 @@ Development ongoing — updates posted as time allows.
                 - Refactored officer and user pages into subdirectories.<br>
                 - Enhance vehicle admin CRUD validation and update logic.<br>
                 - Added input validation for license and ticket creation.<br>
-                - Revamped admin license UI and script logic.
+                - Revamped admin license UI and script logic.<br>
+- Dec 7, 2025   - Added UI to vehicle management in admin panel.

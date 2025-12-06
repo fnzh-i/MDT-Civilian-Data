@@ -45,8 +45,7 @@
     </div>
   </nav>
 
-  <div class="flex flex-col md:flex-row">
-    <!-- sidebar (Admin Version) -->
+  <div class="flex flex-col md:flex-row"> <!-- sidebar (Admin Version) -->
     <div id="sidebar" class="bg-white w-56 h-screen shadow-2xl p-6 hidden md:block fixed top-0 left-0">
       <ul class="space-y-4">
 
@@ -70,16 +69,30 @@
         </li>
 
         <li>
-          <button onclick="window.location.href='../_license/AdminCreateLicense.php'"
+          <button onclick="window.location.href='../_license/adminCreateLicense.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Create License
           </button>
         </li>
 
         <li>
-          <button onclick="window.location.href='../_license/AdminSearchLicense.php'"
+          <button onclick="window.location.href='../_vehicle/adminCreateVehicle.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Create Vehicle
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../_license/adminSearchLicense.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Search & Edit License
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../_vehicle/adminSearchVehicle.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Search & Edit Vehicle
           </button>
         </li>
 
@@ -116,4 +129,5 @@
     </div>
   </div>
 </body>
+
 </html>
