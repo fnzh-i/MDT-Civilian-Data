@@ -1,7 +1,7 @@
 <?php
-  require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
-  class Vehicle
+class Vehicle
 {
   private string $plateNumber;
   private ?string $mvFileNumber;
@@ -18,7 +18,7 @@
 
   public function __construct(
     string $plateNumber,
-    ?string $mvFileNumber,
+    string $mvFileNumber,
     string $vin,
     DateTime $issueDate,
     RegistrationStatus $registrationStatus,
@@ -50,7 +50,7 @@
     return $this->plateNumber;
   }
 
-  public function getMVFileNumber(): ?string
+  public function getMVFileNumber(): string
   {
     return $this->mvFileNumber;
   }
@@ -94,7 +94,7 @@
   {
     return $this->licenseID;
   }
-  private static function inferIssueDate(string $expiryDate): DateTime
+  public static function inferIssueDate(string $expiryDate): DateTime
   {
     $date = new DateTime($expiryDate);
     $date->sub(new DateInterval("P1Y")); // subtract 1 year
@@ -172,198 +172,247 @@
     ];
   }
 
-    public static function searchMVfileNumber(mysqli $conn, string $mvFileNumber): string|array {
-      $stmt = $conn->prepare("SELECT * FROM vehicles WHERE mv_file_number = ?");
-      $stmt->bind_param("s", $mvFileNumber);
-      $stmt->execute();
-      $result = $stmt->get_result();
+  public static function searchMVfileNumber(mysqli $conn, string $mvFileNumber): string|array
+  {
+    $stmt = $conn->prepare("SELECT * FROM vehicles WHERE mv_file_number = ?");
+    $stmt->bind_param("s", $mvFileNumber);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-      if ($result->num_rows === 0) {
-        $stmt->close();
-        return "Error: Vehicle with MV File Number $mvFileNumber not found.";
-      } else {
-        $row = $result->fetch_assoc();
-        $stmt->close();
-        return [
-          "vehicle" => self::fromDatabase($row),
-          "vehicle_id" => $row['vehicle_id'] ?? null
-        ];
-      }
+    if ($result->num_rows === 0) {
+      $stmt->close();
+      return "Error: Vehicle with MV File Number $mvFileNumber not found.";
+    } else {
+      $row = $result->fetch_assoc();
+      $stmt->close();
+      return [
+        "vehicle" => self::fromDatabase($row),
+        "vehicle_id" => $row['vehicle_id'] ?? null
+      ];
+    }
+  }
+
+  // PARA SA ADMIN CREATE VEHICLE (NEED I MANUAL INPUT YUNG LICENSE_ID KASI WALANG JAVASCRIPT OR $_SESSION)
+  public function save(mysqli $conn, string $licenseNumber): string|bool
+  {
+    // HANAPIN YUNG LICENSE_ID SA LICENSES TABLE GAMIT LICENSE_NUMBER
+    $check = $conn->prepare("SELECT license_id FROM licenses WHERE license_number = ?");
+    if (!$check) {
+      return "Prepare failed: " . $conn->error;
     }
 
-    // PARA SA ADMIN CREATE VEHICLE (NEED I MANUAL INPUT YUNG LICENSE_ID KASI WALANG JAVASCRIPT OR $_SESSION)
-    public function save(mysqli $conn, string $licenseNumber): string|bool {
-      // HANAPIN YUNG LICENSE_ID SA LICENSES TABLE GAMIT LICENSE_NUMBER
-      $check = $conn->prepare("SELECT license_id FROM licenses WHERE license_number = ?");
-      if (!$check) {
-        return "Prepare failed: " . $conn->error;
-      }
+    $check->bind_param("s", $licenseNumber);
+    $check->execute();
+    $result = $check->get_result();
 
-      $check->bind_param("s", $licenseNumber);
-      $check->execute();
-      $result = $check->get_result();
-
-      if ($result->num_rows === 0) {
-        $check->close();
-        return "Error: license_number '{$licenseNumber}' does not exist.";
-      }
-
-      $row = $result->fetch_assoc();
-      $licenseID = (int)$row['license_id']; // FOREIGN KEY
+    if ($result->num_rows === 0) {
       $check->close();
+      return "Error: license_number '{$licenseNumber}' does not exist.";
+    }
 
-      // INSERTING NA ETO
-      $stmt = $conn->prepare(
-        "INSERT INTO vehicles
+    $row = $result->fetch_assoc();
+    $licenseID = (int) $row['license_id']; // FOREIGN KEY
+    $check->close();
+
+    // CHECK FOR DUPLICATE PLATE NUMBER
+    $stmtCheck = $conn->prepare("SELECT 1 FROM vehicles WHERE plate_number = ?");
+    $stmtCheck->bind_param("s", $this->plateNumber);
+    $stmtCheck->execute();
+    $resultCheck = $stmtCheck->get_result();
+    $stmtCheck->close();
+    if ($resultCheck->num_rows > 0) {
+      return "Error: plate_number '{$this->plateNumber}' already exists.";
+    }
+
+    // CHECK FOR DUPLICATE MV FILE NUMBER
+    $stmtCheck = $conn->prepare("SELECT 1 FROM vehicles WHERE mv_file_number = ?");
+    $stmtCheck->bind_param("s", $this->mvFileNumber);
+    $stmtCheck->execute();
+    $resultCheck = $stmtCheck->get_result();
+    $stmtCheck->close();
+    if ($resultCheck->num_rows > 0) {
+      return "Error: mv_file_number '{$this->mvFileNumber}' already exists.";
+    }
+
+    // CHECK FOR DUPLICATE VIN
+    $stmtCheck = $conn->prepare("SELECT 1 FROM vehicles WHERE vin = ?");
+    $stmtCheck->bind_param("s", $this->vin);
+    $stmtCheck->execute();
+    $resultCheck = $stmtCheck->get_result();
+    $stmtCheck->close();
+    if ($resultCheck->num_rows > 0) {
+      return "Error: vin '{$this->vin}' already exists.";
+    }
+
+    // INSERTING NA ETO
+    $stmt = $conn->prepare(
+      "INSERT INTO vehicles
         (plate_number, mv_file_number, vin, expiry_date, registration_status,
         brand_name, model_name, model_year, model_color, license_id)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-      );
+    );
 
-      if (!$stmt) {
-        return "Prepare failed: " . $conn->error;
-      }
-
-      $plate = $this->getPlateNumber();
-      $mv = $this->getMVFileNumber();
-      $vin = $this->getVin();
-      $expiryDate = $this->getExpiryDate()->format("Y-m-d");
-      $status = $this->getRegistrationStatus()->value;
-
-      $brand = $this->getBrandName();
-      $model = $this->getModelName();
-      $year = $this->getModelYear();
-      $color = $this->getModelColor();
-
-      $stmt->bind_param(
-        "sssssssisi",
-        $plate,
-        $mv,
-        $vin,
-        $expiryDate,
-        $status,
-        $brand,
-        $model,
-        $year,
-        $color,
-        $licenseID
-      );
-
-      if (!$stmt->execute()) {
-        return "Insert failed: " . $stmt->error;
-      }
-
-      $stmt->close();
-
-      return true;
+    if (!$stmt) {
+      return "Prepare failed: " . $conn->error;
     }
 
+    $plate = $this->getPlateNumber();
+    $mv = $this->getMVFileNumber();
+    $vin = $this->getVin();
+    $expiryDate = $this->getExpiryDate()->format("Y-m-d");
+    $status = $this->getRegistrationStatus()->value;
 
-    // PARA SA ADMIN UPDATE VEHICLE
-    public function update(mysqli $conn): string|bool {
-      $plateNumber = $this->getPlateNumber();
+    $brand = $this->getBrandName();
+    $model = $this->getModelName();
+    $year = $this->getModelYear();
+    $color = $this->getModelColor();
 
-      // GET VEHICLE ID
-      $stmtId = $conn->prepare("SELECT vehicle_id FROM vehicles WHERE plate_number = ?");
-      if (!$stmtId) {
-        return "Prepare failed: " . $conn->error;
-      } 
+    $stmt->bind_param(
+      "sssssssisi",
+      $plate,
+      $mv,
+      $vin,
+      $expiryDate,
+      $status,
+      $brand,
+      $model,
+      $year,
+      $color,
+      $licenseID
+    );
 
-      $stmtId->bind_param("s", $plateNumber);
-      $stmtId->execute();
-      $stmtId->bind_result($vehicle_id);
-
-      if (!$stmtId->fetch()) {
-        $stmtId->close();
-        return "Vehicle not found.";
-      }
-
-      $stmtId->close();
-
-      // UPDATE VEHICLES TABLE
-      $stmt = $conn->prepare(
-        "UPDATE vehicles SET 
-          license_id = ?, 
-          mv_file_number = ?, 
-          vin = ?, 
-          registration_status = ?, 
-          brand_name = ?, 
-          model_name = ?, 
-          model_year = ?, 
-          model_color = ?, 
-          expiry_date = ?
-        WHERE vehicle_id = ?"
-      );
-
-      if (!$stmt) {
-        return "Prepare failed: " . $conn->error;
-      }
-
-      $licenseId = $this->getLicenseID();
-      $mvFile = $this->getMVFileNumber() ?? ''; // DATING NULL LOL
-      $vin = $this->getVin();
-      $status = $this->getRegistrationStatus()->value;
-      $brand = $this->getBrandName();
-      $model = $this->getModelName();
-      $year = $this->getModelYear();
-      $color = $this->getModelColor();
-      $expiryDate = $this->getExpiryDate()->format('Y-m-d');
-
-      $stmt->bind_param(
-        "isssssissi",
-        $licenseId,
-        $mvFile,
-        $vin,
-        $status,
-        $brand,
-        $model,
-        $year,
-        $color,
-        $expiryDate,
-        $vehicle_id
-      );
-
-      if (!$stmt->execute()) {
-        return "Error updating vehicle: " . $stmt->error;
-      }
-
-      $stmt->close();
-      return true;
+    if (!$stmt->execute()) {
+      return "Insert failed: " . $stmt->error;
     }
 
-    // PARA SA ADMIN DELETE VEHICLE
-    public static function delete(mysqli $conn, string $plateNumber): string|bool {
-      // GET VEHICLE ID
-      $stmtId = $conn->prepare("SELECT vehicle_id FROM vehicles WHERE plate_number = ?");
-      if (!$stmtId) {
-        return "Prepare failed (fetch vehicle_id): " . $conn->error;
-      }
+    $stmt->close();
 
-      $stmtId->bind_param("s", $plateNumber);
-      $stmtId->execute();
-      $stmtId->bind_result($vehicle_id);
-
-      if (!$stmtId->fetch()) {
-        $stmtId->close();
-        return "Vehicle not found.";
-      }
-
-      $stmtId->close();
-
-      // DELETE SA vehicles TABLE
-      $stmt = $conn->prepare("DELETE FROM vehicles WHERE vehicle_id = ?");
-      if (!$stmt) {
-        return "Prepare failed (delete vehicle): " . $conn->error;
-      }
-
-      $stmt->bind_param("i", $vehicle_id);
-
-      if (!$stmt->execute()) {
-        return "Error deleting vehicle: " . $stmt->error;
-      }
-
-      $stmt->close();
-      return true;
-    }
+    return true;
   }
+
+  // PARA SA ADMIN UPDATE VEHICLE
+  public function update(mysqli $conn, int $vehicleId): string|bool
+  {
+
+    $plate = $this->getPlateNumber(); // CHECK PLATE NUMBER UNIQUENESS
+    $stmtCheck = $conn->prepare("SELECT 1 FROM vehicles WHERE plate_number = ? AND vehicle_id != ?");
+    $stmtCheck->bind_param("si", $plate, $vehicleId);
+    $stmtCheck->execute();
+    $stmtCheck->store_result();
+    if ($stmtCheck->num_rows > 0) {
+      $stmtCheck->close();
+      return "Error: Another vehicle with the same Plate Number already exists.";
+    }
+    $stmtCheck->close();
+
+    // CHECK MV FILE NUMBER UNIQUENESS
+    $mv = $this->getMVFileNumber();
+    $stmtCheck = $conn->prepare("SELECT 1 FROM vehicles WHERE mv_file_number = ? AND vehicle_id != ?");
+    $stmtCheck->bind_param("si", $mv, $vehicleId);
+    $stmtCheck->execute();
+    $stmtCheck->store_result();
+    if ($stmtCheck->num_rows > 0) {
+      $stmtCheck->close();
+      return "Error: Another vehicle with the same MV File Number already exists.";
+    }
+    $stmtCheck->close();
+
+    // CHECK VIN UNIQUENESS
+    $vin = $this->getVin();
+    $stmtCheck = $conn->prepare("SELECT 1 FROM vehicles WHERE vin = ? AND vehicle_id != ?");
+    $stmtCheck->bind_param("si", $vin, $vehicleId);
+    $stmtCheck->execute();
+    $stmtCheck->store_result();
+    if ($stmtCheck->num_rows > 0) {
+      $stmtCheck->close();
+      return "Error: Another vehicle with the same VIN already exists.";
+    }
+    $stmtCheck->close();
+
+    // UPDATE VEHICLES TABLE
+    $stmt = $conn->prepare(
+      "UPDATE vehicles SET 
+        license_id = ?, 
+        mv_file_number = ?, 
+        vin = ?, 
+        registration_status = ?, 
+        brand_name = ?, 
+        model_name = ?, 
+        model_year = ?, 
+        model_color = ?, 
+        expiry_date = ?
+      WHERE vehicle_id = ?"
+    );
+
+    if (!$stmt)
+      return "Prepare failed: " . $conn->error;
+
+    $licenseId = $this->getLicenseID();
+    $mvFile = $this->getMVFileNumber(); // DATING NULL LOL
+    $vin = $this->getVin();
+    $status = $this->getRegistrationStatus()->value;
+    $brand = $this->getBrandName();
+    $model = $this->getModelName();
+    $year = $this->getModelYear();
+    $color = $this->getModelColor();
+    $expiryDate = $this->getExpiryDate()->format('Y-m-d');
+
+    $stmt->bind_param(
+      "isssssissi",
+      $licenseId,
+      $mvFile,
+      $vin,
+      $status,
+      $brand,
+      $model,
+      $year,
+      $color,
+      $expiryDate,
+      $vehicleId
+    );
+
+    if (!$stmt->execute()) {
+      return "Error updating vehicle: " . $stmt->error;
+    }
+
+    $stmt->close();
+    return true;
+  }
+
+  // PARA SA ADMIN DELETE VEHICLE
+  public static function delete(mysqli $conn, string $plateNumber): string|bool
+  {
+    // GET VEHICLE ID
+    $stmtId = $conn->prepare("SELECT vehicle_id FROM vehicles WHERE plate_number = ?");
+    if (!$stmtId) {
+      return "Prepare failed (fetch vehicle_id): " . $conn->error;
+    }
+
+    $stmtId->bind_param("s", $plateNumber);
+    $stmtId->execute();
+    $stmtId->bind_result($vehicle_id);
+
+    if (!$stmtId->fetch()) {
+      $stmtId->close();
+      return "Vehicle not found.";
+    }
+
+    $stmtId->close();
+
+    // DELETE SA vehicles TABLE
+    $stmt = $conn->prepare("DELETE FROM vehicles WHERE vehicle_id = ?");
+    if (!$stmt) {
+      return "Prepare failed (delete vehicle): " . $conn->error;
+    }
+
+    $stmt->bind_param("i", $vehicle_id);
+
+    if (!$stmt->execute()) {
+      return "Error deleting vehicle: " . $stmt->error;
+    }
+
+    $stmt->close();
+    return true;
+  }
+}
 ?>
