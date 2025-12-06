@@ -1,92 +1,116 @@
 <?php
-  require_once __DIR__ . '/../../bootstrap.php';
-  $licenseNumber = $_GET['license-number'] ?? '';
+require_once __DIR__ . '/../../bootstrap.php';
+$licenseNumber = $_GET['license-number'] ?? '';
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADMIN LICENSE RESULT</title>
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 18px;
-    }
-    button, input {
-      font: inherit;
-    }
-  </style>
+  <title>MDT Admin Search License Result</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="../../../public/admin_script.js"></script>
+  <link rel="stylesheet" href="../../../public/style.css">
 </head>
-<body>
-  <h2>ADMIN SEARCH LICENSE RESULT</h2> <br>
-  <div id="result"></div>
+
+<body class="bg-gray-200">
+
+  <!-- STICKY NAVBAR -->
+  <nav class="bg-blue-600 shadow-lg px-6 py-3 relative flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <!-- burgir toggle -->
+      <button id="sidebarToggle" class="flex flex-col justify-center space-y-1">
+        <span class="block w-6 h-0.5 bg-white"></span>
+        <span class="block w-6 h-0.5 bg-white"></span>
+        <span class="block w-6 h-0.5 bg-white"></span>
+      </button>
+      <span class="text-white block font-semibold truncate max-w-xs">Administrator</span>
+    </div>
+
+    <!-- Title centered -->
+    <div class="absolute left-1/2 transform -translate-x-1/2">
+      <a href="../admin_dashboard.php"
+        class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+        <span>MDT Admin Dashboard</span>
+      </a>
+    </div>
+
+    <!-- Right: Logout -->
+    <div>
+      <a href="../../../public/index.php"
+        class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+        </svg>
+        <span>Logout</span>
+      </a>
+    </div>
+  </nav>
+
+  <div class="flex flex-col md:flex-row">
+    <!-- sidebar (Admin Version) -->
+    <div id="sidebar" class="bg-white w-56 h-screen shadow-2xl p-6 hidden md:block fixed top-0 left-0">
+      <ul class="space-y-4">
+
+        <li>
+          <span class="items-start w-full text-left text-gray-700 hover:text-blue-600 font-bold">
+            <div class="flex items-center gap-3 mt-10">
+              <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
+              <div>
+                <span class="block font-bold">Administrator</span>
+                <span class="block font-semibold">MDT System</span>
+              </div>
+            </div>
+          </span>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../admin_dashboard.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Dashboard
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../_license/AdminCreateLicense.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Create License
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../_license/AdminSearchLicense.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Search & Edit License
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='admin_settings.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Settings
+          </button>
+        </li>
+
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="flex flex-col items-center justify-start px-4 w-full mt-32 md:mt-0 py-32">
+      <div class="bg-white p-8 rounded-2xl shadow-xl max-w-4xl mx-auto">
+        <h1 class="text-3xl font-extrabold text-gray-800 mb-6">Search Result</h1>
+
+        <div id="result" class="text-lg"></div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    const licenseNumber = "<?php echo $licenseNumber; ?>";
-
-    fetch("../../_modules/Controller.php", {
-      method: "POST",
-      headers: {"Content-Type": "application/x-www-form-urlencoded"},
-      body: "action=SEARCH-LICENSE-NUMBER&license-number=" + encodeURIComponent(licenseNumber)
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.status === "error") {
-        document.getElementById("result").innerHTML = `<p>${data.message}</p>`;
-        return;
-      }
-
-      const lic = data.license;
-
-      let table = `
-        <table border="1" cellpadding="8">
-          <tr><th>License Number</th><td>${lic.licenseNumber}</td></tr>
-          <tr><th>Status</th><td>${lic.status}</td></tr>
-          <tr><th>Type</th><td>${lic.type}</td></tr>
-          <tr><th>Issue Date</th><td>${lic.issueDate}</td></tr>
-          <tr><th>Expiry Date</th><td>${lic.expiryDate}</td></tr>
-          <tr><th>DL Codes</th><td>${lic.dl_codes}</td></tr>
-          <tr><th>Name</th><td>${lic.first_name} ${lic.middle_name ?? ""} ${lic.last_name}</td></tr>
-          <tr><th>Birthday</th><td>${lic.date_of_birth}</td></tr>
-          <tr><th>Gender</th><td>${lic.gender}</td></tr>
-          <tr><th>Address</th><td>${lic.address}</td></tr>
-          <tr><th>Nationality</th><td>${lic.nationality}</td></tr>
-          <tr><th>Height</th><td>${lic.height}</td></tr>
-          <tr><th>Weight</th><td>${lic.weight}</td></tr>
-          <tr><th>Eye Color</th><td>${lic.eye_color}</td></tr>
-          <tr><th>Blood Type</th><td>${lic.blood_type}</td></tr>
-        </table>
-
-        <br>
-        <a href="AdminCreateLicense.php?license-number=${lic.licenseNumber}">UPDATE</a>
-        <button id="deleteBtn">DELETE</button>
-      `;
-
-      document.getElementById("result").innerHTML = table;
-
-
-      document.getElementById("deleteBtn").addEventListener("click", () => {
-        if (!confirm("Are you sure you want to delete this license?")) return;
-
-        fetch("../../_modules/Controller.php", {
-          method: "POST",
-          headers: {"Content-Type": "application/x-www-form-urlencoded"},
-          body: "action=DELETE-LICENSE&license-number=" + encodeURIComponent(lic.licenseNumber)
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.status === "success") {
-            alert(data.message);
-            window.location.href = "AdminSearchLicense.php"; // BACK TO SEARCH LICENSE PAGE
-          } else {
-            alert("Error: " + data.message);
-          }
-        })
-        .catch(err => alert("Fetch error: " + err));
-      });
-    });
+    window.pageLicenseNumber = "<?= $licenseNumber ?>";
+    window.pageMode = "search-result";
   </script>
 </body>
 </html>

@@ -59,4 +59,5 @@ Development ongoing — updates posted as time allows.
 - Dec 6, 2025   - Redesigned admin panel and license form and add JS for auto-fill.<br>
                 - Refactored officer and user pages into subdirectories.<br>
                 - Enhance vehicle admin CRUD validation and update logic.<br>
-                - Added input validation for license and ticket creation.
+                - Added input validation for license and ticket creation.<br>
+                - Revamped admin license UI and script logic.

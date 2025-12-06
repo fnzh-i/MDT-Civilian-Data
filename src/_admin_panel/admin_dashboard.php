@@ -78,7 +78,7 @@
         <li>
           <button onclick="window.location.href='_license/adminSearchLicense.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
-            Edit License
+            Search & Edit License
           </button>
         </li>
 
@@ -116,7 +116,7 @@
           <img src="../../public/assets/id.png" class="w-24 h-24 mb-6 opacity-80">
           <button onclick="window.location.href='_license/adminSearchLicense.php'"
             class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-red-700 transition">
-            Edit License
+            Search & Edit License
           </button>
         </div>
 
