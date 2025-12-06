@@ -171,7 +171,7 @@
       $check->store_result();
 
       if ($check->num_rows > 0) {
-        return "License number already exists.";
+        return "License number {$licenseNumber} already exists.";
       }
 
       $check->close();

@@ -107,49 +107,163 @@ class LicenseAPI{
 
     // para sa Admin Panel: Create a License
     public function createLicense(): string {
-        // yung mga DLCodes
+        // CHECK IF EMPTY ANG LICENSE-NUMBER
+        $licenseNumber = $_POST['license-number'] ?? '';
+        if (trim($licenseNumber) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the license number.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG LICENSE STATUS
+        $licenseStatus = $_POST['license-status'] ?? '';
+        if ($licenseStatus === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please select the license status.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG LICENSE TYPE
+        $licenseType = $_POST['license-type'] ?? '';
+        if ($licenseType === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please select the license type.'
+            ]);
+        }
+        // CHECK IF EMPTY ISSUE DATE
+        $issueDate = $_POST['issue-date'] ?? '';
+        if (trim($issueDate) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please input the issue date.'
+            ]);
+        }
+         // CHECK IF EMPTY EXPIRY OPTION
+        if (!isset($_POST['expiry-option'])) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please select an expiry option.'
+            ]);
+        }
+        $expiryOptionValue = (int) $_POST['expiry-option']; // string to int kasi int yung backed values ng ExpiryOption enum
+        $expiryOptionEnum = ExpiryOption::from($expiryOptionValue);
+
+        // DL CODES AND CHECK NA RIN IF EMPTY
         $dlCodes = [];
         if (!empty($_POST['dl-codes']) && is_array($_POST['dl-codes'])) {
             foreach ($_POST['dl-codes'] as $codeString) {
                 $dlCodes[] = DLCodes::from($codeString); // from array of strings into array of DLCodes enum cases
             }
+        } else {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please select at least one DL code.'
+            ]);
         }
 
-        // magiging null if left blank
+        // CHECK IF EMPTY FIRST NAME
+        $firstName = $_POST['first-name'] ?? '';
+        if (trim($firstName) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the first name.'
+            ]);
+        }
+        // CHECK IF EMPTY MIDDLE NAME, MAGIGING NULL
         $middleName = $_POST['middle-name'] ?? null;
         if ($middleName === '') $middleName = null;
-        
-        // magiging null if left blank
+
+        // CHECK IF EMPTY LAST NAME
+        $lastName = $_POST['last-name'] ?? '';
+        if (trim($lastName) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the last name.'
+            ]);
+        }
+        // CHECK IF EMPTY DATE OF BIRTH
+        $dateOfBirth = $_POST['date-of-birth'] ?? '';
+        if (trim($dateOfBirth) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please input the date of birth.'
+            ]);
+        }
+        // CHECK IF EMPTY GENDER
+        $gender = $_POST['sex'] ?? '';
+        if ($gender === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please select a gender.'
+            ]);
+        }
+        // CHECK IF EMPTY ADDRESS
+        $address = $_POST['address'] ?? '';
+        if (trim($address) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the address.'
+            ]);
+        }
+        // CHECK IF EMPTY NATIONALITY
+        $nationality = $_POST['nationality'] ?? '';
+        if (trim($nationality) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the nationality.'
+            ]);
+        }
+        // CHECK IF EMPTY HEIGHT
+        $height = $_POST['height'] ?? '';
+        if (trim($height) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the height.'
+            ]);
+        }
+        // CHECK IF EMPTY WEIGHT
+        $weight = $_POST['weight'] ?? '';
+        if (trim($weight) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the weight.'
+            ]);
+        }
+        //CHECK IF EMPTY EYE COLOR
+        $eyeColor = $_POST['eye-color'] ?? '';
+        if (trim($eyeColor) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the eye color.'
+            ]);
+        }
+
+        // CHECK IF EMPTY BLOOD TYPE, MAGIGING NULL
         $bloodType = $_POST['blood-type'] ?? null;
         if ($bloodType === '') $bloodType = null;
 
-        // Checker if walang na pick na Expiry Option
-        if (!isset($_POST['expiry-option'])) {
-            return "Error: Expiry option not selected.";
-        }
-
-        $expiryOptionValue = (int) $_POST['expiry-option']; // string to int kasi int yung backed values ng ExpiryOption enum
-        $expiryOptionEnum = ExpiryOption::from($expiryOptionValue);
+       
 
         // gawa ng DriversLicense object
         $license = new DriversLicense(
-            $_POST['license-number'],
-            LicenseStatus::from($_POST['license-status']),
-            LicenseType::from($_POST['license-type']),
-            new DateTime($_POST['issue-date']),
+            $licenseNumber,
+            LicenseStatus::from($licenseStatus),
+            LicenseType::from($licenseType),
+            new DateTime($issueDate),
             $expiryOptionEnum,
             $dlCodes,
 
-            $_POST['first-name'],
+            $firstName,
             $middleName,
-            $_POST['last-name'],
-            new DateTime($_POST['date-of-birth']),
-            Gender::from($_POST['sex']),
-            $_POST['address'],
-            $_POST['nationality'],
-            $_POST['height'],
-            $_POST['weight'],
-            $_POST['eye-color'],
+            $lastName,
+            new DateTime($dateOfBirth),
+            Gender::from($gender),
+            $address,
+            $nationality,
+            $height,
+            $weight,
+            $eyeColor,
             $bloodType
             );
 

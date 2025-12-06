@@ -27,8 +27,13 @@
     <form action="../../_modules/Controller.php" method="POST" class="forms">
       <input type="hidden" name="action" value="CREATE-LICENSE">
 
-      <label for="license-number">License Number:</label>
-      <input type="text" id="license-number" name="license-number">
+      <input 
+        type="text" 
+        id="license-number" 
+        name="license-number"
+        value="<?php echo htmlspecialchars($licenseNumber); ?>" 
+        <?php echo $licenseNumber ? "readonly" : ""; ?>
+      >
       <br> <br>
 
       License Status:

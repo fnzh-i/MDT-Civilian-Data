@@ -51,6 +51,7 @@ class TicketAPI {
 
     // CREATE TICKET (GINAGAMIT BOTH SA USER AND SA ADMIN)
     public function createTicket(array $data): string {
+
         // DETERMINE IF SA USER (TRAFFIC ENFORCER) OR ADMIN BA YUNG REQUEST
         $licenseID = null;
 
@@ -96,23 +97,41 @@ class TicketAPI {
             ]);
         }
 
-
         // VIOLATION CHECKER
         try {
             $violation = Violation::from($data['violation']);
         } catch (ValueError $e) {
             return json_encode([
                 'status' => 'error',
-                'message' => 'Invalid violation.'
+                'message' => 'Please input a valid violation.'
             ]);
         }
 
 
+        // CHECK IF EMPTY DATE OF INCIDENT
+        $dateOfIncident = $data['date-of-incident'] ?? '';
+        if (trim($dateOfIncident) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please input the date of incident.'
+            ]);
+        }
+
+        // CHECK IF EMPTY PLACE OF INCIDENT
+        $placeOfIncident = $data['place-of-incident'] ?? '';
+        if (trim($placeOfIncident) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the place of incident.'
+            ]);
+        }
+        
+
         // CREATE TicketViolation OBJECT
         $ticket = new TicketViolation(
             $violation,
-            new DateTime($data['date-of-incident']),
-            $data['place-of-incident'],
+            new DateTime($dateOfIncident),
+            $placeOfIncident,
             $data['note'] ?? ''
         );
 
