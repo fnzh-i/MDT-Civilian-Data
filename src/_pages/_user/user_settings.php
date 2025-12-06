@@ -23,7 +23,7 @@
             <span class="text-white block font-semibold truncate max-w-xs">Tarub Salsalini</span>
         </div>
         <div class="absolute left-1/2 transform -translate-x-1/2">
-            <a href="officer_dashboard.php"
+            <a href="user_dashboard.php"
                 class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
                 <span>Mobile Data Terminal</span>
             </a>
@@ -111,7 +111,7 @@
 
                 <ul class="text-gray-700 text-sm mb-8 space-y-2 ml-2">
                     <li>• Password change or reset</li>
-                    <li>• Update to account name or officer details</li>
+                    <li>• Update to account name or user details</li>
                     <li>• Recovery for forgotten password</li>
                     <li>• Report account or login issues</li>
                     <li>• Contact administrative support</li>
