@@ -86,7 +86,7 @@ class User
   public static function savePersonalInfo(mysqli $conn, array $data): bool
   {
     $stmt = $conn->prepare("
-        INSERT INTO user (first_name, middle_name, last_name)
+        INSERT INTO users (first_name, middle_name, last_name)
         VALUES (?, ?, ?)
     ");
 
