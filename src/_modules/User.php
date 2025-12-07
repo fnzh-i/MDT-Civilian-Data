@@ -86,24 +86,21 @@ class User
   public static function savePersonalInfo(mysqli $conn, array $data): bool
   {
     $stmt = $conn->prepare("
-        INSERT INTO personal_info (full_name, license_id, dob, weight, height, exp_date, email)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO user (first_name, middle_name, last_name)
+        VALUES (?, ?, ?)
     ");
 
     $stmt->bind_param(
-      "sssddds",
-      $data['fullname'],
-      $data['license'],
-      $data['dob'],
-      $data['weight'],
-      $data['height'],
-      $data['expdate'],
-      $data['email']
+      "sss",
+      $data['first_name'],
+      $data['middle_name'],
+      $data['last_name']
     );
 
     $result = $stmt->execute();
     $stmt->close();
     return $result;
   }
+
 }
 ?>

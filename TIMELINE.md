@@ -65,3 +65,4 @@ Development ongoing — updates posted as time allows.
                 - Added support ticket form to officer settings page.<br>
                 - Added user settings page and update asset paths.<br>
                 - Refactored login and registration flow, add user role handling.<br>
+                - Updated savePersonalInfo to insert into user table<br>
