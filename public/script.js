@@ -38,13 +38,16 @@ function login() {
 
 // ================= REGISTER USER =================
 function registerUser() {
-    const firstName = document.getElementById("first_name").value.trim();
-    const middleName = document.getElementById("middle_name").value.trim(); // optional
-    const lastName = document.getElementById("last_name").value.trim();
+    const firstName = document.getElementById("first_name").value;
+    const middleName = document.getElementById("middle_name").value; // optional
+    const lastName = document.getElementById("last_name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const licenseNumber = document.getElementById("license").value;
 
-    if (!firstName || !lastName) {
+    if (!firstName || !lastName || !email || !password) {
         document.getElementById("registerError").textContent =
-        "Please fill in at least first and last name.";
+        "Please fill in at least first name, last name, email, and password.";
         document.getElementById("registerError").classList.remove("hidden");
         return;
     }
@@ -54,6 +57,9 @@ function registerUser() {
     formData.append("first_name", firstName);
     formData.append("middle_name", middleName);
     formData.append("last_name", lastName);
+    formData.append("license_number", licenseNumber);
+    formData.append("email", email);
+    formData.append("password", password);
 
     fetch("../_modules/Controller.php", {
         method: "POST",
@@ -66,8 +72,9 @@ function registerUser() {
         sessionStorage.setItem("first_name", data.first_name);
         sessionStorage.setItem("middle_name", data.middle_name);
         sessionStorage.setItem("last_name", data.last_name);
+        sessionStorage.setItem("email", data.email);
 
-        // redirect if needed (or stay on page)
+        // redirect if needed
         // window.location.href = "_user/user_dashboard.php";
     } else {
         document.getElementById("registerError").textContent = data.message;
@@ -79,6 +86,7 @@ function registerUser() {
     alert("Error connecting to server.");
     });
 }
+
 
 // ================= VEHICLE LOOKUP =================
 function lookupVehicle() {

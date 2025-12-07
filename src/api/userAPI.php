@@ -3,7 +3,8 @@ require_once __DIR__ . '/../bootstrap.php';
 
 header('Content-Type: application/json');
 
-class UserAPI{
+class UserAPI
+{
     private mysqli $conn;
 
     public function __construct(mysqli $conn)
@@ -13,25 +14,69 @@ class UserAPI{
 
     public function registerUser(): string
     {
-        // Get POST data
+        // collect POST data
         $firstName = trim($_POST['first_name'] ?? '');
         $middleName = trim($_POST['middle_name'] ?? '');
         $lastName = trim($_POST['last_name'] ?? '');
+        $licenseNumber = trim($_POST['license_number'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = trim($_POST['password'] ?? '');
 
-        // Validate required fields
-        if (!$firstName || !$lastName) {
+        // validate required fields
+        if (!$firstName || !$lastName || !$email || !$password) {
             return json_encode([
                 'status' => 'error',
-                'message' => 'Please fill in at least first name and last name.'
+                'message' => 'First name, last name, email, and password are required.'
             ]);
         }
 
-        // Save personal info to users table
+        // look up license_id from license_number (if provided)
+        $licenseId = null;
+
+        if ($licenseNumber !== '') {
+            $stmt = $this->conn->prepare("SELECT license_id FROM licenses WHERE license_number = ?");
+            $stmt->bind_param("s", $licenseNumber);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows === 0) {
+                $stmt->close();
+                return json_encode([
+                    'status' => 'error',
+                    'message' => "License number '{$licenseNumber}' does not exist."
+                ]);
+            }
+
+            $licenseId = (int) $result->fetch_assoc()['license_id'];
+            $stmt->close();
+        }
+
+        // create User object to hash password
+        require_once __DIR__ . '/../_modules/User.php';
+        $userObj = new User(
+            $firstName,
+            $lastName,
+            $email,
+            $password,
+            $middleName,
+            false,); // auto-hashes password
+        $hashedPassword = $userObj->getPassword();
+
+        // insert full user data
         $stmt = $this->conn->prepare("
-            INSERT INTO users (first_name, middle_name, last_name)
-            VALUES (?, ?, ?)
-        ");
-        $stmt->bind_param("sss", $firstName, $middleName, $lastName);
+        INSERT INTO users (first_name, middle_name, last_name, email, password, license_id)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ");
+
+        $stmt->bind_param(
+            "sssssi",
+            $firstName,
+            $middleName,
+            $lastName,
+            $email,
+            $hashedPassword,
+            $licenseId
+        );
 
         if ($stmt->execute()) {
             $stmt->close();
@@ -39,15 +84,18 @@ class UserAPI{
                 'status' => 'success',
                 'first_name' => $firstName,
                 'middle_name' => $middleName,
-                'last_name' => $lastName
-            ]);
-        } else {
-            $stmt->close();
-            return json_encode([
-                'status' => 'error',
-                'message' => 'Failed to save user.'
+                'last_name' => $lastName,
+                'email' => $email,
+                'license_id' => $licenseId
             ]);
         }
+
+        $stmt->close();
+        return json_encode([
+            'status' => 'error',
+            'message' => 'Database error: failed to save user.'
+        ]);
     }
+
 }
 ?>
