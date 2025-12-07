@@ -8,16 +8,23 @@ class User
   private string $last_name;
   private string $email;
   private string $password;
+  private Roles $role;
+  private int $default_password;
 
   public function __construct(
+    Roles $role,
+
     string $first_name,
+    ?string $middle_name,
     string $last_name,
+
     string $email,
     string $password,
-    ?string $middle_name = null,
+    
     bool $isHashed = false,
     $extra = null)
   {
+    $this->role = $role;
     $this->first_name = $first_name;
     $this->middle_name = $middle_name;
     $this->last_name = $last_name; 
@@ -28,10 +35,14 @@ class User
     } else {
       $this->password = password_hash($password, PASSWORD_DEFAULT); // hash the password kaagad
     }
-
     // mag ttrue lang yung isHashed if galing sa database yung user 'object', using fromDatabase()
   }
 
+  public function getRole(): Roles
+  {
+    return $this->role;
+  }
+  
   public function getEmail(): string
   {
     return $this->email;
@@ -42,20 +53,34 @@ class User
     return $this->password;
   }
 
+  public function getDefaultPasswordString(): string
+  {
+    return (string) $this->default_password;
+    
+    // string ang return type para ma lagay natin sa password field sa frontend later
+  }
+
   public function save(mysqli $conn): bool
   {
+    $this->default_password = rand(1000, 9999); // random four-digit default_password
+
     $stmt = $conn->prepare("
-            INSERT INTO users (first_name, middle_name, last_name, email, password)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO users (role, first_name, middle_name, last_name, email, password, default_password)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
 
+    $role = $this->role->value;
+    $middle_name = $this->middle_name ?? null; // para di completely blank sa db
+
     $stmt->bind_param(
-      "sssss",
+      "ssssssi",
+      $role,
       $this->first_name,
-      $this->middle_name,
+      $middle_name,
       $this->last_name,
       $this->email,
-      $this->password
+      $this->password,
+      $this->default_password
     );
 
     $result = $stmt->execute();
@@ -96,11 +121,23 @@ class User
       : "Password does not match the email provided."; // string return pag mali.
   }
 
-  // gagamitin na pala ito, para sa frontend, to fetch Users sa database
   public static function fromDatabase(array $row): self
-  { // will return 'self' meaning mag-rereturn ng User object
-    return new self($row['email'], $row['password'], true);
+  {
+    $user = new self
+    (
+      Roles::from($row['role']),
+      $row['first_name'],
+      $row['middle_name'],
+      $row['last_name'],
+      $row['email'],
+      $row['password'],
+      true
+    );
     // yung last argument which is bool true ay para ma 'override' yung isHashed false sa User constructor
+
+    $user->default_password = $row['default_password']; // kunin yung default_password sa db
+
+    return $user;
   }
 }
 ?>

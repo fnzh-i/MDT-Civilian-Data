@@ -15,6 +15,7 @@ class UserAPI
     public function registerUser(): string
     {
         // collect POST data
+        $role = Roles::from($_POST['role']);
         $firstName = trim($_POST['first_name'] ?? '');
         $middleName = trim($_POST['middle_name'] ?? '');
         $lastName = trim($_POST['last_name'] ?? '');
@@ -23,10 +24,10 @@ class UserAPI
         $password = trim($_POST['password'] ?? '');
 
         // validate required fields
-        if (!$firstName || !$lastName || !$email || !$password) {
+        if (!$role || !$firstName || !$lastName || !$email || !$password) {
             return json_encode([
                 'status' => 'error',
-                'message' => 'First name, last name, email, and password are required.'
+                'message' => 'Role, first name, last name, email, and password are required.'
             ]);
         }
 
@@ -54,47 +55,58 @@ class UserAPI
         // create User object to hash password
         require_once __DIR__ . '/../_modules/User.php';
         $userObj = new User(
+            $role,
+
             $firstName,
+            $middleName,
             $lastName,
+            
             $email,
             $password,
-            $middleName,
+            
             false,); // auto-hashes password
         $hashedPassword = $userObj->getPassword();
-
-        // insert full user data
-        $stmt = $this->conn->prepare("
-        INSERT INTO users (first_name, middle_name, last_name, email, password, license_id)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ");
-
-        $stmt->bind_param(
-            "sssssi",
-            $firstName,
-            $middleName,
-            $lastName,
-            $email,
-            $hashedPassword,
-            $licenseId
-        );
-
-        if ($stmt->execute()) {
-            $stmt->close();
-            return json_encode([
-                'status' => 'success',
-                'first_name' => $firstName,
-                'middle_name' => $middleName,
-                'last_name' => $lastName,
-                'email' => $email,
-                'license_id' => $licenseId
-            ]);
+        
+        $result = $userObj->save($this->conn);
+        if ($result) {
+            return "Successful.";
+        } else {
+            return "Error: {$this->conn->error}";
         }
 
-        $stmt->close();
-        return json_encode([
-            'status' => 'error',
-            'message' => 'Database error: failed to save user.'
-        ]);
+        // insert full user data
+    //     $stmt = $this->conn->prepare("
+    //     INSERT INTO users (first_name, middle_name, last_name, email, password, license_id)
+    //     VALUES (?, ?, ?, ?, ?, ?)
+    // ");
+
+    //     $stmt->bind_param(
+    //         "sssssi",
+    //         $firstName,
+    //         $middleName,
+    //         $lastName,
+    //         $email,
+    //         $hashedPassword,
+    //         $licenseId
+    //     );
+
+    //     if ($stmt->execute()) {
+    //         $stmt->close();
+    //         return json_encode([
+    //             'status' => 'success',
+    //             'first_name' => $firstName,
+    //             'middle_name' => $middleName,
+    //             'last_name' => $lastName,
+    //             'email' => $email,
+    //             'license_id' => $licenseId
+    //         ]);
+    //     }
+
+    //     $stmt->close();
+    //     return json_encode([
+    //         'status' => 'error',
+    //         'message' => 'Database error: failed to save user.'
+    //     ]);
     }
 
 }
