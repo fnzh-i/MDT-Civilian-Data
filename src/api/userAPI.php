@@ -3,37 +3,51 @@ require_once __DIR__ . '/../bootstrap.php';
 
 header('Content-Type: application/json');
 
-$response = [];
+class UserAPI{
+    private mysqli $conn;
 
-if ($conn) {
-    $sql = "SELECT * FROM users";
-    $result = mysqli_query($conn, $sql);
-
-    if ($result) {
-        $users = [];
-
-        while ($row = mysqli_fetch_assoc($result)) {
-            
-            $user = User::fromDatabase($row);
-
-            $users[] = [
-                'user_id' => $row['user_id'],
-                'email' => $user->getEmail(),
-                // 'password' => $user->getPassword(),
-                // 'first_name' => $license->getFirstName(),
-                // 'middle_name' => $license->getMiddleName(),
-                // 'last_name' => $license->getLastName(),
-                // 'date_of_birth' => $license->getDateOfBirth()->format('M-d-Y'),
-                // 'address' => $license->getAddress()
-            ];
-        }
-        $response = json_encode(['users' => $users], JSON_PRETTY_PRINT);
-        // echo json_encode(['users' => $users], JSON_PRETTY_PRINT);
-    } else {
-        http_response_code(500);
-        echo json_encode(['error' => 'Failed to fetch users from database.']);
+    public function __construct(mysqli $conn)
+    {
+        $this->conn = $conn;
     }
-} else {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed.']);
+
+    public function registerUser(): string
+    {
+        // Get POST data
+        $firstName = trim($_POST['first_name'] ?? '');
+        $middleName = trim($_POST['middle_name'] ?? '');
+        $lastName = trim($_POST['last_name'] ?? '');
+
+        // Validate required fields
+        if (!$firstName || !$lastName) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please fill in at least first name and last name.'
+            ]);
+        }
+
+        // Save personal info to users table
+        $stmt = $this->conn->prepare("
+            INSERT INTO users (first_name, middle_name, last_name)
+            VALUES (?, ?, ?)
+        ");
+        $stmt->bind_param("sss", $firstName, $middleName, $lastName);
+
+        if ($stmt->execute()) {
+            $stmt->close();
+            return json_encode([
+                'status' => 'success',
+                'first_name' => $firstName,
+                'middle_name' => $middleName,
+                'last_name' => $lastName
+            ]);
+        } else {
+            $stmt->close();
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Failed to save user.'
+            ]);
+        }
+    }
 }
+?>

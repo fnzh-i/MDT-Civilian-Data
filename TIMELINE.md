@@ -64,3 +64,4 @@ Development ongoing — updates posted as time allows.
 - Dec 7, 2025   - Added UI to vehicle management in admin panel.<br>
                 - Added support ticket form to officer settings page.<br>
                 - Added user settings page and update asset paths.<br>
+                - Refactored login and registration flow, add user role handling.<br>

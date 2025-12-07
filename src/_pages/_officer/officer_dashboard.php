@@ -1,3 +1,9 @@
+<?php
+session_start();
+$role = $_SESSION['role'] ?? 'OFFICER'; // fallback if session not set
+$name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'WALA'); // you store name
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -52,8 +58,8 @@
                         <div class="flex items-center gap-3 mt-10">
                             <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
                             <div>
-                                <span class="block font-bold">LTO Officer</span>
-                                <span class="block font-semibold">Tarub Salsalini</span>
+                                <span class="block font-bold" id="userRoleDisplay">LTO Officer</span>
+                                <span class="block font-semibold" id="userNameDisplay">Tarub Salsalini</span>
                             </div>
                         </div>
                     </span>
@@ -115,5 +121,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+    window.userRole = "<?= $role ?>";
+    window.userName = "<?= $name ?>";
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const roleEl = document.getElementById('userRoleDisplay');
+        const nameEl = document.getElementById('userNameDisplay');
+
+        if (roleEl) {
+            roleEl.textContent = window.userRole;
+            switch(window.userRole) {
+                case 'ADMIN': roleEl.classList.add('text-red-600'); break;
+                case 'SUPERVISOR': roleEl.classList.add('text-yellow-600'); break;
+                default: roleEl.classList.add('text-blue-600'); break;
+            }
+        }
+
+        if (nameEl) {
+            nameEl.textContent = window.userName;
+        }
+    });
+    </script>
 </body>
 </html>

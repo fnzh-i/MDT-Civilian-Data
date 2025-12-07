@@ -44,7 +44,7 @@ class User
     return $stmt->execute();
   }
 
-  public static function searchEmail(mysqli $conn, string $email, string $password): string|bool
+  public static function searchEmail(mysqli $conn, string $email, string $password)
   {
     $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
@@ -59,7 +59,13 @@ class User
     $user = $result->fetch_assoc(); // kunin yung hashed password sa db, if found yung email sa db
     $stmt->close();
 
-    return self::checkPassword($password, $user['password']); // first param is yung ininput sa UI, second param is galing sa database
+    // verify password
+    if (!password_verify($password, $user['password'])) {
+      return "Password does not match the email provided.";
+    }
+
+    // SUCCESS → return full user row
+    return $user;
   }
 
   // para ma compare yung ininput na pass vs hashed password from database
@@ -75,6 +81,29 @@ class User
   { // will return 'self' meaning mag-rereturn ng User object
     return new self($row['email'], $row['password'], true);
     // yung last argument which is bool true ay para ma 'override' yung isHashed false sa User constructor
+  }
+
+  public static function savePersonalInfo(mysqli $conn, array $data): bool
+  {
+    $stmt = $conn->prepare("
+        INSERT INTO personal_info (full_name, license_id, dob, weight, height, exp_date, email)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+
+    $stmt->bind_param(
+      "sssddds",
+      $data['fullname'],
+      $data['license'],
+      $data['dob'],
+      $data['weight'],
+      $data['height'],
+      $data['expdate'],
+      $data['email']
+    );
+
+    $result = $stmt->execute();
+    $stmt->close();
+    return $result;
   }
 }
 ?>

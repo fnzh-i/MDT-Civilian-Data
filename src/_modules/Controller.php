@@ -7,21 +7,48 @@ require_once __DIR__ . '/../bootstrap.php';
     $action = $_POST['action'] ?? null;
 
     switch ($action) {
-      case 'USER-LOGIN':
-          $email = $_POST['email'] ?? null;
-          $password = $_POST['password'] ?? null;
-          
+    case 'USER-LOGIN':
 
-          $loginResult = User::searchEmail($conn, $email, $password);
+      $email = $_POST['email'] ?? null;
+      $password = $_POST['password'] ?? null;
 
-          if ($loginResult === true) {
-              echo "SUCCESS";
-          } else {
-              echo $loginResult; // the error message from User::searchEmail()
-          }
+      $loginResult = User::searchEmail($conn, $email, $password);
+
+      if (is_array($loginResult)) { // <--- IMPORTANTE WAG GAGALINGIN TONG LINYANG TO
+        $_SESSION['id'] = $loginResult['user_id'];
+        $_SESSION['email'] = $loginResult['email'];
+        $_SESSION['role'] = $loginResult['role'];
+
+        // logic redirect based on role
+        $redirect = match (strtoupper($_SESSION['role'])) {
+          'ADMIN' => '../_admin_panel/admin_dashboard.php',
+          'SUPERVISOR' => '_officer/officer_dashboard.php',
+          'USER' => '_user/user_dashboard.php',
+          default => '_officer/officer_dashboard.php', // fallback to officer
+        };
+
+        // send JSON with redirect info
+        echo json_encode([
+          "status" => "SUCCESS",
+          "role" => $_SESSION['role'],
+          "redirect" => $redirect
+        ]);
+      } else {
+        echo json_encode([
+          "status" => "ERROR",
+          "message" => $loginResult
+        ]);
+      }
       exit;
 
-      case 'SEARCH-PLATE-NUMBER':
+    case 'REGISTER-USER':
+      header('Content-Type: application/json');
+
+      $userAPI = new UserAPI($conn);
+      echo $userAPI->registerUser();
+      exit();
+
+    case 'SEARCH-PLATE-NUMBER':
         header('Content-Type: application/json');
 
         $plateNumber = $_POST['plate-number'];
