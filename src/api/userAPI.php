@@ -60,26 +60,9 @@ class UserAPI
             $password,
             $middleName,
             false,); // auto-hashes password
-        $hashedPassword = $userObj->getPassword();
+        $success = $userObj->save($this->conn, $licenseId);
 
-        // insert full user data
-        $stmt = $this->conn->prepare("
-        INSERT INTO users (first_name, middle_name, last_name, email, password, license_id)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ");
-
-        $stmt->bind_param(
-            "sssssi",
-            $firstName,
-            $middleName,
-            $lastName,
-            $email,
-            $hashedPassword,
-            $licenseId
-        );
-
-        if ($stmt->execute()) {
-            $stmt->close();
+        if ($success) {
             return json_encode([
                 'status' => 'success',
                 'first_name' => $firstName,
@@ -90,7 +73,6 @@ class UserAPI
             ]);
         }
 
-        $stmt->close();
         return json_encode([
             'status' => 'error',
             'message' => 'Database error: failed to save user.'

@@ -8,6 +8,7 @@ class User
   private string $last_name;
   private string $email;
   private string $password;
+  private int $default_password;
 
   public function __construct(
     string $first_name,
@@ -42,20 +43,30 @@ class User
     return $this->password;
   }
 
-  public function save(mysqli $conn): bool
+  public function getDefaultPasswordString(): string
   {
+    return (string) $this->default_password;
+
+    // string ang return type para ma lagay natin sa password field sa frontend later
+  }
+
+  public function save(mysqli $conn, ?int $license_id): bool
+  {
+    $this->default_password = rand(1000, 9999); // random four-digit default_password
     $stmt = $conn->prepare("
-            INSERT INTO users (first_name, middle_name, last_name, email, password)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO users (first_name, middle_name, last_name, email, password, default_password, license_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
 
     $stmt->bind_param(
-      "sssss",
+      "sssssii",
       $this->first_name,
       $this->middle_name,
       $this->last_name,
       $this->email,
-      $this->password
+      $this->password,
+      $this->default_password,
+      $license_id,
     );
 
     $result = $stmt->execute();
@@ -98,9 +109,20 @@ class User
 
   // gagamitin na pala ito, para sa frontend, to fetch Users sa database
   public static function fromDatabase(array $row): self
-  { // will return 'self' meaning mag-rereturn ng User object
-    return new self($row['email'], $row['password'], true);
-    // yung last argument which is bool true ay para ma 'override' yung isHashed false sa User constructor
+  {
+    $user = new self(
+      $row['first_name'],
+      $row['last_name'],
+      $row['email'],
+      $row['password'],
+      $row['middle_name'],
+      true  // isHashed
+    );
+
+    // assign default_password from DB para hindi NULL
+    $user->default_password = (int) $row['default_password'];
+
+    return $user;
   }
 }
 ?>
