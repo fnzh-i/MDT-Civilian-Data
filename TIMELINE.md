@@ -68,3 +68,5 @@ Development ongoing — updates posted as time allows.
                 - Updated savePersonalInfo to insert into user table.<br>
                 - Enhanced user registration with email, password, and license.<br>
 - Dec 8, 2025   - Added default_password function.<br>
+                - Refactored user function to handle admin and civilian registration.<br>
+                - Added User Name and Role display to Navbar and Sidebar.<br> 

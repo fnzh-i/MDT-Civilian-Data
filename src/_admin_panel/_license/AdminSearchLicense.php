@@ -1,3 +1,9 @@
+<?php
+session_start();
+$role = $_SESSION['role'] ?? 'OFFICER'; // fallback if session not set
+$name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-BOT'); // you store name
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,14 +27,14 @@
         <span class="block w-6 h-0.5 bg-white"></span>
         <span class="block w-6 h-0.5 bg-white"></span>
       </button>
-      <span class="text-white block font-semibold truncate max-w-xs">Administrator</span>
+      <span class="text-white block font-semibold truncate max-w-xs" id="userNameNav">Administrator</span>
     </div>
 
     <!-- Title centered -->
     <div class="absolute left-1/2 transform -translate-x-1/2">
       <a href="../admin_dashboard.php"
         class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
-        <span>MDT Admin (Search & Edit License)</span>
+        <span>MDT Admin Dashboard</span>
       </a>
     </div>
 
@@ -54,8 +60,8 @@
             <div class="flex items-center gap-3 mt-10">
               <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
               <div>
-                <span class="block font-bold">Administrator</span>
-                <span class="block font-semibold">MDT System</span>
+                <span class="block font-bold" id="userRoleDisplay">Administrator</span>
+                <span class="block font-semibold" id="userNameSidebar">MDT System</span>
               </div>
             </div>
           </span>
@@ -65,6 +71,13 @@
           <button onclick="window.location.href='../admin_dashboard.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Dashboard
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../_user/adminCreateUser.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Create User
           </button>
         </li>
 
@@ -106,6 +119,7 @@
       </ul>
     </div>
 
+
     <!-- MAIN CONTENT -->
     <div class="flex flex-col items-center justify-start px-4 w-full mt-32 md:mt-0 py-32">
       <div class="bg-white p-8 rounded-2xl shadow-xl max-w-xl mx-auto">
@@ -128,6 +142,32 @@
       </div>
     </div>
   </div>
+  <script>
+    window.userRole = "<?= $role ?>";
+    window.userFName = "<?= $name ?>";
+    window.userLName = "<?= $name ?>";
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const roleEl = document.getElementById('userRoleDisplay');
+      const navNameEl = document.getElementById('userNameNav');
+      const sidebarNameEl = document.getElementById('userNameSidebar');
+
+      if (roleEl) {
+        roleEl.textContent = window.userRole;
+        switch (window.userRole) {
+          case 'ADMIN': roleEl.classList.add('text-red-600'); break;
+          default: roleEl.classList.add('text-blue-600'); break;
+        }
+      }
+
+      if (navNameEl) {
+        navNameEl.textContent = window.userFName;
+      }
+      if (sidebarNameEl) {
+        sidebarNameEl.textContent = window.userLName;
+      }
+    });
+  </script>
 </body>
 
 </html>

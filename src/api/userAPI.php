@@ -53,7 +53,7 @@ class UserAPI
 
         // create User object to hash password
         require_once __DIR__ . '/../_modules/User.php';
-        $userObj = new User(
+        $userObj = User::createForRegistration(
             $firstName,
             $lastName,
             $email,
@@ -76,6 +76,52 @@ class UserAPI
         return json_encode([
             'status' => 'error',
             'message' => 'Database error: failed to save user.'
+        ]);
+    }
+
+    public function registerAdmin(): string
+    {
+        $firstName = trim($_POST['first_name'] ?? '');
+        $middleName = trim($_POST['middle_name'] ?? '');
+        $lastName = trim($_POST['last_name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = trim($_POST['password'] ?? '');
+        $roleId = trim($_POST['role_id'] ?? '');
+
+        if (!$firstName || !$lastName || !$email || !$password || !$roleId) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'All fields including role_id are required for admin creation.'
+            ]);
+        }
+
+        require_once __DIR__ . '/../_modules/User.php';
+        require_once __DIR__ . '/../_modules/Roles.php';
+
+        $roles = Roles::loadById($roleId);
+
+        $userObj = User::createByAdmin(
+            $roles,
+            $firstName,
+            $lastName,
+            $email,
+            $password,
+            $middleName,
+        );
+
+        $success = $userObj->save($this->conn, null);
+
+        if ($success) {
+            return json_encode([
+                'status' => 'success',
+                'admin_created' => true,
+                'email' => $email
+            ]);
+        }
+
+        return json_encode([
+            'status' => 'error',
+            'message' => 'Failed to save admin user.'
         ]);
     }
 

@@ -19,6 +19,8 @@ require_once __DIR__ . '/../bootstrap.php';
         $_SESSION['id'] = $loginResult['user_id'];
         $_SESSION['email'] = $loginResult['email'];
         $_SESSION['role'] = $loginResult['role'];
+        $_SESSION['first_name'] = $loginResult['first_name'];
+        $_SESSION['last_name'] = $loginResult['last_name'];
 
         // logic redirect based on role
         $redirect = match (strtoupper($_SESSION['role'])) {
@@ -141,6 +143,13 @@ require_once __DIR__ . '/../bootstrap.php';
 
         $vehicleAPI = new VehicleAPI($conn);
         echo $vehicleAPI->deleteVehicle();
+        exit();
+
+      case 'CREATE-USER': // PARA SA ADMIN CREATE USER
+        header('Content-Type: application/json');
+
+        $userAPI = new UserAPI($conn);
+        echo $userAPI->registerAdmin();
         exit();
   }
 }

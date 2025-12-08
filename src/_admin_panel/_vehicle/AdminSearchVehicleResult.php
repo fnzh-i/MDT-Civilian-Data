@@ -1,4 +1,8 @@
 <?php
+session_start();
+$role = $_SESSION['role'] ?? 'OFFICER'; // fallback if session not set
+$name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-BOT'); // you store name
+
 require_once __DIR__ . '/../../bootstrap.php';
 $plateNumber = $_GET['plate-number'] ?? '';
 ?>
@@ -33,6 +37,12 @@ $plateNumber = $_GET['plate-number'] ?? '';
     <div class="absolute left-1/2 transform -translate-x-1/2">
       <a href="../admin_dashboard.php"
         class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+        <span class="text-white block font-semibold truncate max-w-xs" id="userNameNav">Administrator</span>
+    </div>
+
+    <!-- Title centered -->
+    <div class="absolute left-1/2 transform -translate-x-1/2">
+      <a href="../admin_dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
         <span>MDT Admin Dashboard</span>
       </a>
     </div>
@@ -59,8 +69,8 @@ $plateNumber = $_GET['plate-number'] ?? '';
             <div class="flex items-center gap-3 mt-10">
               <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
               <div>
-                <span class="block font-bold">Administrator</span>
-                <span class="block font-semibold">MDT System</span>
+                <span class="block font-bold" id="userRoleDisplay">Administrator</span>
+                <span class="block font-semibold" id="userNameSidebar">MDT System</span>
               </div>
             </div>
           </span>
@@ -70,6 +80,13 @@ $plateNumber = $_GET['plate-number'] ?? '';
           <button onclick="window.location.href='../admin_dashboard.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Dashboard
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../_user/adminCreateUser.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Create User
           </button>
         </li>
 
@@ -124,6 +141,31 @@ $plateNumber = $_GET['plate-number'] ?? '';
   <script>
     window.pagePlateNumber = "<?= $plateNumber ?>";
     window.pageMode = "vehicle-search-result";
+
+    window.userRole = "<?= $role ?>";
+    window.userFName = "<?= $name ?>";
+    window.userLName = "<?= $name ?>";
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const roleEl = document.getElementById('userRoleDisplay');
+      const navNameEl = document.getElementById('userNameNav');
+      const sidebarNameEl = document.getElementById('userNameSidebar');
+
+      if (roleEl) {
+        roleEl.textContent = window.userRole;
+        switch (window.userRole) {
+          case 'ADMIN': roleEl.classList.add('text-red-600'); break;
+          default: roleEl.classList.add('text-blue-600'); break;
+        }
+      }
+
+      if (navNameEl) {
+        navNameEl.textContent = window.userFName;
+      }
+      if (sidebarNameEl) {
+        sidebarNameEl.textContent = window.userLName;
+      }
+    });
   </script>
 </body>
 

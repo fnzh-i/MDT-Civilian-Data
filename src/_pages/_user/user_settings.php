@@ -1,3 +1,9 @@
+<?php
+session_start();
+$role = $_SESSION['role'] ?? 'OFFICER'; // fallback if session not set
+$name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-BOT'); // you store name
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,7 +26,7 @@
                 <span class="block w-6 h-0.5 bg-white"></span>
                 <span class="block w-6 h-0.5 bg-white"></span>
             </button>
-            <span class="text-white block font-semibold truncate max-w-xs">Tarub Salsalini</span>
+            <span class="text-white block font-semibold truncate max-w-xs" id="userNameNav">Tarub Salsalini</span>
         </div>
         <div class="absolute left-1/2 transform -translate-x-1/2">
             <a href="user_dashboard.php"
@@ -52,8 +58,8 @@
                         <div class="flex items-center gap-3 mt-10">
                             <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
                             <div>
-                                <span class="block font-bold">Civilian</span>
-                                <span class="block font-semibold">Tarub Salsalini</span>
+                                <span class="block font-bold" id="userRoleDisplay">LTO MDT</span>
+                                <span class="block font-semibold" id="userNameSidebar">Tarub Salsalini</span>
                             </div>
                         </div>
                     </span>
@@ -152,5 +158,33 @@
             </div>
         </div>
     </div>
+    <script>
+        window.userRole = "<?= $role ?>";
+        window.userFName = "<?= $name ?>";
+        window.userLName = "<?= $name ?>";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const roleEl = document.getElementById('userRoleDisplay');
+            const navNameEl = document.getElementById('userNameNav');
+            const sidebarNameEl = document.getElementById('userNameSidebar');
+
+            if (roleEl) {
+                roleEl.textContent = window.userRole;
+                switch (window.userRole) {
+                    case 'ADMIN': roleEl.classList.add('text-red-600'); break;
+                    case 'SUPERVISOR': roleEl.classList.add('text-yellow-600'); break;
+                    default: roleEl.classList.add('text-blue-600'); break;
+                }
+            }
+
+            if (navNameEl) {
+                navNameEl.textContent = window.userFName;
+            }
+            if (sidebarNameEl) {
+                sidebarNameEl.textContent = window.userLName;
+            }
+        });
+    </script>
 </body>
+
 </html>

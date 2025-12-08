@@ -21,8 +21,10 @@ function login() {
         console.log("Response from PHP:", response);
 
         if (response.status === "SUCCESS") {
-        window.userRole = response.role; // store role for frontend
-        window.location.href = response.redirect; // redirect sa sariling dashboard
+          window.userRole = response.role; // store role for frontend
+          window.userFName = `${response.first_name || ""}`.trim() || "MDT BOT"; // store name for frontend
+          window.userLName = `${response.last_name || ""}`.trim() || "MDT BOT"; // store name for frontend
+          window.location.href = response.redirect; // redirect sa sariling dashboard
         } else {
         const errorElement = document.getElementById("error");
         errorElement.innerText = response.message;

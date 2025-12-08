@@ -1,0 +1,231 @@
+<?php
+session_start();
+$roleDisplay = $_SESSION['role'] ?? 'OFFICER'; // fallback if session not set
+$name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-BOT'); // you store name
+
+require_once __DIR__ . '/../../bootstrap.php';
+
+// DEFAULT VALUES
+$id = "";
+$role = "";
+$firstName = "";
+$middleName = "";
+$lastName = "";
+$email = "";
+$password = "";
+
+// IF COMING FROM UPDATE
+if (isset($_GET['updateID'])) {
+    $id = $_GET['updateID'];
+    $role = $_GET['role'] ?? "";
+    $firstName = $_GET['first_name'] ?? "";
+    $middleName = $_GET['middle_name'] ?? "";
+    $lastName = $_GET['last_name'] ?? "";
+    $email = $_GET['email'] ?? "";
+    $password = isset($_GET['default_password']) ? (string) $_GET['default_password'] : "";
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MDT Admin Create License</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="../../../public/admin_script.js"></script>
+    <link rel="stylesheet" href="../../../public/style.css">
+</head>
+
+<body class="bg-gray-200">
+
+    <!-- STICKY NAVBAR -->
+    <nav class="bg-blue-600 shadow-lg px-6 py-3 relative flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <!-- burgir toggle -->
+            <button id="sidebarToggle" class="flex flex-col justify-center space-y-1">
+                <span class="block w-6 h-0.5 bg-white"></span>
+                <span class="block w-6 h-0.5 bg-white"></span>
+                <span class="block w-6 h-0.5 bg-white"></span>
+            </button>
+            <span class="text-white block font-semibold truncate max-w-xs" id="userNameNav">Administrator</span>
+        </div>
+
+        <!-- Title centered -->
+        <div class="absolute left-1/2 transform -translate-x-1/2">
+            <a href="../admin_dashboard.php"
+                class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+                <span>MDT Admin Dashboard</span>
+            </a>
+        </div>
+
+        <!-- Right: Logout -->
+        <div>
+            <a href="../../../public/index.php"
+                class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+                </svg>
+                <span>Logout</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="flex flex-col md:flex-row"> <!-- sidebar (Admin Version) -->
+        <div id="sidebar" class="bg-white w-56 h-screen shadow-2xl p-6 hidden md:block fixed top-0 left-0">
+            <ul class="space-y-4">
+
+                <li>
+                    <span class="items-start w-full text-left text-gray-700 hover:text-blue-600 font-bold">
+                        <div class="flex items-center gap-3 mt-10">
+                            <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
+                            <div>
+                                <span class="block font-bold" id="userRoleDisplay">Administrator</span>
+                                <span class="block font-semibold" id="userNameSidebar">MDT System</span>
+                            </div>
+                        </div>
+                    </span>
+                </li>
+
+                <li>
+                    <button onclick="window.location.href='../admin_dashboard.php'"
+                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        Dashboard
+                    </button>
+                </li>
+
+                <li>
+                    <button onclick="window.location.href='../_user/adminCreateUser.php'"
+                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        Create User
+                    </button>
+                </li>
+
+                <li>
+                    <button onclick="window.location.href='../_license/adminCreateLicense.php'"
+                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        Create License
+                    </button>
+                </li>
+
+                <li>
+                    <button onclick="window.location.href='../_vehicle/adminCreateVehicle.php'"
+                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        Create Vehicle
+                    </button>
+                </li>
+
+                <li>
+                    <button onclick="window.location.href='../_license/adminSearchLicense.php'"
+                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        Search & Edit License
+                    </button>
+                </li>
+
+                <li>
+                    <button onclick="window.location.href='../_vehicle/adminSearchVehicle.php'"
+                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        Search & Edit Vehicle
+                    </button>
+                </li>
+
+                <li>
+                    <button onclick="window.location.href='../admin_settings.php'"
+                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        Settings
+                    </button>
+                </li>
+
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="flex flex-col items-center justify-start px-4 w-full mt-32 md:mt-0 py-32">
+            <div class="bg-white p-8 rounded-2xl shadow-xl max-w-4xl mx-auto w-full h-[85vh] overflow-y-auto">
+                <h1 class="text-3xl font-extrabold text-gray-800 mb-6">
+                    <?= $id ? "Update User" : "Create New User" ?>
+                </h1>
+
+                <form action="AdminUser.php" method="POST" class="space-y-6">
+                    <input type="hidden" name="id" value="<?= htmlspecialchars($id) ?>">
+
+                    <!-- ROLE -->
+                    <div>
+                        <label class="font-semibold text-gray-700 block mb-2">Role</label>
+                        <div class="flex flex-wrap gap-4">
+                            <?php foreach (["USER", "ENFORCER", "SUPERVISOR", "ADMIN"] as $r): ?>
+                                <label class="flex items-center gap-2">
+                                    <input type="radio" name="role" value="<?= $r ?>" <?= ($role === $r) ? "checked" : "" ?>
+                                        class="form-radio text-blue-600">
+                                    <span><?= ucfirst(strtolower($r)) ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <!-- NAME FIELDS -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="text" name="first_name" id="first-name" placeholder="First Name"
+                            value="<?= htmlspecialchars($firstName) ?>" class="w-full p-3 border rounded-lg">
+                        <input type="text" name="middle_name" id="middle-name" placeholder="Middle Name"
+                            value="<?= htmlspecialchars($middleName) ?>" class="w-full p-3 border rounded-lg">
+                        <input type="text" name="last_name" id="last-name" placeholder="Last Name"
+                            value="<?= htmlspecialchars($lastName) ?>" class="w-full p-3 border rounded-lg">
+                    </div>
+
+                    <!-- EMAIL -->
+                    <div>
+                        <label class="font-semibold text-gray-700 block mb-2" for="email">Email</label>
+                        <input type="text" name="email" id="email" value="<?= htmlspecialchars($email) ?>"
+                            class="w-full p-3 border rounded-lg">
+                    </div>
+
+                    <!-- PASSWORD -->
+                    <div>
+                        <label class="font-semibold text-gray-700 block mb-2" for="password">Password</label>
+                        <input type="<?= ($id > 0) ? 'text' : 'password'; ?>" name="password" id="password"
+                            value="<?= htmlspecialchars($password) ?>" class="w-full p-3 border rounded-lg">
+                    </div>
+
+                    <!-- SUBMIT BUTTON -->
+                    <div>
+                        <button type="submit" name="<?= $id ? 'update' : 'insert'; ?>"
+                            class="bg-blue-600 text-white py-3 px-6 rounded-xl font-bold hover:bg-blue-900 transition w-full">
+                            <?= $id ? "Update" : "Insert" ?>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script>
+            window.userRole = "<?= $roleDisplay ?>";
+            window.userFName = "<?= $name ?>";
+            window.userLName = "<?= $name ?>";
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const roleEl = document.getElementById('userRoleDisplay');
+                const navNameEl = document.getElementById('userNameNav');
+                const sidebarNameEl = document.getElementById('userNameSidebar');
+
+                if (roleEl) {
+                    roleEl.textContent = window.userRole;
+                    switch (window.userRole) {
+                        case 'ADMIN': roleEl.classList.add('text-red-600'); break;
+                        default: roleEl.classList.add('text-blue-600'); break;
+                    }
+                }
+
+                if (navNameEl) {
+                    navNameEl.textContent = window.userFName;
+                }
+                if (sidebarNameEl) {
+                    sidebarNameEl.textContent = window.userLName;
+                }
+            });
+        </script>
+</body>
+
+</html>
