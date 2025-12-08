@@ -92,12 +92,15 @@ function loadVehicleBox() {
     const V = dashboardData.vehicles;
     const box = document.getElementById("vehicleBox");
 
-    let vehiclesHTML = V.map(v => `
+    let vehiclesHTML = V.map(
+      (v) => `
         <li class="border-b pb-2">
-            <p class="font-bold">${v.name}</p>
+            <p class="font-bold">Brand: ${v.brand}</p>
+            <p class="font-bold">Model: ${v.model}</p>
             <p class="text-sm text-gray-600">Plate: ${v.plate}</p>
         </li>
-    `).join("");
+    `
+    ).join("");
 
     box.innerHTML = `
         <div class="flex items-center gap-4 mb-4">

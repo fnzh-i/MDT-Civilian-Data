@@ -78,3 +78,4 @@ Development ongoing — updates posted as time allows.
                 - Added jpg/png images.<br>
                 - Refactored Civilian user side code to display user's information.<br>
                 - Added 404 catch to settings on submit.<br>
+                - Hotfix (vehicle display CIV side).<br>

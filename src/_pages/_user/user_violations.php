@@ -100,7 +100,7 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
 <!-- MAIN CONTENT -->
 <div class="flex flex-col md:ml-56 w-full px-6 py-10">
 
-    <h1 class="text-4xl font-extrabold mb-2 text-gray-800">User Dashboard</h1>
+    <h1 class="text-4xl font-extrabold mb-2 text-gray-800">User Violations</h1>
     <p class="text-lg text-gray-600 mb-8">Overview of your violations</p>
 
     <!-- Violation cards container -->
