@@ -117,6 +117,31 @@ class Vehicle
     );
   }
 
+  public static function getByLicenseID(mysqli $conn, int $license_id): array
+  {
+    $stmt = $conn->prepare("
+        SELECT 
+            v.plate_number,
+            v.mv_file_number,
+            v.vin,
+            v.expiry_date,
+            v.registration_status,
+            v.brand_name,
+            v.model_name,
+            v.model_year,
+            v.model_color,
+            v.license_id
+        FROM vehicles v
+        WHERE v.license_id = ?
+    ");
+
+    $stmt->bind_param("i", $license_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    return $result->fetch_all(MYSQLI_ASSOC);
+  }
 
   // I SE-SEARCH PAREHONG PLATE AT MV FILE NUMBER, PARA IISANG FUNCTION CALL NALANG
   public static function searchVehicle(mysqli $conn, string $query): string|array

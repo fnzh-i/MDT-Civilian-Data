@@ -76,3 +76,5 @@ Development ongoing — updates posted as time allows.
                 - Added openEditModal and updateViolationStatus, and closeAddViolationModal, taken from the front end logic.<br>
                 - Added print_ticket.php to display the ticket of civilian user.<br>
                 - Added jpg/png images.<br>
+                - Refactored Civilian user side code to display user's information.<br>
+                - Added 404 catch to settings on submit.<br>

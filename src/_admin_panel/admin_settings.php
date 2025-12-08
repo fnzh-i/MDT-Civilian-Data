@@ -11,92 +11,112 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
     <meta charset="UTF-8">
     <title>Settings | MDT Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="../../../public/user_script.js"></script>
-    <link rel="stylesheet" href="../../../public/style.css">
+    <script defer src="../../public/admin_script.js"></script>
+    <link rel="stylesheet" href="../../public/style.css">
 </head>
 
-<body class="bg-gray-200" data-license-id="<?= $_SESSION['license_id'] ?>">
 
+
+<body class="bg-gray-200">
     <!-- STICKY NAVBAR -->
     <nav class="bg-blue-600 shadow-lg px-6 py-3 relative flex justify-between items-center sticky top-0 z-50">
         <div class="flex items-center gap-3">
-            <!-- burger toggle -->
-            <button id="sidebarToggle" class="flex flex-col justify-center space-y-1">
-                <span class="block w-6 h-0.5 bg-white"></span>
-                <span class="block w-6 h-0.5 bg-white"></span>
-                <span class="block w-6 h-0.5 bg-white"></span>
-            </button>
-            <span class="text-white block font-semibold truncate max-w-xs" id="userNameNav">Tarub Salsalini</span>
+        <!-- burgir toggle -->
+        <button id="sidebarToggle" class="flex flex-col justify-center space-y-1">
+            <span class="block w-6 h-0.5 bg-white"></span>
+            <span class="block w-6 h-0.5 bg-white"></span>
+            <span class="block w-6 h-0.5 bg-white"></span>
+        </button>
+        <span class="text-white block font-semibold truncate max-w-xs" id="userNameNav">Administrator</span>
         </div>
+
+        <!-- Title centered -->
         <div class="absolute left-1/2 transform -translate-x-1/2">
-            <a href="user_dashboard.php"
-                class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
-                <span>Mobile Data Terminal</span>
-            </a>
+        <a href="admin_dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+            <span>MDT Admin Dashboard</span>
+        </a>
         </div>
+
+        <!-- Right: Logout -->
         <div>
-            <!-- Right: Logout -->
-            <a href="../../../public/index.php"
-                class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
-                </svg>
-                <span>Logout</span>
-            </a>
+        <a href="../../public/index.php"
+            class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+            </svg>
+            <span>Logout</span>
+        </a>
         </div>
     </nav>
 
-    <div class="flex flex-col md:flex-row">
-        <!-- sidebar -->
+    <div class="flex flex-col md:flex-row"> <!-- sidebar (Admin Version) -->
         <div id="sidebar" class="bg-white w-56 h-screen shadow-2xl p-6 hidden md:block fixed top-0 left-0">
-            <ul class="space-y-4">
-                <li>
-                    <span class="items-start w-full text-left text-gray-700 hover:text-blue-600 font-bold">
+        <ul class="space-y-4">
 
-                        <div class="flex items-center gap-3 mt-10">
-                            <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
-                            <div>
-                                <span class="block font-bold" id="userRoleDisplay">LTO MDT</span>
-                                <span class="block font-semibold" id="userNameSidebar">Tarub Salsalini</span>
-                            </div>
-                        </div>
-                    </span>
-                </li>
-                <li>
-                    <button onclick="window.location.href='user_dashboard.php'"
-                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
-                        Dashboard
-                    </button>
-                </li>
-                <li>
-                    <button onclick="window.location.href='user_license.php'"
-                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
-                        View Full License
-                    </button>
-                </li>
-                <li>
-                    <button onclick="window.location.href='user_vehicle.php'"
-                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
-                        View All Vehicles
-                    </button>
-                </li>
-                <li>
-                    <button onclick="window.location.href='user_violations.php'"
-                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
-                        View Violations
-                    </button>
-                </li>
-                <li>
-                    <button onclick="window.location.href='user_settings.php'"
-                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
-                        Settings
-                    </button>
-                </li>
-            </ul>
+            <li>
+            <span class="items-start w-full text-left text-gray-700 hover:text-blue-600 font-bold">
+                <div class="flex items-center gap-3 mt-10">
+                <span><img src="../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
+                <div>
+                    <span class="block font-bold" id="userRoleDisplay">Administrator</span>
+                    <span class="block font-semibold" id="userNameSidebar">MDT System</span>
+                </div>
+                </div>
+            </span>
+            </li>
+
+            <li>
+            <button onclick="window.location.href='admin_dashboard.php'"
+                class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                Dashboard
+            </button>
+            </li>
+
+            <li>
+            <button onclick="window.location.href='_user/adminCreateUser.php'"
+                class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                Create User
+            </button>
+            </li>
+
+            <li>
+            <button onclick="window.location.href='_license/adminCreateLicense.php'"
+                class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                Create License
+            </button>
+            </li>
+
+            <li>
+            <button onclick="window.location.href='_vehicle/adminCreateVehicle.php'"
+                class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                Create Vehicle
+            </button>
+            </li>
+
+            <li>
+            <button onclick="window.location.href='_license/adminSearchLicense.php'"
+                class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                Search & Edit License
+            </button>
+            </li>
+
+            <li>
+            <button onclick="window.location.href='_vehicle/adminSearchVehicle.php'"
+                class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                Search & Edit Vehicle
+            </button>
+            </li>
+
+            <li>
+            <button onclick="window.location.href='admin_settings.php'"
+                class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                Settings
+            </button>
+            </li>
+
+        </ul>
         </div>
-
         <!-- MAIN CONTENT -->
         <div class="flex flex-col md:ml-56 w-full px-6 py-10">
 
@@ -117,14 +137,14 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
 
                 <ul class="text-gray-700 text-sm mb-8 space-y-2 ml-2">
                     <li>• Password change or reset</li>
-                    <li>• Update to account name or user details</li>
+                    <li>• Update to account name or officer details</li>
                     <li>• Recovery for forgotten password</li>
                     <li>• Report account or login issues</li>
                     <li>• Contact administrative support</li>
                 </ul>
 
                 <!-- FORM -->
-                <form action="support_submit.php" method="POST" class="space-y-6">
+                <form action="../_pages/not_found.php" method="POST" class="space-y-6">
 
                     <!-- Category -->
                     <div>

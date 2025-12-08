@@ -129,7 +129,7 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
                     </div>
 
                     <!-- Submit -->
-                    <button
+                    <button id="settingsBtn"
                         class="bg-blue-600 w-full text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">
                         Submit Ticket
                     </button>

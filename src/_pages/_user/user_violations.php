@@ -11,12 +11,11 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
     <meta charset="UTF-8">
     <title>MDT Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="../../../public/script.js"></script>
+    <script defer src="../../../public/user_script.js"></script>
     <link rel="stylesheet" href="../../../public/style.css">
 </head>
 
-<body class="bg-gray-200">
-
+<body class="bg-gray-200" data-license-id="<?= $_SESSION['license_id'] ?>">
     <!-- STICKY NAVBAR -->
     <nav class="bg-blue-600 shadow-lg px-6 py-3 relative flex justify-between items-center sticky top-0 z-50">
         <div class="flex items-center gap-3">
@@ -98,19 +97,16 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
         </div>
 
 
-        <!-- MAIN CONTENT -->
-        <div class="flex flex-col md:ml-56 w-full px-6 py-10">
+<!-- MAIN CONTENT -->
+<div class="flex flex-col md:ml-56 w-full px-6 py-10">
 
-            <h1 class="text-4xl font-extrabold mb-2 text-gray-800">User Dashboard</h1>
-            <p class="text-lg text-gray-600 mb-8">Overview of your violations</p>
+    <h1 class="text-4xl font-extrabold mb-2 text-gray-800">User Dashboard</h1>
+    <p class="text-lg text-gray-600 mb-8">Overview of your violations</p>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Violation cards container -->
+    <div id="violationFull" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-                <!-- VIOLATIONS PANEL -->
-                <div id="violationBox" class="bg-white rounded-2xl shadow-xl p-6"></div>
-
-            </div>
-        </div>
+</div>
         <script>
             window.userRole = "<?= $role ?>";
             window.userFName = "<?= $name ?>";

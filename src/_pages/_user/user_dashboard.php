@@ -11,11 +11,11 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
     <meta charset="UTF-8">
     <title>MDT Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="../../../public/script.js"></script>
+    <script defer src="../../../public/user_script.js"></script>
     <link rel="stylesheet" href="../../../public/style.css">
 </head>
 
-<body class="bg-gray-200">
+<body class="bg-gray-200" data-license-id="<?= $_SESSION['license_id'] ?>">
 
     <!-- STICKY NAVBAR -->
     <nav class="bg-blue-600 shadow-lg px-6 py-3 relative flex justify-between items-center sticky top-0 z-50">
@@ -89,7 +89,7 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
                     </button>
                 </li>
                 <li>
-                    <button onclick="window.location.href='user_settings.php'"
+                    <button id="settingsBtn" onclick="window.location.href='user_settings.php'"
                         class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         Settings
                     </button>

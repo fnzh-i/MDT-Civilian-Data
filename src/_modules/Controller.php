@@ -21,6 +21,7 @@ require_once __DIR__ . '/../bootstrap.php';
         $_SESSION['role'] = $loginResult['role'];
         $_SESSION['first_name'] = $loginResult['first_name'];
         $_SESSION['last_name'] = $loginResult['last_name'];
+        $_SESSION['license_id'] = $loginResult['license_id'];
 
         // logic redirect based on role
         $redirect = match (strtoupper($_SESSION['role'])) {
@@ -70,8 +71,71 @@ require_once __DIR__ . '/../bootstrap.php';
         echo $licenseAPI->searchLicense($licenseNumber);
         exit();
 
+    case 'FETCH-DASHBOARD':
+      header('Content-Type: application/json');
 
-      case 'FETCH-TICKETS':
+      $licenseID = $_POST['license_id'] ?? null;
+      if (!$licenseID) {
+        echo json_encode(['status' => 'error', 'message' => 'License ID is required.']);
+        exit();
+      }
+
+      // Fetch user info
+      $user = User::getByLicenseID($conn, $licenseID);
+      if (!$user) {
+        echo json_encode(['status' => 'error', 'message' => 'User not found.']);
+        exit();
+      }
+
+      // Fetch vehicles
+      $vehicles = Vehicle::getByLicenseID($conn, $licenseID);
+
+      // Fetch violations
+      $violations = TicketViolation::fetchTickets($conn, $licenseID);
+
+      $dashboardData = [
+        'user' => [
+          'name' => $user['full_name'],
+          'licenseNumber' => $user['license_number'],
+          'licenseStatus' => $user['license_status'],
+          'expiry' => $user['license_expiry'],
+
+          // NEW FIELDS
+          'dob' => $user['date_of_birth'],
+          'address' => $user['address'],
+          'type' => $user['license_type'],
+          'restrictions' => $user['dl_codes'],
+        ],
+        'vehicles' => array_map(function ($v) {
+          return [
+            'plate' => $v['plate_number'],
+            'mvFileNumber' => $v['mv_file_number'],
+            'vin' => $v['vin'],
+            'expiry' => $v['expiry_date'],
+            'status' => $v['registration_status'],
+            'brand' => $v['brand_name'],
+            'model' => $v['model_name'],
+            'year' => $v['model_year'],
+            'color' => $v['model_color']
+          ];
+        }, $vehicles),
+        'violations' => array_map(function ($t) {
+          return [
+            'offense' => $t['offense'],
+            'date' => $t['date'],
+            'place' => $t['place_of_incident'],
+            'status' => $t['status'],
+            'note' => $t['note'],
+            'fine' => (float) $t['fine']
+          ];
+        }, $violations)
+      ];
+
+      echo json_encode($dashboardData);
+      exit();
+
+
+    case 'FETCH-TICKETS':
         header('Content-Type: application/json');
 
         $licenseID = $_POST['license_id'];

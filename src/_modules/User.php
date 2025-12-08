@@ -134,6 +134,42 @@ class User
     return $user;
   }
 
+  public static function getByLicenseID(mysqli $conn, int $license_id): ?array
+  {
+    $stmt = $conn->prepare("
+    SELECT 
+        CONCAT(pi.first_name, ' ', pi.last_name) AS full_name,
+        pi.date_of_birth,
+        pi.address,
+
+        l.license_number,
+        l.license_status,
+        l.expiry_date AS license_expiry,
+        l.license_type,
+        l.dl_codes
+
+    FROM personal_information pi
+    INNER JOIN licenses l ON l.license_id = pi.license_id
+
+    WHERE pi.license_id = ?
+    LIMIT 1
+");
+
+
+
+
+    $stmt->bind_param("i", $license_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    if ($result->num_rows === 0) {
+      return null;
+    }
+
+    return $result->fetch_assoc();
+  }
+
   public static function createForRegistration( // civilians/public
     string $first,
     string $last,

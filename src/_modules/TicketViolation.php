@@ -82,6 +82,30 @@ class TicketViolation
     return $ticket;
   }
 
+  public static function fetchTickets(mysqli $conn, int $license_id): array
+  {
+    $stmt = $conn->prepare("
+        SELECT 
+            violation AS offense,
+            date_of_incident AS date,
+            place_of_incident,
+            status,
+            note,
+            0 AS fine
+        FROM ticket_violations
+        WHERE license_id = ?
+        ORDER BY date_of_incident DESC
+    ");
+
+    $stmt->bind_param("i", $license_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+
+    return $result->fetch_all(MYSQLI_ASSOC);
+  }
+
+
   // I CHECHECK MUNA IF EXISTING YUNG LICENSE_ID, YES PARANG REDUNDANT SYA
   // PERO KASI GAGAMITIN KO RIN ITONG SAVE FUNCTION SA ADMIN CREATE TICKET
   // PARA DI NA AKO GUMAWA PA NG ANOTHER FUNCTION

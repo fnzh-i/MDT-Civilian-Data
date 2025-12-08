@@ -351,3 +351,21 @@ document.addEventListener("DOMContentLoaded", () => {
         sidebar.classList.toggle("-translate-x-full");
     });
 });
+
+// ================= NOT FOUND =================
+document.getElementById("settingsBtn").addEventListener("click", async () => {
+  try {
+    // Check if the settings page exists by fetching it
+    const res = await fetch("admin_settings.php", { method: "HEAD" });
+    if (res.ok) {
+      // Page exists, redirect
+      window.location.href = "../not_found.php";
+    } else {
+      // Page not found, redirect to 404
+      window.location.href = "../not_found.php";
+    }
+  } catch (err) {
+    // On error (network issue, etc.), also redirect to 404
+    window.location.href = "../not_found.php";
+  }
+});
