@@ -155,7 +155,6 @@ class TicketAPI {
 
     // UPDATE STATUS
     public function updateTicketStatus(int $ticketID, string $status): string {
-
         try {
             $newStatus = ViolationStatus::from($status);
         } catch (ValueError $e) {

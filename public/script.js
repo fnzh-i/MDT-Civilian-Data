@@ -2,6 +2,7 @@
 
 const API_URL = "../src/Controller.php";
 let currentLicense = null;
+let editingIndex = null; // null = adding, number = editing
 
 function login() {
     const email = document.getElementById("username").value;
@@ -238,7 +239,7 @@ function lookupLicense() {
                     <h2 class="text-2xl font-bold mb-4">Add New Ticket Violation</h2>
                     <div class="mb-3">
                         <label class="font-semibold">Date of Violation:</label>
-                        <input id="v_date" type="date" class="p-2 border rounded w-full">
+                        <input id="modal_v_date" type="date" class="p-2 border rounded w-full">
                     </div>
                     <div class="mb-3">
                         <label class="font-semibold">Offense Description:</label>
@@ -261,11 +262,11 @@ function lookupLicense() {
                     </div>
                     <div class="mb-3">
                         <label class="font-semibold">Place of Incident:</label>
-                        <input id="v_place" type="text" class="p-2 border rounded w-full">
+                        <input id="modal_v_place" type="text" class="p-2 border rounded w-full">
                     </div>
                     <div class="mb-3">
                         <label class="font-semibold">Note:</label>
-                        <textarea id="v_note" class="p-2 border rounded w-full"></textarea>
+                        <textarea id="modal_v_note" class="p-2 border rounded w-full"></textarea>
                     </div>
                     <button onclick="addViolation(); toggleViolationModal();" 
                         class="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-5 py-3 rounded-xl hover:from-blue-600 hover:to-blue-800 transition font-bold w-full">
@@ -287,14 +288,16 @@ function lookupLicense() {
 }
 
 function addViolation() {
+    editingIndex = null; // ensure we're in add mode
+
     if (!currentLicense) return;
 
     const violationData = {
-        "license_id": currentLicense.id, // yung current license
-        "violation": document.getElementById("v_offense").value,
-        "date-of-incident": document.getElementById("v_date").value,
-        "place-of-incident": document.getElementById("v_place").value,
-        "note": document.getElementById("v_note").value
+      "license_id": currentLicense.id, // yung current license
+      "violation": document.getElementById("v_offense").value,
+      "date-of-incident": document.getElementById("modal_v_date").value,
+      "place-of-incident": document.getElementById("modal_v_place").value,
+      "note": document.getElementById("modal_v_note").value,
     };
 
     // validate
@@ -321,10 +324,10 @@ function addViolation() {
             loadViolations(); 
             
             // Clear yung mga input sa Add New TicketViolation
-            document.getElementById("v_date").value = "";
-            document.getElementById("v_offense").value = "";
-            document.getElementById("v_place").value = "";
-            document.getElementById("v_note").value = "";
+            document.getElementById("modal_v_date").value = "";
+            document.getElementById("modal_v_offense").value = "";
+            document.getElementById("modal_v_place").value = "";
+            document.getElementById("modal_v_note").value = "UNSETTLED";
         } else {
             alert("Error: " + data.message);
         }
@@ -333,91 +336,203 @@ function addViolation() {
 }
 
 function loadViolations() {
-if (!currentLicense) return;
+    if (!currentLicense) return;
 
-const table = document.getElementById("violationTable");
-table.innerHTML = ""; // clear table
+    const table = document.getElementById("violationTable");
+    table.innerHTML = ""; // clear table
 
-const formData = new FormData();
-formData.append("action", "FETCH-TICKETS");
-formData.append("license_id", currentLicense.id);
+    const formData = new FormData();
+    formData.append("action", "FETCH-TICKETS");
+    formData.append("license_id", currentLicense.id);
 
-fetch("../../_modules/Controller.php", {
-method: "POST",
-body: formData,
-})
-.then((res) => res.json())
-.then((data) => {
-    if (data.status === "success") {
-    currentLicense.violations = data.tickets.map((t) => ({
-        date: t.date_of_incident,
-        offense: t.violation,
-        location: t.place_of_incident,
-        note: t.note,
-        status: t.status,
-    }));
+    fetch("../../_modules/Controller.php", {
+        method: "POST",
+        body: formData,
+    })
+        .then((res) => res.json())
+        .then((data) => {
+        if (data.status === "success") {
+            currentLicense.violations = data.tickets.map((t) => ({
+            id: t.ticket_id,
+            date: t.date_of_incident,
+            offense: t.violation,
+            location: t.place_of_incident,
+            note: t.note,
+            status: t.status,
+            }));
 
-    const role = window.userRole ?? "ADMIN"; // fallback
+            const role = window.userRole ?? "ENFORCER"; // fallback
 
-    currentLicense.violations.forEach((v, idx) => {
-        // ===== BUTTON PERMISSIONS =====
-        let editBtn = "";
-        let deleteBtn = "";
-        let printBtn = `
-                <button class="px-2 py-1 rounded bg-blue-600 text-white text-sm"
-                    onclick="printViolation(${idx})">Print</button>`;
+            currentLicense.violations.forEach((v, idx) => {
+            // ===== BUTTON PERMISSIONS =====
+            let editBtn = "";
+            let deleteBtn = "";
+            let printBtn = `
+                            <button class="px-2 py-1 rounded bg-blue-600 text-white text-sm"
+                                onclick="printViolation(${idx})">Print</button>`;
 
-        if (role === "ADMIN") {
-        editBtn = `
-                    <button class="px-2 py-1 text-sm rounded bg-yellow-400 text-white"
-                        onclick="openEditViolation(${idx})">Edit</button>`;
-        deleteBtn = `
-                    <button class="px-2 py-1 text-sm rounded bg-red-500 text-white"
-                        onclick="deleteViolation(${idx})">Delete</button>`;
-        } else if (role === "SUPERVISOR") {
-        editBtn = `
-                    <button class="px-2 py-1 text-sm rounded bg-yellow-400 text-white"
-                        onclick="openEditViolation(${idx})">Edit</button>`;
-        // supervisors cannot delete
+            if (role === "ADMIN") {
+                editBtn = `
+                                <button class="px-2 py-1 text-sm rounded bg-yellow-400 text-white"
+                                    onclick="openEditViolation(${idx})">Edit</button>`;
+                deleteBtn = `
+                                <button class="px-2 py-1 text-sm rounded bg-red-500 text-white"
+                                    onclick="deleteViolation(${idx})">Delete</button>`;
+            } else if (role === "SUPERVISOR") {
+                editBtn = `
+                                <button class="px-2 py-1 text-sm rounded bg-yellow-400 text-white"
+                                    onclick="openEditViolation(${idx})">Edit</button>`;
+            }
+
+            // Status cell — now same for Admin and Supervisor
+            let statusCell = `<span class="font-semibold ${
+                v.status.toUpperCase() === "SETTLED"
+                ? "text-green-600"
+                : "text-red-600"
+            }">${v.status}</span>`;
+
+            table.innerHTML += `
+                            <tr>
+                                <td class="border px-3 py-1">${idx + 1}</td>
+                                <td class="border px-3 py-1">${v.date}</td>
+                                <td class="border px-3 py-1">${v.offense}</td>
+                                <td class="border px-3 py-1">${v.location}</td>
+                                <td class="border px-3 py-1">${v.note}</td>
+                                <td class="border px-3 py-1">${statusCell}</td>
+
+                                <!-- ACTIONS COLUMN -->
+                                <td class="border px-3 py-1 text-sm">
+                                    <div class="inline-flex gap-2">
+                                        ${editBtn}
+                                        ${deleteBtn}
+                                    </div>
+                                </td>
+
+                                <td class="border px-3 py-1 text-sm">
+                                    ${printBtn}
+                                </td>
+                            </tr>
+                        `;
+            });
         } else {
-        // OFFICER → NO edit, NO delete
+            console.error("Error fetching tickets:", data.message);
         }
-
-        table.innerHTML += `
-                <tr>
-                    <td class="border px-3 py-1">${idx + 1}</td>
-                    <td class="border px-3 py-1">${v.date}</td>
-                    <td class="border px-3 py-1">${v.offense}</td>
-                    <td class="border px-3 py-1">${v.location}</td>
-                    <td class="border px-3 py-1">${v.note}</td>
-                    <td class="border px-3 py-1 font-semibold ${
-                        v.status === "Paid"
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }">${v.status}</td>
-
-                    <!-- ACTIONS COLUMN -->
-                    <td class="border px-3 py-1 text-sm">
-                        <div class="inline-flex gap-2">
-                            ${editBtn}
-                            ${deleteBtn}
-                        </div>
-                    </td>
-
-                    <td class="border px-3 py-1 text-sm">
-                        ${printBtn}
-                    </td>
-                </tr>
-            `;
-    });
-    } else {
-    console.error("Error fetching tickets:", data.message);
-    }
-})
-.catch((err) => console.error("Fetch error:", err));
+        })
+        .catch((err) => console.error("Fetch error:", err));
 }
 
 // ================= MODALSS =================
+
+function printViolation(idx) {
+    const v = currentLicense.violations[idx];
+    const officerName = `${window.userFName}`; 
+
+    // Open PDF generator with GET params
+    window.open(
+        `../../../fpdf/print_ticket.php?ticket_no=${encodeURIComponent(v.id)}` +
+        `&date=${encodeURIComponent(v.date)}` +
+        `&violation=${encodeURIComponent(v.offense)}` +
+        `&place=${encodeURIComponent(v.location)}` +
+        `&note=${encodeURIComponent(v.note)}` +
+        `&driver=${encodeURIComponent(
+            currentLicense.first_name + " " + currentLicense.last_name
+        )}` +
+        `&license=${encodeURIComponent(currentLicense.licenseNumber)}`+
+        `&officer_name=${encodeURIComponent(officerName)}`,
+        "_blank"
+    );
+}
+
+// ---------- DELETE ----------
+function deleteViolation(index) {
+    if (!currentLicense || !currentLicense.violations[index]) return;
+
+    const v = currentLicense.violations[index];
+    const ok = confirm("Are you sure you want to delete this violation?");
+    if (!ok) return;
+
+    const formData = new FormData();
+    formData.append("action", "DELETE-TICKET");
+    formData.append("ticket_id", v.id); // send ticket_id to backend
+
+    fetch("../../_modules/Controller.php", {
+        method: "POST",
+        body: formData,
+    })
+        .then((res) => res.json())
+        .then((data) => {
+        if (data.status === "success") {
+            // Remove locally as well
+            currentLicense.violations.splice(index, 1);
+            loadViolations();
+            alert("Violation deleted.");
+        } else {
+            alert("Error deleting violation: " + data.message);
+        }
+        })
+        .catch((err) => console.error("Error deleting violation:", err));
+}
+
+function openEditViolation(index) {
+    const violation = currentLicense.violations[index];
+    if (!violation) return;
+
+    // Show modal
+    const modal = document.getElementById("addViolationModal");
+    modal.classList.remove("hidden");
+
+    // Set modal title
+    document.getElementById("modalTitle").textContent = "Update Violation Status";
+
+    // Show status dropdown and set value
+    document.getElementById("modal_v_status").value = violation.status;
+
+    // Update submit button to update status
+    const submitBtn = document.getElementById("modalSubmitBtn");
+    submitBtn.textContent = "Update Status";
+    submitBtn.onclick = () => updateViolationStatus(index);
+}
+
+// ---------- UPDATE ----------
+function updateViolationStatus(index) {
+    const violation = currentLicense.violations[index];
+    if (!violation) return;
+
+    const newStatus = document.getElementById("modal_v_status").value;
+    violation.status = newStatus;
+
+    const formData = new FormData();
+    formData.append("action", "UPDATE-TICKET-STATUS");
+    formData.append("ticket_id", violation.id);
+    formData.append("status", newStatus);
+
+    fetch("../../_modules/Controller.php", {
+        method: "POST",
+        body: formData,
+    })
+        .then((res) => res.json())
+        .then((data) => {
+        if (data.status === "success") {
+            alert("Violation status updated!");
+            loadViolations();
+            closeAddViolationModal();
+        } else {
+            alert("Error: " + data.message);
+        }
+        })
+        .catch((err) => console.error(err));
+}
+
+function closeAddViolationModal() {
+    const modal = document.getElementById("addViolationModal");
+    modal.classList.add("hidden");
+
+    // Reset submit button
+    const submitBtn = modal.querySelector("#modalSubmitBtn");
+    submitBtn.textContent = "Add Violation";
+    submitBtn.onclick = updateViolationStatus;
+}
+
 
 function toggleViolationModal() {
     const modal = document.getElementById("violationModal");
@@ -500,12 +615,12 @@ function updateLoginButton() {
 }
 
 // ================= TOGGLE =================
-// document.addEventListener("DOMContentLoaded", () => {
-//     const sidebar = document.getElementById("sidebar");
-//     const toggleBtn = document.getElementById("sidebarToggle");
+document.addEventListener("DOMContentLoaded", () => {
+    const sidebar = document.getElementById("sidebar");
+    const toggleBtn = document.getElementById("sidebarToggle");
 
-//     toggleBtn.addEventListener("click", (e) => {
-//         e.preventDefault();
-//         sidebar.classList.toggle("-translate-x-full");
-//     });
-// });
+    toggleBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        sidebar.classList.toggle("-translate-x-full");
+    });
+});

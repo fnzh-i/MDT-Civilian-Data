@@ -69,4 +69,10 @@ Development ongoing — updates posted as time allows.
                 - Enhanced user registration with email, password, and license.<br>
 - Dec 8, 2025   - Added default_password function.<br>
                 - Refactored user function to handle admin and civilian registration.<br>
-                - Added User Name and Role display to Navbar and Sidebar.<br> 
+                - Added User Name and Role display to Navbar and Sidebar.<br>
+- Dec 9, 2025   - Added the FPDF lib support for PHP.<br>
+                - Added functions for EDIT DELETE PRINT.<br>
+                - Refactored code for addViolationModal.<br>
+                - Added openEditModal and updateViolationStatus, and closeAddViolationModal, taken from the front end logic.<br>
+                - Added print_ticket.php to display the ticket of civilian user.<br>
+                - Added jpg/png images.<br>

@@ -119,12 +119,12 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
             </div>
         </div>
 
-        <!-- ADD VIOLATION MODAL (hidden by default) -->
-        <div id="addViolationModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+        <!-- EDIT VIOLATION MODAL (hidden by default) -->
+        <div id="addViolationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div class="bg-white rounded-lg max-w-md w-full shadow-xl">
                 <div class="p-6">
                     <div class="flex items-start justify-between mb-4">
-                        <h2 class="text-xl font-semibold">Add New Ticket Violation</h2>
+                        <h2 id="modalTitle" class="text-xl font-semibold">Add New Ticket Violation</h2>
                         <button onclick="closeAddViolationModal()"
                             class="text-gray-500 hover:text-gray-800">&times;</button>
                     </div>
@@ -132,29 +132,17 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
                     <div id="modalError" class="text-red-600 text-sm mb-3 hidden"></div>
 
                     <div class="mb-3">
-                        <label class="font-semibold">Date of Violation:</label>
-                        <input id="modal_v_date" type="date" class="p-2 border rounded w-full">
-                    </div>
-                    <div class="mb-3">
-                        <label class="font-semibold">Offense Description:</label>
-                        <input id="modal_v_offense" type="text" class="p-2 border rounded w-full"
-                            placeholder="e.g. Speeding">
-                    </div>
-                    <div class="mb-3">
-                        <label class="font-semibold">Place of Incident:</label>
-                        <input id="modal_v_place" type="text" class="p-2 border rounded w-full"
-                            placeholder="e.g. Highway 1">
-                    </div>
-                    <div class="mb-3">
-                        <label class="font-semibold">Note:</label>
-                        <textarea id="modal_v_note" class="p-2 border rounded w-full"
-                            placeholder="Optional note"></textarea>
+                        <label class="font-semibold">Status:</label>
+                        <select id="modal_v_status" class="border p-2 rounded w-full">
+                            <option value="UNSETTLED">Unsettled</option>
+                            <option value="SETTLED">Settled</option>
+                        </select>
                     </div>
 
                     <div class="flex justify-end gap-2 mt-4">
                         <button onclick="closeAddViolationModal()" class="px-4 py-2 rounded-md border">Cancel</button>
-                        <button onclick="addViolationFromModal()"
-                            class="px-4 py-2 rounded-md bg-blue-600 text-white">Add Violation</button>
+                        <button id="modalSubmitBtn" onclick="updateViolationStatus()"
+                            class="px-4 py-2 rounded-md bg-blue-600 text-white">Update Violation</button>
                     </div>
                 </div>
             </div>
