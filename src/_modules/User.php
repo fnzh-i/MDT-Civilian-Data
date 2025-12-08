@@ -2,12 +2,29 @@
 require_once __DIR__ . '/../bootstrap.php';
 class User
 {
+  private Roles $role;
   private ?int $user_id = null;
+  private string $first_name;
+  private ?string $middle_name;
+  private string $last_name;
   private string $email;
   private string $password;
+  private int $default_password;
 
-  public function __construct(string $email, string $password, bool $isHashed = false)
+  public function __construct(
+    Roles $role,
+    string $first_name,
+    string $last_name,
+    string $email,
+    string $password,
+    ?string $middle_name = null,
+    bool $isHashed = false,
+    $extra = null)
   {
+    $this->role = $role;
+    $this->first_name = $first_name;
+    $this->middle_name = $middle_name;
+    $this->last_name = $last_name; 
     $this->email = $email;
 
     if ($isHashed) {
@@ -29,22 +46,45 @@ class User
     return $this->password;
   }
 
-  public function save(mysqli $conn): bool
+  public function getDefaultPasswordString(): string
   {
-    $stmt = $conn->prepare("
-        INSERT INTO users(email, password)
-        VALUES (?, ?)
-      ");
+    return (string) $this->default_password;
 
-    $email = $this->getEmail();
-    $password = $this->getPassword();
-
-    $stmt->bind_param("ss", $email, $password);
-
-    return $stmt->execute();
+    // string ang return type para ma lagay natin sa password field sa frontend later
   }
 
-  public static function searchEmail(mysqli $conn, string $email, string $password): string|bool
+  public function getRole(): Roles
+  {
+    return $this->role;
+  }
+
+  public function save(mysqli $conn, ?int $license_id): bool
+  {
+    $this->default_password = rand(1000, 9999); // random four-digit default_password
+    $stmt = $conn->prepare("
+            INSERT INTO users (role, first_name, middle_name, last_name, email, password, default_password, license_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+    $role = $this->role->value;
+    $stmt->bind_param(
+      "ssssssii",
+      $role,
+      $this->first_name,
+      $this->middle_name,
+      $this->last_name,
+      $this->email,
+      $this->password,
+      $this->default_password,
+      $license_id,
+    );
+
+    $result = $stmt->execute();
+    $stmt->close();
+
+    return $result;
+  }
+
+  public static function searchEmail(mysqli $conn, string $email, string $password)
   {
     $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
@@ -59,7 +99,13 @@ class User
     $user = $result->fetch_assoc(); // kunin yung hashed password sa db, if found yung email sa db
     $stmt->close();
 
-    return self::checkPassword($password, $user['password']); // first param is yung ininput sa UI, second param is galing sa database
+    // verify password
+    if (!password_verify($password, $user['password'])) {
+      return "Password does not match the email provided.";
+    }
+
+    // SUCCESS → return full user row
+    return $user;
   }
 
   // para ma compare yung ininput na pass vs hashed password from database
@@ -72,9 +118,44 @@ class User
 
   // gagamitin na pala ito, para sa frontend, to fetch Users sa database
   public static function fromDatabase(array $row): self
-  { // will return 'self' meaning mag-rereturn ng User object
-    return new self($row['email'], $row['password'], true);
-    // yung last argument which is bool true ay para ma 'override' yung isHashed false sa User constructor
+  {
+    $user = new self(
+      $row['first_name'],
+      $row['last_name'],
+      $row['email'],
+      $row['password'],
+      $row['middle_name'],
+      true  // isHashed
+    );
+
+    // assign default_password from DB para hindi NULL
+    $user->default_password = (int) $row['default_password'];
+
+    return $user;
   }
+
+  public static function createForRegistration( // civilians/public
+    string $first,
+    string $last,
+    string $email,
+    string $password,
+    ?string $middle = null
+  ): self {
+    $role = Roles::USER;
+    return new self($role, $first, $last, $email, $password, $middle, false);
+  }
+
+  public static function createByAdmin( // admin panel
+    Roles $role,
+    string $first,
+    string $last,
+    string $email,
+    string $password,
+    ?string $middle = null
+  ): self {
+    $user = new self($role,$first, $last, $email, $password, $middle, false);
+    return $user;
+  }
+
 }
 ?>

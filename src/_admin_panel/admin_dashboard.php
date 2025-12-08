@@ -9,11 +9,10 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MDT Admin Search License</title>
+  <title>MDT Admin Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="../../../public/admin_script.js"></script>
-  <link rel="stylesheet" href="../../../public/style.css">
+  <script defer src="../../public/script.js"></script>
+  <link rel="stylesheet" href="../../public/style.css">
 </head>
 
 <body class="bg-gray-200">
@@ -32,15 +31,14 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
 
     <!-- Title centered -->
     <div class="absolute left-1/2 transform -translate-x-1/2">
-      <a href="../admin_dashboard.php"
-        class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
+      <a href="admin_dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
         <span>MDT Admin Dashboard</span>
       </a>
     </div>
 
     <!-- Right: Logout -->
     <div>
-      <a href="../../../public/index.php"
+      <a href="../../public/index.php"
         class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -58,7 +56,7 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
         <li>
           <span class="items-start w-full text-left text-gray-700 hover:text-blue-600 font-bold">
             <div class="flex items-center gap-3 mt-10">
-              <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
+              <span><img src="../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
               <div>
                 <span class="block font-bold" id="userRoleDisplay">Administrator</span>
                 <span class="block font-semibold" id="userNameSidebar">MDT System</span>
@@ -68,49 +66,49 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
         </li>
 
         <li>
-          <button onclick="window.location.href='../admin_dashboard.php'"
+          <button onclick="window.location.href='admin_dashboard.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Dashboard
           </button>
         </li>
 
         <li>
-          <button onclick="window.location.href='../_user/adminCreateUser.php'"
+          <button onclick="window.location.href='_user/adminCreateUser.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Create User
           </button>
         </li>
 
         <li>
-          <button onclick="window.location.href='../_license/adminCreateLicense.php'"
+          <button onclick="window.location.href='_license/adminCreateLicense.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Create License
           </button>
         </li>
 
         <li>
-          <button onclick="window.location.href='../_vehicle/adminCreateVehicle.php'"
+          <button onclick="window.location.href='_vehicle/adminCreateVehicle.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Create Vehicle
           </button>
         </li>
 
         <li>
-          <button onclick="window.location.href='../_license/adminSearchLicense.php'"
+          <button onclick="window.location.href='_license/adminSearchLicense.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Search & Edit License
           </button>
         </li>
 
         <li>
-          <button onclick="window.location.href='../_vehicle/adminSearchVehicle.php'"
+          <button onclick="window.location.href='_vehicle/adminSearchVehicle.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Search & Edit Vehicle
           </button>
         </li>
 
         <li>
-          <button onclick="window.location.href='../admin_settings.php'"
+          <button onclick="window.location.href='admin_settings.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Settings
           </button>
@@ -119,28 +117,64 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
       </ul>
     </div>
 
-
     <!-- MAIN CONTENT -->
-    <div class="flex flex-col items-center justify-start px-4 w-full mt-32 md:mt-0 py-32">
-      <div class="bg-white p-8 rounded-2xl shadow-xl max-w-xl mx-auto">
-        <h1 class="text-3xl font-extrabold text-gray-800 mb-6">Search License</h1>
+    <div
+      class="flex flex-col items-center justify-start h-[calc(100vh-64px)] px-4 w-[calc(101vw-64px)] mt-32 md:mt-0 py-32">
 
-        <form action="AdminSearchLicenseResult.php" method="GET" class="space-y-6">
-          <input type="hidden" name="action" value="SEARCH-LICENSE-NUMBER">
+      <h1 class="text-4xl font-extrabold mb-2 text-gray-800">Admin Dashboard</h1>
+      <p class="text-lg text-gray-600 mb-8">Administrative tools and management actions</p>
 
-          <div>
-            <label class="font-semibold text-gray-700">Enter License Number</label>
-            <input type="text" id="search-license" name="license-number" placeholder="AXX-XX-XXXXXX"
-              class="w-full p-3 border rounded-lg">
-          </div>
+      <!-- ADMIN ACTION CARDS -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 px-4 sm:px-6 md:px-10">
 
-          <button type="submit"
-            class="w-full bg-blue-600 hover:bg-blue-800 text-white py-3 rounded-xl font-bold transition">
-            Search
+        <!-- Create License -->
+        <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
+          <img src="../../public/assets/id.png" class="w-24 h-24 mb-6 opacity-80">
+          <button onclick="window.location.href='_license/adminCreateLicense.php'"
+            class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-blue-700 transition">
+            Create License
           </button>
-        </form>
+        </div>
+
+        <!-- Search & Edit License -->
+        <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
+          <img src="../../public/assets/id.png" class="w-24 h-24 mb-6 opacity-80">
+          <button onclick="window.location.href='_license/adminSearchLicense.php'"
+            class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-blue-700 transition">
+            Search & Edit License
+          </button>
+        </div>
+
+        <!-- Create Vehicle -->
+        <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
+          <img src="../../public/assets/car.png" class="w-24 h-24 mb-6 opacity-80">
+          <button onclick="window.location.href='_vehicle/adminCreateVehicle.php'"
+            class="bg-blue-600  text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-blue-700 transition">
+            Create Vehicle
+          </button>
+        </div>
+
+        <!-- Search & Edit Vehicle -->
+        <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
+          <img src="../../public/assets/car.png" class="w-24 h-24 mb-6 opacity-80">
+          <button onclick="window.location.href='_vehicle/adminSearchVehicle.php'"
+            class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-blue-700 transition">
+            Search & Edit Vehicle
+          </button>
+        </div>
+
+        <!-- Create User -->
+        <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
+          <img src="../../public/assets/user.png" class="w-24 h-24 mb-6 opacity-80">
+          <button onclick="window.location.href='_license/adminCreateUser.php'"
+            class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-blue-700 transition">
+            Create User
+          </button>
+        </div>
+
       </div>
     </div>
+
   </div>
   <script>
     window.userRole = "<?= $role ?>";

@@ -4,14 +4,6 @@ const API_URL = "../src/Controller.php";
 let currentLicense = null;
 
 function login() {
-
-    if (!acceptance.terms || !acceptance.privacy) {
-        alert("You must accept the Terms & Conditions and Privacy Policy to continue.");
-        // Optionally, open the modals automatically
-        if (!acceptance.terms) openModal('termsModal');
-        else if (!acceptance.privacy) openModal('privacyModal');
-        return;
-    }
     const email = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
@@ -21,45 +13,82 @@ function login() {
     formData.append("password", password);
 
     fetch("../_modules/Controller.php", {
-        method: "POST",
-        body: formData
+    method: "POST",
+    body: formData,
     })
-    .then(res => res.text())
-    .then(response => {
+    .then((res) => res.json())
+    .then((response) => {
         console.log("Response from PHP:", response);
-        if (response.trim() === "SUCCESS") {
-            window.location.href = "../_pages/officer_dashboard.php";
-            console.log("Login successful");
+
+        if (response.status === "SUCCESS") {
+          window.userRole = response.role; // store role for frontend
+          window.userFName = `${response.first_name || ""}`.trim() || "MDT BOT"; // store name for frontend
+          window.userLName = `${response.last_name || ""}`.trim() || "MDT BOT"; // store name for frontend
+          window.location.href = response.redirect; // redirect sa sariling dashboard
         } else {
-            const errorElement = document.getElementById("error");
-            errorElement.innerText = response;
-            errorElement.classList.remove("hidden");
-            console.log("Login failed:", response);
+        const errorElement = document.getElementById("error");
+        errorElement.innerText = response.message;
+        errorElement.classList.remove("hidden");
+        console.log("Login failed:", response.message);
         }
     })
-    .catch(err => {
+    .catch((err) => {
         console.error("Fetch error:", err);
         alert("Error connecting to server.");
     });
-
 }
 
+// ================= REGISTER USER =================
 function registerUser() {
-    const fullname = document.getElementById("fullname").value;
-    const license = document.getElementById("license").value;
-    const dob = document.getElementById("dob").value;
-    const weight = document.getElementById("weight").value;
-    const height = document.getElementById("height").value;
-    const expdate = document.getElementById("expdate").value;
+    const firstName = document.getElementById("first_name").value;
+    const middleName = document.getElementById("middle_name").value; // optional
+    const lastName = document.getElementById("last_name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const licenseNumber = document.getElementById("license").value;
 
-    if (!fullname || !license || !dob || !weight || !height || !expdate) {
+    if (!firstName || !lastName || !email || !password) {
+        document.getElementById("registerError").textContent =
+        "Please fill in at least first name, last name, email, and password.";
         document.getElementById("registerError").classList.remove("hidden");
         return;
     }
 
-    // TODO: AJAX/Fetch call to backend to save registration
-    alert("Registration submitted!");
+    const formData = new FormData();
+    formData.append("action", "REGISTER-USER");
+    formData.append("first_name", firstName);
+    formData.append("middle_name", middleName);
+    formData.append("last_name", lastName);
+    formData.append("license_number", licenseNumber);
+    formData.append("email", email);
+    formData.append("password", password);
+
+    fetch("../_modules/Controller.php", {
+        method: "POST",
+        body: formData,
+    })
+    .then((res) => res.json())
+    .then((data) => {
+    if (data.status === "success") {
+        // store for later use
+        sessionStorage.setItem("first_name", data.first_name);
+        sessionStorage.setItem("middle_name", data.middle_name);
+        sessionStorage.setItem("last_name", data.last_name);
+        sessionStorage.setItem("email", data.email);
+
+        // redirect if needed
+        // window.location.href = "_user/user_dashboard.php";
+    } else {
+        document.getElementById("registerError").textContent = data.message;
+        document.getElementById("registerError").classList.remove("hidden");
+    }
+    })
+    .catch((err) => {
+    console.error("Fetch error:", err);
+    alert("Error connecting to server.");
+    });
 }
+
 
 // ================= VEHICLE LOOKUP =================
 function lookupVehicle() {
@@ -69,7 +98,7 @@ function lookupVehicle() {
     formData.append("action", "SEARCH-PLATE-NUMBER");
     formData.append("plate-number", document.getElementById("plateInput").value);
 
-    fetch("../_modules/Controller.php", {
+    fetch("../../_modules/Controller.php", {
         method: "POST",
         body: formData
     })
@@ -126,7 +155,7 @@ function lookupLicense() {
     formData.append("action", "SEARCH-LICENSE-NUMBER");
     formData.append("license-number", document.getElementById("licenseInput").value.trim());
 
-    fetch("../_modules/Controller.php", {
+    fetch("../../_modules/Controller.php", {
         method: "POST",
         body: formData
     })
@@ -280,7 +309,7 @@ function addViolation() {
         formData.append(key, violationData[key]);
     }
 
-    fetch("../_modules/Controller.php", {
+    fetch("../../_modules/Controller.php", {
         method: "POST",
         body: formData
     })
@@ -304,56 +333,88 @@ function addViolation() {
 }
 
 function loadViolations() {
-    if (!currentLicense) return;
+if (!currentLicense) return;
 
-    const table = document.getElementById("violationTable");
-    table.innerHTML = ""; // clear table
+const table = document.getElementById("violationTable");
+table.innerHTML = ""; // clear table
 
-    const formData = new FormData();
-    formData.append("action", "FETCH-TICKETS");
-    formData.append("license_id", currentLicense.id);
+const formData = new FormData();
+formData.append("action", "FETCH-TICKETS");
+formData.append("license_id", currentLicense.id);
 
-    fetch("../_modules/Controller.php", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            currentLicense.violations = data.tickets.map(t => ({
-                date: t.date_of_incident,
-                offense: t.violation,
-                location: t.place_of_incident,
-                note: t.note,
-                status: t.status
-            }));
+fetch("../../_modules/Controller.php", {
+method: "POST",
+body: formData,
+})
+.then((res) => res.json())
+.then((data) => {
+    if (data.status === "success") {
+    currentLicense.violations = data.tickets.map((t) => ({
+        date: t.date_of_incident,
+        offense: t.violation,
+        location: t.place_of_incident,
+        note: t.note,
+        status: t.status,
+    }));
 
-            currentLicense.violations.forEach((v, idx)=> {
-                table.innerHTML += `
-                    <tr>
-                        <td class="border px-3 py-1">${idx + 1}</td>
-                        <td class="border px-3 py-1">${v.date}</td>
-                        <td class="border px-3 py-1">${v.offense}</td>
-                        <td class="border px-3 py-1">${v.location}</td>
-                        <td class="border px-3 py-1">${v.note}</td>
-                        <td class="border px-3 py-1 font-semibold ${v.status === "Paid" ? "text-green-600" : "text-red-600"}">${v.status}</td>
-                        <td class="border px-3 py-1 text-sm">
-                            <div class="inline-flex gap-2">
-                                <button class="px-2 py-1 text-sm rounded bg-yellow-400 text-white" onclick="openEditViolation(${idx})">Edit</button>
-                                <button class="px-2 py-1 text-sm rounded bg-red-500 text-white" onclick="deleteViolation(${idx})">Delete</button>
-                            </div>
-                        </td>
-                        <td class="border px-3 py-1 text-sm">
-                            <button class="px-2 py-1 rounded bg-blue-600 text-white text-sm" onclick="printViolation(${idx})">Print</button>
-                        </td>
-                    </tr>
-                `;
-            });
+    const role = window.userRole ?? "ADMIN"; // fallback
+
+    currentLicense.violations.forEach((v, idx) => {
+        // ===== BUTTON PERMISSIONS =====
+        let editBtn = "";
+        let deleteBtn = "";
+        let printBtn = `
+                <button class="px-2 py-1 rounded bg-blue-600 text-white text-sm"
+                    onclick="printViolation(${idx})">Print</button>`;
+
+        if (role === "ADMIN") {
+        editBtn = `
+                    <button class="px-2 py-1 text-sm rounded bg-yellow-400 text-white"
+                        onclick="openEditViolation(${idx})">Edit</button>`;
+        deleteBtn = `
+                    <button class="px-2 py-1 text-sm rounded bg-red-500 text-white"
+                        onclick="deleteViolation(${idx})">Delete</button>`;
+        } else if (role === "SUPERVISOR") {
+        editBtn = `
+                    <button class="px-2 py-1 text-sm rounded bg-yellow-400 text-white"
+                        onclick="openEditViolation(${idx})">Edit</button>`;
+        // supervisors cannot delete
         } else {
-            console.error("Error fetching tickets:", data.message);
+        // OFFICER → NO edit, NO delete
         }
-    })
-    .catch(err => console.error("Fetch error:", err));
+
+        table.innerHTML += `
+                <tr>
+                    <td class="border px-3 py-1">${idx + 1}</td>
+                    <td class="border px-3 py-1">${v.date}</td>
+                    <td class="border px-3 py-1">${v.offense}</td>
+                    <td class="border px-3 py-1">${v.location}</td>
+                    <td class="border px-3 py-1">${v.note}</td>
+                    <td class="border px-3 py-1 font-semibold ${
+                        v.status === "Paid"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }">${v.status}</td>
+
+                    <!-- ACTIONS COLUMN -->
+                    <td class="border px-3 py-1 text-sm">
+                        <div class="inline-flex gap-2">
+                            ${editBtn}
+                            ${deleteBtn}
+                        </div>
+                    </td>
+
+                    <td class="border px-3 py-1 text-sm">
+                        ${printBtn}
+                    </td>
+                </tr>
+            `;
+    });
+    } else {
+    console.error("Error fetching tickets:", data.message);
+    }
+})
+.catch((err) => console.error("Fetch error:", err));
 }
 
 // ================= MODALSS =================
@@ -439,12 +500,12 @@ function updateLoginButton() {
 }
 
 // ================= TOGGLE =================
-document.addEventListener("DOMContentLoaded", () => {
-    const sidebar = document.getElementById("sidebar");
-    const toggleBtn = document.getElementById("sidebarToggle");
+// document.addEventListener("DOMContentLoaded", () => {
+//     const sidebar = document.getElementById("sidebar");
+//     const toggleBtn = document.getElementById("sidebarToggle");
 
-    toggleBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        sidebar.classList.toggle("-translate-x-full");
-    });
-});
+//     toggleBtn.addEventListener("click", (e) => {
+//         e.preventDefault();
+//         sidebar.classList.toggle("-translate-x-full");
+//     });
+// });

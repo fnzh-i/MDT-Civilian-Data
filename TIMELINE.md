@@ -55,4 +55,18 @@ Development ongoing — updates posted as time allows.
                 - Added user registration function and code cleanup.<br>
 - Dec 5, 2025   - Improved login and registration UI and add registration function.<br>
                 - Refactored and add methods to DriversLicense, TicketViolation, Vehicle.<br>
-                - Removed unused API case handlers from Controller.php.
+                - Removed unused API case handlers from Controller.php.<br>
+- Dec 6, 2025   - Redesigned admin panel and license form and add JS for auto-fill.<br>
+                - Refactored officer and user pages into subdirectories.<br>
+                - Enhance vehicle admin CRUD validation and update logic.<br>
+                - Added input validation for license and ticket creation.<br>
+                - Revamped admin license UI and script logic.<br>
+- Dec 7, 2025   - Added UI to vehicle management in admin panel.<br>
+                - Added support ticket form to officer settings page.<br>
+                - Added user settings page and update asset paths.<br>
+                - Refactored login and registration flow, add user role handling.<br>
+                - Updated savePersonalInfo to insert into user table.<br>
+                - Enhanced user registration with email, password, and license.<br>
+- Dec 8, 2025   - Added default_password function.<br>
+                - Refactored user function to handle admin and civilian registration.<br>
+                - Added User Name and Role display to Navbar and Sidebar.<br> 

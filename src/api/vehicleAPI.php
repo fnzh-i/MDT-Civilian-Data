@@ -11,6 +11,14 @@ class VehicleAPI {
     }
 
     public function searchPlate(string $plateNumber): string {
+
+        if (trim($plateNumber) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter a plate number or MV file number.'
+            ]);
+        }
+
         $result = Vehicle::searchVehicle($this->conn, $plateNumber);
 
         if (is_string($result)) {
@@ -23,6 +31,11 @@ class VehicleAPI {
         $vehicle = $result['vehicle'];
         $vehicleId = $result['vehicle_id'];
 
+        // CALCULATE ISSUE DATE FROM EXPIRY DATE, NEED TO SA UPDATE VEHICLE
+        $issueDate = $vehicle->getExpiryDate() 
+        ? Vehicle::inferIssueDate($vehicle->getExpiryDate()->format('Y-m-d')) 
+        : null;
+
         return json_encode([
             'status' => 'success',
             'vehicle' => [
@@ -34,6 +47,7 @@ class VehicleAPI {
                 'model' => $vehicle->getModelName(),
                 'color' => $vehicle->getModelColor(),
                 'regExpiry' => $vehicle->getExpiryDate()->format('M-d-Y'),
+                'issueDate' => $issueDate ? $issueDate->format('Y-m-d') : null, // NEED SA UPDATE VEHICLE
                 'status' => $vehicle->getRegistrationStatus(),
                 'year' => $vehicle->getModelYear(),
                 'license_id' => $vehicle->getLicenseID()
@@ -99,31 +113,105 @@ class VehicleAPI {
         if (trim($licenseNumber) === '') {
             return json_encode([
                 'status' => 'error',
-                'message' => 'Please enter a license-number.'
+                'message' => 'Please enter the license number.'
             ]);
         }
 
-        // MV FILE NUMBER NULL
-        $mvFile = $_POST['mv-file-number'] ?? null;
-        if ($mvFile === '') {
-            $mvFile = null;
+        // CHECK IF EMPTY ANG PLATE NUMBER
+        $plateNumber = $_POST['plate-number'] ?? '';
+        if (trim($plateNumber) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the plate number.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG MV FILE NUMBER (KASI DI NA SYA OPTIONAL RIGHT)
+        $mvFileNumber = $_POST['mv-file-number'] ?? '';
+        if (trim($mvFileNumber) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the MV file number.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG VIN
+        $vin = $_POST['vin'] ?? '';
+        if (trim($vin) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the VIN.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG ISSUE DATE
+        $issueDate = $_POST['issue-date'] ?? '';
+        if (trim($issueDate) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please input the issue date.'
+            ]);
+        }
+        // CHECK IF WALANG PINILING REGISTRATION STATUS
+        $registrationStatus = $_POST['registration-status'] ?? '';
+        if ($registrationStatus === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please select the registration status.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG BRAND NAME
+        $brandName = $_POST['brand-name'] ?? '';
+        if (trim($brandName) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the brand name.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG MODEL NAME
+        $modelName = $_POST['model-name'] ?? '';
+        if (trim($modelName) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the model name.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG MODEL YEAR
+        $modelYear = $_POST['model-year'] ?? '';
+        if (trim($modelYear) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the model year.'
+            ]);
+        }
+        // CHECK IF POSITIVE INTEGER SYA
+        if (!ctype_digit($modelYear) || (int)$modelYear <= 0) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter a valid year (positive integer).'
+            ]);
+        }
+        // CHECK IF EMPTY ANG MODEL COLOR
+        $modelColor = $_POST['model-color'] ?? '';
+        if (trim($modelColor) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the model color.'
+            ]);
         }
 
         // VEHICLE OBJECT
         $vehicle = new Vehicle(
-            $_POST['plate-number'],
-            $mvFile,
-            $_POST['vin'],
-            new DateTime($_POST['issue-date']),
-            RegistrationStatus::from($_POST['registration-status']),
-            $_POST['brand-name'],
-            $_POST['model-name'],
-            (int) $_POST['model-year'],
-            $_POST['model-color'],
+            $plateNumber,
+            $mvFileNumber,
+            $vin,
+            new DateTime($issueDate),
+            RegistrationStatus::from($registrationStatus),
+            $brandName,
+            $modelName,
+            (int) $modelYear,
+            $modelColor,
             0 // PLACEHOLDER SA LICENSE_ID MUNA, SINCE DI PA NASASAVE SA DB
         );
 
-        // SAVING
+        // SAVING TO DB
         $result = $vehicle->save($this->conn, $licenseNumber);
 
         return $result;
@@ -132,29 +220,130 @@ class VehicleAPI {
 
     // PARA SA ADMIN UPDATE VEHICLE
     public function updateVehicle(): string {
-        // MV FILE NUMBER NA DATING OPTIONAL HAHAHAHA
-        $mvFile = $_POST['mv-file-number'] ?? null;
-        if ($mvFile === '') {
-            $mvFile = null;
+        // CHECK IF EMPTY ANG LICENSE-NUMBER
+        $licenseNumber = $_POST['license-number'] ?? '';
+        if (trim($licenseNumber) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the license number.'
+            ]);
         }
+        // CHECK IF EMPTY ANG PLATE NUMBER
+        $plateNumber = $_POST['plate-number'] ?? '';
+        if (trim($plateNumber) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the plate number.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG MV FILE NUMBER (KASI DI NA SYA OPTIONAL RIGHT)
+        $mvFileNumber = $_POST['mv-file-number'] ?? '';
+        if (trim($mvFileNumber) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the MV file number.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG VIN
+        $vin = $_POST['vin'] ?? '';
+        if (trim($vin) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the VIN.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG ISSUE DATE
+        $issueDate = $_POST['issue-date'] ?? '';
+        if (trim($issueDate) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please input the issue date.'
+            ]);
+        }
+        // CHECK IF WALANG PINILING REGISTRATION STATUS
+        $registrationStatus = $_POST['registration-status'] ?? '';
+        if ($registrationStatus === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please select the registration status.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG BRAND NAME
+        $brandName = $_POST['brand-name'] ?? '';
+        if (trim($brandName) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the brand name.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG MODEL NAME
+        $modelName = $_POST['model-name'] ?? '';
+        if (trim($modelName) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the model name.'
+            ]);
+        }
+        // CHECK IF EMPTY ANG MODEL YEAR
+        $modelYear = $_POST['model-year'] ?? '';
+        if (trim($modelYear) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the model year.'
+            ]);
+        }
+        // CHECK IF POSITIVE INTEGER SYA
+        if (!ctype_digit($modelYear) || (int)$modelYear <= 0) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter a valid year (positive integer).'
+            ]);
+        }
+        // CHECK IF EMPTY ANG MODEL COLOR
+        $modelColor = $_POST['model-color'] ?? '';
+        if (trim($modelColor) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the model color.'
+            ]);
+        }
+
+        // KUNIN VEHICLE ID DUN SA HIDDEN INPUT SA ADMINCREATEVEHICLE (UPDATE MODE)
+        $vehicleId = (int)($_POST['vehicle-id'] ?? 0);
+        if ($vehicleId <= 0) {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Vehicle ID is missing. Cannot update.'
+            ]);
+        }
+
+        // GET LICENSE ID
+        $stmt = $this->conn->prepare("SELECT license_id FROM licenses WHERE license_number = ?");
+        $stmt->bind_param("s", $licenseNumber);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        if ($res->num_rows === 0) {
+            return json_encode(['status'=>'error','message'=>"License number '{$licenseNumber}' does not exist."]);
+        }
+        $licenseId = (int)$res->fetch_assoc()['license_id'];
+        $stmt->close();
 
         // VEHICLE OBJECT
         $vehicle = new Vehicle(
-            $_POST['plate-number'],
-            $mvFile,
-            $_POST['vin'],
-            new DateTime($_POST['issue-date']),
-            RegistrationStatus::from($_POST['registration-status']),
-
-            $_POST['brand-name'],
-            $_POST['model-name'],
-            (int) $_POST['model-year'],
-            $_POST['model-color'],
-            (int) $_POST['license-id'] // FOREIGN KEY
+            $plateNumber,
+            $mvFileNumber,
+            $vin,
+            new DateTime($issueDate),
+            RegistrationStatus::from($registrationStatus),
+            $brandName,
+            $modelName,
+            (int) $modelYear,
+            $modelColor,
+            $licenseId
         );
 
-        // UPDATE YUNG SA DB (vehicles TABLE)
-        $result = $vehicle->update($this->conn);
+        // UPDATE SA DB
+        $result = $vehicle->update($this->conn, $vehicleId);
 
         if ($result === true) {
             return json_encode([

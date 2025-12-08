@@ -1,12 +1,19 @@
+<?php
+session_start();
+$role = $_SESSION['role'] ?? 'OFFICER'; // fallback if session not set
+$name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-BOT'); // you store name
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>MDT Dashboard</title>
+    <title>Check Vehicle</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="../../public/script.js"></script>
-    <link rel="stylesheet" href="../../public/style.css">
+    <script defer src="../../../public/script.js"></script>
+    <link rel="stylesheet" href="../../../public/style.css">
+
 </head>
 
 <body class="bg-gray-200">
@@ -20,7 +27,7 @@
                 <span class="block w-6 h-0.5 bg-white"></span>
                 <span class="block w-6 h-0.5 bg-white"></span>
             </button>
-            <span class="text-white block font-semibold truncate max-w-xs">Tarub Salsalini</span>
+            <span class="text-white block font-semibold truncate max-w-xs" id="userNameNav">Tarub Salsalini</span>
         </div>
         <div class="absolute left-1/2 transform -translate-x-1/2">
             <a href="officer_dashboard.php"
@@ -30,7 +37,7 @@
         </div>
         <div>
             <!-- Right: Logout -->
-            <a href="../../public/index.php"
+            <a href="../../../public/index.php"
                 class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -50,10 +57,10 @@
                     <span class="items-start w-full text-left text-gray-700 hover:text-blue-600 font-bold">
 
                         <div class="flex items-center gap-3 mt-10">
-                            <span><img src="../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
+                            <span><img src="../../../public/assets/user.png" class="w-6 h-6 inline-block"></span>
                             <div>
-                                <span class="block font-bold">LTO Officer</span>
-                                <span class="block font-semibold">Tarub Salsalini</span>
+                                <span class="block font-bold" id="userRoleDisplay">LTO MDT</span>
+                                <span class="block font-semibold" id="userNameSidebar">Tarub Salsalini</span>
                             </div>
                         </div>
                     </span>
@@ -85,36 +92,57 @@
             </ul>
         </div>
 
-
-        <!-- MAIN CONTENT CENTERED -->
+        <!-- MAIN CONTENT -->
         <div
-            class="flex flex-col items-center justify-start h-[calc(100vh-64px)] px-4 w-[calc(101vw-64px)] mt-32 md:mt-0 py-32">
-            <!-- Titles -->
-            <h1 class="text-4xl font-extrabold mb-2 text-gray-800">Officer Dashboard</h1>
-            <p class="text-lg text-gray-600 mb-8">Select a search type to retrieve civilian data</p>
+            class="flex flex-col items-center justify-start h-[calc(100vh-64px)] px-4 w-[calc(100vw-64px)] mt-32 md:mt-0 py-32">
 
-            <!-- Buttons -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 px-4 sm:px-6 md:px-10">
-                <!-- VEHICLE BOX -->
-                <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
-                    <img src="../../public/assets/car.png" class="w-24 h-24 mb-6 opacity-80">
-                    <button onclick="window.location.href='officer_vehicle.php'"
-                        class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-red-700 transition">
-                        Check Vehicle
-                    </button>
-                </div>
+            <h1 class="text-3xl font-extrabold mb-6 text-center text-black">Vehicle Lookup</h1>
 
-                <!-- LICENSE BOX -->
-                <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
-                    <img src="../../public/assets/id.png" class="w-24 h-24 mb-6 opacity-80">
-                    <button onclick="window.location.href='officer_license.php'"
-                        class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-red-700 transition">
-                        Check License
-                    </button>
-                </div>
+            <!-- Input and Search Button -->
+            <div class="flex flex-col sm:flex-row gap-2 justify-center mb-4 w-full max-w-md  mx-auto">
+                <input id="plateInput" type="text" placeholder="Enter Plate Number or MV File No."
+                    class="p-3 border rounded-lg w-full sm:w-80">
+                <button onclick="lookupVehicle()"
+                    class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition font-bold">
+                    Search
+                </button>
             </div>
+
+            <!-- Error Message -->
+            <p id="error" class="text-red-600 mt-3 text-center hidden mx-auto">
+                Vehicle Information doesn't exist. Please check your input details.
+            </p>
+            <!-- Vehicle Info Box -->
+            <div id="infoBox"
+                class="hidden mt-6 max-w-3xl w-full bg-white p-6 rounded-2xl shadow-lg text-gray-800 mx-auto"></div>
         </div>
-    </div>
+        <script>
+            window.userRole = "<?= $role ?>";
+            window.userFName = "<?= $name ?>";
+            window.userLName = "<?= $name ?>";
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const roleEl = document.getElementById('userRoleDisplay');
+                const navNameEl = document.getElementById('userNameNav');
+                const sidebarNameEl = document.getElementById('userNameSidebar');
+
+                if (roleEl) {
+                    roleEl.textContent = window.userRole;
+                    switch (window.userRole) {
+                        case 'ADMIN': roleEl.classList.add('text-red-600'); break;
+                        case 'SUPERVISOR': roleEl.classList.add('text-yellow-600'); break;
+                        default: roleEl.classList.add('text-blue-600'); break;
+                    }
+                }
+
+                if (navNameEl) {
+                    navNameEl.textContent = window.userFName;
+                }
+                if (sidebarNameEl) {
+                    sidebarNameEl.textContent = window.userLName;
+                }
+            });
+        </script>
 </body>
 
 </html>

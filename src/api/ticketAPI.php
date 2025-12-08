@@ -103,7 +103,26 @@ class TicketAPI {
         } catch (ValueError $e) {
             return json_encode([
                 'status' => 'error',
-                'message' => 'Invalid violation.'
+                'message' => 'Please input a valid violation.'
+            ]);
+        }
+
+
+        // CHECK IF EMPTY DATE OF INCIDENT
+        $dateOfIncident = $data['date-of-incident'] ?? '';
+        if (trim($dateOfIncident) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please input the date of incident.'
+            ]);
+        }
+
+        // CHECK IF EMPTY PLACE OF INCIDENT
+        $placeOfIncident = $data['place-of-incident'] ?? '';
+        if (trim($placeOfIncident) === '') {
+            return json_encode([
+                'status' => 'error',
+                'message' => 'Please enter the place of incident.'
             ]);
         }
 
@@ -111,8 +130,8 @@ class TicketAPI {
         // CREATE TicketViolation OBJECT
         $ticket = new TicketViolation(
             $violation,
-            new DateTime($data['date-of-incident']),
-            $data['place-of-incident'],
+            new DateTime($dateOfIncident),
+            $placeOfIncident,
             $data['note'] ?? ''
         );
 

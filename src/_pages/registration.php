@@ -15,7 +15,7 @@ require_once __DIR__ . '/../bootstrap.php';
 
 <body class="bg-gray-200 h-screen flex flex-col items-center justify-center">
 
-    <div class="bg-white p-10 rounded-2xl shadow-2xl w-96">
+    <div class="bg-white p-10 rounded-2xl shadow-2xl w-[40rem] max-w-full">
 
         <h1 class="text-3xl font-extrabold text-center mb-6">Register</h1>
 
@@ -28,21 +28,35 @@ require_once __DIR__ . '/../bootstrap.php';
 
             <!-- PERSONAL INFO -->
             <div class="space-y-4">
-                <div>
-                    <label class="text-gray-700 text-sm font-semibold">Full Name</label>
-                    <input id="fullname" type="text" placeholder="Tarub Salsalini" class="w-full p-3 border rounded-lg">
+                <!-- First, Middle, Last Name -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-gray-700 text-sm font-semibold">First Name</label>
+                        <input id="first_name" type="text" placeholder="Tarub" class="w-full p-3 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="text-gray-700 text-sm font-semibold">Middle Name</label>
+                        <input id="middle_name" type="text" placeholder="Optional" class="w-full p-3 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="text-gray-700 text-sm font-semibold">Last Name</label>
+                        <input id="last_name" type="text" placeholder="Salsalini" class="w-full p-3 border rounded-lg">
+                    </div>
                 </div>
 
+                <!-- License Number -->
                 <div>
                     <label class="text-gray-700 text-sm font-semibold">License Number</label>
                     <input id="license" type="text" placeholder="N69-21-173867" class="w-full p-3 border rounded-lg">
                 </div>
 
+                <!-- Date of Birth -->
                 <div>
                     <label class="text-gray-700 text-sm font-semibold">Date of Birth</label>
                     <input id="dob" type="date" class="w-full p-3 border rounded-lg">
                 </div>
 
+                <!-- Weight & Height -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="text-gray-700 text-sm font-semibold">Weight (kg)</label>
@@ -55,11 +69,14 @@ require_once __DIR__ . '/../bootstrap.php';
                     </div>
                 </div>
 
+                <!-- Expiration Date -->
                 <div>
                     <label class="text-gray-700 text-sm font-semibold">Expiration Date</label>
                     <input id="expdate" type="date" class="w-full p-3 border rounded-lg">
                 </div>
+
             </div>
+
 
             <!-- DIVIDER -->
             <hr class="border-gray-300 my-4">
