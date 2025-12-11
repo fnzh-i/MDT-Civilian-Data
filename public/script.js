@@ -189,8 +189,8 @@ function lookupLicense() {
             <div class="bg-white p-6 rounded-2xl shadow-xl mb-6">
                 <h2 class="text-2xl font-bold mb-3">Personal Information</h2>
                 <p><b>Full Name:</b> ${L.first_name}</p>
-                <p><b>Full Name:</b> ${L.middle_name}</p>
-                <p><b>Full Name:</b> ${L.last_name}</p>
+                <p><b>Middle Name:</b> ${L.middle_name}</p>
+                <p><b>Last Name:</b> ${L.last_name}</p>
                 <p><b>Date of Birth:</b> ${L.date_of_birth}</p>
                 <p><b>Sex:</b> ${L.gender}</p>
                 <p><b>Address:</b> ${L.address}</p>

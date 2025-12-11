@@ -109,6 +109,13 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
         </li>
 
         <li>
+          <button onclick="window.location.href='../_user/adminUser.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Search & Edit User
+          </button>
+        </li>
+
+        <li>
           <button onclick="window.location.href='../admin_settings.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Settings

@@ -25,8 +25,8 @@ require_once __DIR__ . '/../bootstrap.php';
 
         // logic redirect based on role
         $redirect = match (strtoupper($_SESSION['role'])) {
-          // 'ADMIN' => '../_admin_panel/admin_dashboard.php',
-          'ADMIN' => '_officer/officer_dashboard.php',
+          'ADMIN' => '../_admin_panel/admin_dashboard.php',
+          //'ADMIN' => '_officer/officer_dashboard.php',
           'SUPERVISOR' => '_officer/officer_dashboard.php',
           'USER' => '_user/user_dashboard.php',
           default => '_officer/officer_dashboard.php', // fallback to officer

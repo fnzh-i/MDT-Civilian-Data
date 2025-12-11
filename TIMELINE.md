@@ -79,3 +79,4 @@ Development ongoing — updates posted as time allows.
                 - Refactored Civilian user side code to display user's information.<br>
                 - Added 404 catch to settings on submit.<br>
                 - Hotfix (vehicle display CIV side).<br>
+- Dec 9, 2025   - Hotfix (admin_panel).<br>

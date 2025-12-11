@@ -35,13 +35,6 @@ $plateNumber = $_GET['plate-number'] ?? '';
 
     <!-- Title centered -->
     <div class="absolute left-1/2 transform -translate-x-1/2">
-      <a href="../admin_dashboard.php"
-        class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
-        <span class="text-white block font-semibold truncate max-w-xs" id="userNameNav">Administrator</span>
-    </div>
-
-    <!-- Title centered -->
-    <div class="absolute left-1/2 transform -translate-x-1/2">
       <a href="../admin_dashboard.php" class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
         <span>MDT Admin Dashboard</span>
       </a>
@@ -115,6 +108,13 @@ $plateNumber = $_GET['plate-number'] ?? '';
           <button onclick="window.location.href='../_vehicle/adminSearchVehicle.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Search & Edit Vehicle
+          </button>
+        </li>
+
+        <li>
+          <button onclick="window.location.href='../_user/adminUser.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Search & Edit User
           </button>
         </li>
 

@@ -151,7 +151,7 @@ $result = $conn->query($sql);
 
         <!-- Right: Logout -->
         <div>
-            <a href="../../public/index.php"
+            <a href="../../../public/index.php"
                 class="flex items-center gap-2 text-white font-bold hover:text-gray-200 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -218,6 +218,13 @@ $result = $conn->query($sql);
                     <button onclick="window.location.href='../_vehicle/adminSearchVehicle.php'"
                         class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                         Search & Edit Vehicle
+                    </button>
+                </li>
+
+                <li>
+                    <button onclick="window.location.href='../_user/adminUser.php'"
+                        class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                        Search & Edit User
                     </button>
                 </li>
 

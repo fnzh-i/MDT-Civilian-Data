@@ -109,6 +109,13 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
             </li>
 
             <li>
+                <button onclick="window.location.href='_user/adminUser.php'"
+                    class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+                    Search & Edit User
+                </button>
+            </li>
+
+            <li>
             <button onclick="window.location.href='admin_settings.php'"
                 class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
                 Settings
@@ -137,14 +144,14 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
 
                 <ul class="text-gray-700 text-sm mb-8 space-y-2 ml-2">
                     <li>• Password change or reset</li>
-                    <li>• Update to account name or officer details</li>
+                    <li>• Update to account name or admin details</li>
                     <li>• Recovery for forgotten password</li>
                     <li>• Report account or login issues</li>
                     <li>• Contact administrative support</li>
                 </ul>
 
                 <!-- FORM -->
-                <form action="../_pages/not_found.php" method="POST" class="space-y-6">
+                <form action="support_submit.php" method="POST" class="space-y-6">
 
                     <!-- Category -->
                     <div>

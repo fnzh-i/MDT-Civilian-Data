@@ -11,7 +11,7 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
   <meta charset="UTF-8">
   <title>MDT Admin Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="../../public/script.js"></script>
+  <script defer src="../../public/admin_script.js"></script>
   <link rel="stylesheet" href="../../public/style.css">
 </head>
 
@@ -108,6 +108,13 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
         </li>
 
         <li>
+          <button onclick="window.location.href='_user/adminUser.php'"
+            class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
+            Search & Edit User
+          </button>
+        </li>
+
+        <li>
           <button onclick="window.location.href='admin_settings.php'"
             class="w-full text-left text-gray-700 hover:text-blue-600 font-semibold">
             Settings
@@ -166,12 +173,20 @@ $name = ($_SESSION['first_name'] ?? '') . ' ' . ($_SESSION['last_name'] ?? 'MDT-
         <!-- Create User -->
         <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
           <img src="../../public/assets/user.png" class="w-24 h-24 mb-6 opacity-80">
-          <button onclick="window.location.href='_license/adminCreateUser.php'"
+          <button onclick="window.location.href='_user/adminCreateUser.php'"
             class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-blue-700 transition">
             Create User
           </button>
         </div>
 
+        <!-- Search & Edit User -->
+        <div class="bg-white p-10 rounded-2xl shadow-xl flex flex-col items-center w-80 mx-auto">
+          <img src="../../public/assets/user.png" class="w-24 h-24 mb-6 opacity-80">
+          <button onclick="window.location.href='_user/adminUser.php'"
+            class="bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-bold hover:bg-blue-700 transition">
+            Search & Edit User
+          </button>
+        </div>
       </div>
     </div>
 
